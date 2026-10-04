@@ -1,3 +1,5 @@
+import useRecitationAttendance from "../../lib/useRecitationAttendance";
+import { assertRecitationAttendance } from "../../lib/recitationAttendance";
 import SideLessonFields from "../../components/SideLessonFields";
 import { storedSideLesson, formatSideLessonTotal, validateSideLesson, sideLessonPayload, withSideLessonMetrics } from "../../lib/sideLesson";
 import StudentLessonActivity from "../../components/StudentLessonActivity";
@@ -388,6 +390,9 @@ export default function Recitations() {
     dateFilter,
     setDateFilter,
   ] = useState("today");
+
+  const attendanceGuard = useRecitationAttendance(supabase, commonForm, formOpen,
+    sessionStudents.map(row => `${row.student_id}:${row.status}`).join(","));
 
   /* =====================================================
      التحميل
@@ -4550,6 +4555,7 @@ export default function Recitations() {
     reason,
     afterPersist = null,
   }) {
+    await assertRecitationAttendance(supabase, payload);
     let persistedRecord = null;
     let postPersistResult = null;
 
@@ -5870,6 +5876,9 @@ export default function Recitations() {
 
               </FormSection>
 
+              {attendanceGuard.message && <p role="status" className="attendance-recitation-notice">{attendanceGuard.message}</p>}
+              <fieldset className="attendance-recitation-fields" disabled={attendanceGuard.disabled}>
+
               {/* =========================================
                   QURAN
               ========================================= */}
@@ -6270,6 +6279,7 @@ export default function Recitations() {
                   </div>
                 </details>
               </div>
+              </fieldset>
             </div>
 
             {/* ===========================================
@@ -6303,7 +6313,7 @@ export default function Recitations() {
                   saveRecord
                 }
                 disabled={
-                  saving
+                  saving || attendanceGuard.disabled
                 }
               >
                 {saving ? (

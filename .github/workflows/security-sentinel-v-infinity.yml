@@ -58,6 +58,9 @@ jobs:
       - name: Side lesson recitation and monthly achievement tests
         run: npm run test:side-lessons
 
+      - name: Absent student recitation regression tests
+        run: npm run test:attendance
+
       - name: Lint
         run: npm run lint
 

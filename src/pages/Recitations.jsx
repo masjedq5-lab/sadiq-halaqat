@@ -1,3 +1,5 @@
+import useRecitationAttendance from "../lib/useRecitationAttendance";
+import { assertRecitationAttendance } from "../lib/recitationAttendance";
 import SideLessonFields from "../components/SideLessonFields";
 import {storedSideLesson,formatSideLessonTotal,validateSideLesson,sideLessonPayload,withSideLessonMetrics} from "../lib/sideLesson";
 import { useEffect, useMemo, useState } from "react";
@@ -26,6 +28,7 @@ const [selectedDate, setSelectedDate] =
   useState(getLocalDate());
   const [halaqaId, setHalaqaId] = useState("");
   const [halaqaName, setHalaqaName] = useState("");
+  const attendanceGuard = useRecitationAttendance(supabase, { student_id: studentId, halaqa_id: halaqaId, recitation_date: selectedDate });
 
   const [fromSurah, setFromSurah] = useState("");
   const [fromAyah, setFromAyah] = useState("");
@@ -455,6 +458,7 @@ const [selectedDate, setSelectedDate] =
     setLoading(true);
 
     try {
+      await assertRecitationAttendance(supabase, {student_id: studentId, halaqa_id: halaqaId, recitation_date: selectedDate});
       const points = totalPoints;
 
       const recordData = {
@@ -555,6 +559,8 @@ const [selectedDate, setSelectedDate] =
           points
         );
       }
+    } catch (error) {
+      showToast(error.message || "تعذر حفظ التسميع", "error");
     } finally {
       setLoading(false);
     }
@@ -1186,6 +1192,8 @@ const [selectedDate, setSelectedDate] =
 
 )}
 
+          {attendanceGuard.message && <p role="status" className="attendance-recitation-notice">{attendanceGuard.message}</p>}
+          <fieldset className="attendance-recitation-fields" disabled={attendanceGuard.disabled}>
           {/* LESSON */}
 
           <RecitationSection
@@ -1342,6 +1350,7 @@ const [selectedDate, setSelectedDate] =
             </div>
           </section>
 
+          </fieldset>
           {/* SAVE */}
 
           <div className="save-bar">
@@ -1350,7 +1359,7 @@ const [selectedDate, setSelectedDate] =
               onClick={
                 saveRecitation
               }
-              disabled={loading}
+              disabled={loading || attendanceGuard.disabled}
             >
               {loading ? (
                 <Loader2

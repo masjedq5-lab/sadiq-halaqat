@@ -1,0 +1,4 @@
+.attendance-recitation-notice { margin: 12px 0; padding: 12px 16px; border: 1px solid #fcd34d; border-radius: 12px; color: #92400e; background: #fffbeb; font-size: 14px; line-height: 1.7; }
+
+.attendance-recitation-fields { border: 0; margin: 0; padding: 0; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+.attendance-recitation-fields:disabled { opacity: .65; }

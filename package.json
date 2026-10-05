@@ -51,7 +51,7 @@
     "@types/web-push": "3.6.4",
     "@vitejs/plugin-react": "^6.0.4",
     "deno": "2.9.6",
-    "oxlint": "^1.75.0",
+    "oxlint": "^1.85.0",
     "react-test-renderer": "19.2.8",
     "vite": "^8.2.0",
     "web-push": "3.6.7"

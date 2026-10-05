@@ -112,7 +112,7 @@ jobs:
 
       - name: Upload core audit
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: sadiq-security-v-infinity-core-${{ github.run_number }}
           path: security-artifacts/
@@ -183,7 +183,7 @@ jobs:
 
       - name: Upload Semgrep report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: sadiq-security-v-infinity-semgrep-${{ github.run_number }}
           path: security-artifacts/
@@ -227,7 +227,7 @@ jobs:
 
       - name: Upload Trivy report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: sadiq-security-v-infinity-trivy-${{ github.run_number }}
           path: security-artifacts/
@@ -265,7 +265,7 @@ jobs:
 
       - name: Upload Supabase lint
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: sadiq-security-v-infinity-supabase-${{ github.run_number }}
           path: security-artifacts/
@@ -291,7 +291,7 @@ jobs:
 
       - name: Upload ZAP report
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: sadiq-security-v-infinity-zap-${{ github.run_number }}
           path: security-artifacts/zap/

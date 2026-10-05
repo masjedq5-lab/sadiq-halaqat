@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import { OrnamentScene } from '../components/ornaments/Ornament';
 import {
   useCallback,
@@ -57,7 +58,7 @@ function formatDate(value) {
   if (!value) return "—";
 
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       year: "numeric",
       month: "short",
       day: "numeric",

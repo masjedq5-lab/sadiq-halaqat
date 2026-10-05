@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import { OrnamentScene } from '../components/ornaments/Ornament';
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
@@ -54,7 +55,7 @@ function number(value) {
 function formatDate(value, withTime = true) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -69,7 +70,7 @@ function formatDate(value, withTime = true) {
 
 function formatGregorianToday() {
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+    return displayDateFormatter( {
       weekday: "long",
       day: "numeric",
       month: "long",
@@ -82,7 +83,7 @@ function formatGregorianToday() {
 
 function formatHijriToday() {
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
+    return displayDateFormatter( {
       day: "numeric",
       month: "long",
       year: "numeric",

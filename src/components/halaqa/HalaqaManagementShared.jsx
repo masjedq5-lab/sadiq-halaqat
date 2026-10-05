@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import { OrnamentScene } from '../ornaments/Ornament';
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -13,7 +14,7 @@ export const matchSearch = (query, ...values) => values.join(" ").toLocaleLowerC
 export function displayDate(value) {
   if (!value) return "غير مسجل";
   const date = new Date(`${String(value).slice(0, 10)}T12:00:00`);
-  return Number.isNaN(date.getTime()) ? "غير مسجل" : new Intl.DateTimeFormat("ar-SA-u-ca-gregory", { year: "numeric", month: "short", day: "numeric" }).format(date);
+  return Number.isNaN(date.getTime()) ? "غير مسجل" : displayDateFormatter( { year: "numeric", month: "short", day: "numeric" }).format(date);
 }
 
 export function useHalaqaManagement(id) {

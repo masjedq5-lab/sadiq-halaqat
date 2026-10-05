@@ -1,3 +1,4 @@
+import CalendarSettings from "../components/CalendarSettings";
 import Ornament from '../components/ornaments/Ornament';
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -125,7 +126,7 @@ export default function SettingsPage() {
           <div><h2>{activeMeta.label}</h2><p>{activeMeta.desc}</p></div>
         </div>
         <div className="settings-component-surface">
-          {activeTab === "general" && <GeneralPreferences {...common} />}
+          {activeTab === "general" && <><CalendarSettings /><GeneralPreferences {...common} /></>}
           {activeTab === "appearance" && <AppearancePreferences {...common} />}
           {activeTab === "tv" && <TVSettings />}
           {activeTab === "quotes" && <QuoteManager />}

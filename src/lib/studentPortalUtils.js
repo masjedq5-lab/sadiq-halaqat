@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "./calendar";
 const SETTINGS_KEY = "sadiq.student.preferences.v1";
 
 export const STUDENT_ACCENTS = {
@@ -69,7 +70,7 @@ export function getHijriParts(date = new Date()) {
 export function formatGregorianDate(value, options = {}) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+    return displayDateFormatter( {
       timeZone: "Asia/Riyadh",
       day: "numeric",
       month: "short",
@@ -84,7 +85,7 @@ export function formatGregorianDate(value, options = {}) {
 export function formatHijriDate(value, options = {}) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
+    return displayDateFormatter( {
       timeZone: "Asia/Riyadh",
       day: "numeric",
       month: "long",
@@ -99,7 +100,7 @@ export function formatHijriDate(value, options = {}) {
 export function formatDateTime(value) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       timeZone: "Asia/Riyadh",
       day: "numeric",
       month: "short",
@@ -198,7 +199,7 @@ export function findGregorianForHijri(hijriYear, hijriMonth, hijriDay = 1) {
     cursor.setDate(cursor.getDate() + 1);
   }
 
-  throw new Error("تعذر تحويل التاريخ الهجري.");
+  throw new Error("تعذر تحويل التاريخ.");
 }
 
 export function getHijriMonthRange(year, month) {

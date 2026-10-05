@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
@@ -1453,8 +1454,7 @@ function LoadingState() {
 
 function formatDate(date) {
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",

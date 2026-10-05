@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -21,7 +22,7 @@ import "../Register.css";
 function formatDate(value) {
   if (!value) return "—";
 
-  return new Intl.DateTimeFormat("ar-SA", {
+  return displayDateFormatter( {
     timeZone: "Asia/Riyadh",
     day: "numeric",
     month: "short",

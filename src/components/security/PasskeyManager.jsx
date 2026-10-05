@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
 import {
   CheckCircle2,
@@ -41,7 +42,7 @@ function passkeyErrorMessage(error) {
 function formatDate(value) {
   if (!value) return "غير معروف";
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(new Date(value));

@@ -1,3 +1,6 @@
+import {displayDateFormatter} from "../../lib/calendar";
+import {monthRange, dateKey, weekRange} from "../../lib/calendar";
+import CalendarInput from "../../components/CalendarInput";
 import useRecitationAttendance from "../../lib/useRecitationAttendance";
 import { assertRecitationAttendance } from "../../lib/recitationAttendance";
 import SideLessonFields from "../../components/SideLessonFields";
@@ -1188,11 +1191,8 @@ export default function Recitations() {
       const todayDate =
         getLocalDate();
 
-      const monthPrefix =
-        todayDate.slice(
-          0,
-          7
-        );
+      const monthPeriod = monthRange(todayDate);
+      const weekPeriod = weekRange(todayDate);
 
       return allRecords.filter(
         (record) => {
@@ -1243,14 +1243,11 @@ export default function Recitations() {
               ) === todayDate
             ) ||
             (
+              dateFilter === "week" && record.recitation_date >= weekPeriod.start && record.recitation_date < weekPeriod.nextStart
+            ) || (
               dateFilter ===
                 "month" &&
-              String(
-                record.recitation_date ||
-                  ""
-              ).startsWith(
-                monthPrefix
-              )
+              (record.recitation_date >= monthPeriod.start && record.recitation_date < monthPeriod.nextStart)
             );
 
           return (
@@ -1277,32 +1274,18 @@ export default function Recitations() {
 
   const stats =
     useMemo(() => {
-      const month =
-        getLocalDate().slice(
-          0,
-          7
-        );
+      const month = monthRange(dateKey());
 
       const monthQuran =
         quranRecords.filter(
           (record) =>
-            String(
-              record.recitation_date ||
-                ""
-            ).startsWith(
-              month
-            )
+            (record.recitation_date >= month.start && record.recitation_date < month.nextStart)
         );
 
       const monthNoorania =
         nooraniaRecords.filter(
           (record) =>
-            String(
-              record.recitation_date ||
-                ""
-            ).startsWith(
-              month
-            )
+            (record.recitation_date >= month.start && record.recitation_date < month.nextStart)
         );
 
       const lessonFaces =
@@ -5327,8 +5310,8 @@ export default function Recitations() {
               ))}
             </select>
 
-            <input
-              type="date"
+            <CalendarInput
+
               value={sessionLauncherDate}
               max={getLocalDate()}
               onChange={(event) => setSessionLauncherDate(event.target.value)}
@@ -5512,6 +5495,7 @@ export default function Recitations() {
             كل التواريخ
           </option>
 
+          <option value="week">هذا الأسبوع</option>
           <option value="month">
             هذا الشهر
           </option>
@@ -6459,11 +6443,7 @@ function RecordCard({
             )}
           </strong>
 
-          <span>
-            {formatGregorianDate(
-              record.recitation_date
-            )}
-          </span>
+
         </div>
       </div>
 
@@ -7316,8 +7296,8 @@ function DateField({
           size={15}
         />
 
-        <input
-          type="date"
+        <CalendarInput
+
           value={value}
           max={getLocalDate()}
           disabled={disabled}
@@ -7657,8 +7637,7 @@ function formatHijriDate(
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         weekday:
           "long",
@@ -7690,8 +7669,7 @@ function formatGregorianDate(
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year:
           "numeric",

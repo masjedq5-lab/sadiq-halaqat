@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../../lib/calendar";
 import { OrnamentScene } from '../../../components/ornaments/Ornament';
 import {
   BookOpen,
@@ -25,7 +26,7 @@ export default function TeacherHero({
   assignment,
   stats = {},
 }) {
-  const todayGregorian = new Intl.DateTimeFormat("ar-SA", {
+  const todayGregorian = displayDateFormatter( {
     timeZone: "Asia/Riyadh",
     weekday: "long",
     day: "numeric",
@@ -33,12 +34,6 @@ export default function TeacherHero({
     year: "numeric",
   }).format(new Date());
 
-  const todayHijri = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
-    timeZone: "Asia/Riyadh",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  }).format(new Date());
 
   return (
     <section className="td-hero">
@@ -79,8 +74,7 @@ export default function TeacherHero({
         <div className="td-date-line">
           <CalendarDays size={16} />
           <span>{todayGregorian}</span>
-          <i />
-          <span>{todayHijri}</span>
+
         </div>
       </div>
 

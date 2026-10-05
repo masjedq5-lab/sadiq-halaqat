@@ -1,3 +1,4 @@
+import {calendarLocale} from "../lib/calendar";
 import Ornament from '../components/ornaments/Ornament';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -316,8 +317,7 @@ export default function Profile() {
     try {
       return new Date(
         date
-      ).toLocaleDateString(
-        "ar-SA",
+      ).toLocaleDateString(calendarLocale(),
         {
           year: "numeric",
           month: "long",

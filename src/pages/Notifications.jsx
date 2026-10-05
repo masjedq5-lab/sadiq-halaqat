@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import { OrnamentScene } from '../components/ornaments/Ornament';
 import {
   useCallback,
@@ -100,7 +101,7 @@ function formatDateTime(value) {
   if (!value) return "—";
 
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(new Date(value));

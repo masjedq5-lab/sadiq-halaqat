@@ -1,3 +1,4 @@
+import {displayDateFormatter, monthRange, dateKey} from "../lib/calendar";
 import { functionErrorMessage } from "../lib/functionErrors";
 import Ornament, { OrnamentScene } from '../components/ornaments/Ornament';
 import {
@@ -58,6 +59,11 @@ import { supabase } from "../lib/supabase";
 
 /* SADIQ_PUBLIC_RPC_SESSION_RETRY_V1 */
 async function publicRpcWithSessionRetry(rpcName, params) {
+  if (rpcName === "get_public_mosque_stats") {
+    const period = monthRange(dateKey());
+    rpcName = "get_public_mosque_stats_period";
+    params = { ...params, p_period_start: period.start, p_period_end: period.nextStart, p_academic_start: monthRange(dateKey(), "hijri").start };
+  }
   let result = await supabase.rpc(rpcName, params);
 
   if (result?.error?.code !== "PGRST303") {
@@ -374,7 +380,7 @@ function formatUpdatedAt(value) {
   if (!value) return "تتحدث تلقائيًا";
 
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       day: "numeric",
       month: "short",
       hour: "2-digit",

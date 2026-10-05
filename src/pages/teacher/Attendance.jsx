@@ -1,3 +1,7 @@
+import { calendarParts, formatDate } from "../../lib/calendar";
+import {displayDateFormatter} from "../../lib/calendar";
+import {getCalendar} from "../../lib/calendar";
+import CalendarInput from "../../components/CalendarInput";
 // src/pages/teacher/Attendance.jsx
 
 import {
@@ -74,7 +78,7 @@ const ATTENDANCE_STATUSES = {
    أدوات التاريخ
 
    مهم:
-   نخزن ونرسل إلى Supabase التاريخ الميلادي.
+   نخزن ونرسل إلى Supabase التاريخ.
    الهجري للعرض فقط.
 ========================================================= */
 
@@ -109,14 +113,13 @@ function parseLocalDate(
   );
 }
 
-/* التاريخ الميلادي */
+/* التاريخ */
 
 function formatGregorianDate(
   dateString
 ) {
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         weekday: "long",
         year: "numeric",
@@ -133,14 +136,13 @@ function formatGregorianDate(
   }
 }
 
-/* التاريخ الهجري - أم القرى */
+/* التاريخ - أم القرى */
 
 function formatHijriDate(
   dateString
 ) {
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         weekday: "long",
         year: "numeric",
@@ -153,7 +155,7 @@ function formatHijriDate(
       )
     );
   } catch {
-    return "تعذر عرض التاريخ الهجري";
+    return "تعذر عرض التاريخ";
   }
 }
 
@@ -2273,7 +2275,7 @@ export default function Attendance() {
 
               {/* Gregorian */}
 
-              {teacherPreferences.calendar_mode !== "hijri" && (
+              {getCalendar() !== "hijri" && (
                 <div
                   className="gregorian-date"
                 >
@@ -2285,7 +2287,7 @@ export default function Attendance() {
 
               {/* Hijri */}
 
-              {teacherPreferences.calendar_mode !== "gregorian" && (
+              {getCalendar() !== "gregorian" && (
                 <div
                   className="hijri-date"
                 >
@@ -2325,8 +2327,8 @@ export default function Attendance() {
         <div
           className="date-panel-bottom"
         >
-          <input
-            type="date"
+          <CalendarInput
+
             className="date-input"
             value={
               selectedDate
@@ -2388,7 +2390,7 @@ export default function Attendance() {
           <CalendarOff size={18} />
           <div>
             <strong>اليوم إجازة — تسجيل الحضور مقفل</strong>
-            <span>{selectedHoliday.title} • {formatHijriDate(selectedDate)} • {formatGregorianDate(selectedDate)}</span>
+            <span>{selectedHoliday.title} • {formatHijriDate(selectedDate)}</span>
           </div>
         </div>
       )}
@@ -2930,46 +2932,26 @@ export default function Attendance() {
                 <input value={holidayTitle} onChange={(e) => setHolidayTitle(e.target.value)} placeholder="مثال: إجازة نهاية الأسبوع" />
               </label>
 
-              <div className="hijri-picker-label">فترة الإجازة بالتاريخ الهجري (أم القرى)</div>
+              <div className="hijri-picker-label">فترة الإجازة</div>
 
               <div className="holiday-range-pickers">
                 <div className="holiday-range-block">
                   <span className="holiday-range-caption">من</span>
-                  <div className="hijri-picker-grid">
-                    <select value={holidayHijriDay} onChange={(e) => setHolidayHijriDay(Number(e.target.value))}>
-                      {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => <option key={day} value={day}>{day}</option>)}
-                    </select>
-                    <select value={holidayHijriMonth} onChange={(e) => setHolidayHijriMonth(Number(e.target.value))}>
-                      {HIJRI_MONTHS.map((name, index) => <option key={name} value={index + 1}>{name}</option>)}
-                    </select>
-                    <select value={holidayHijriYear} onChange={(e) => setHolidayHijriYear(Number(e.target.value))}>
-                      {Array.from({ length: 7 }, (_, i) => initialHijri.year - 2 + i).map((year) => <option key={year} value={year}>{year} هـ</option>)}
-                    </select>
-                  </div>
+                  <CalendarInput required value={holidayStartGregorian || ""} onChange={e => { const p = calendarParts(e.target.value, "hijri"); setHolidayHijriDay(p.day); setHolidayHijriMonth(p.month); setHolidayHijriYear(p.year); }} />
                 </div>
 
                 <div className="holiday-range-block">
                   <span className="holiday-range-caption">إلى</span>
-                  <div className="hijri-picker-grid">
-                    <select value={holidayEndHijriDay} onChange={(e) => setHolidayEndHijriDay(Number(e.target.value))}>
-                      {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => <option key={day} value={day}>{day}</option>)}
-                    </select>
-                    <select value={holidayEndHijriMonth} onChange={(e) => setHolidayEndHijriMonth(Number(e.target.value))}>
-                      {HIJRI_MONTHS.map((name, index) => <option key={name} value={index + 1}>{name}</option>)}
-                    </select>
-                    <select value={holidayEndHijriYear} onChange={(e) => setHolidayEndHijriYear(Number(e.target.value))}>
-                      {Array.from({ length: 7 }, (_, i) => initialHijri.year - 2 + i).map((year) => <option key={year} value={year}>{year} هـ</option>)}
-                    </select>
-                  </div>
+                  <CalendarInput required value={holidayEndGregorian || ""} onChange={e => { const p = calendarParts(e.target.value, "hijri"); setHolidayEndHijriDay(p.day); setHolidayEndHijriMonth(p.month); setHolidayEndHijriYear(p.year); }} />
                 </div>
               </div>
 
               <div className={`holiday-gregorian-preview ${holidayEndGregorian && holidayStartGregorian && holidayEndGregorian < holidayStartGregorian ? "invalid" : ""}`}>
-                <span>الميلادي:</span>
+                <span>الفترة:</span>
                 <strong>
-                  {holidayStartGregorian || "تاريخ غير صالح"}
+                  {holidayStartGregorian ? formatDate(holidayStartGregorian) : "تاريخ غير صالح"}
                   {holidayEndGregorian && holidayEndGregorian !== holidayStartGregorian
-                    ? ` ← ${holidayEndGregorian}`
+                    ? ` ← ${formatDate(holidayEndGregorian)}`
                     : ""}
                 </strong>
                 {holidayRangeDays > 0 && (
@@ -3006,9 +2988,7 @@ export default function Attendance() {
                         : `${formatHijriDate(holiday.start_date)} ← ${formatHijriDate(holiday.end_date)}`}
                     </span>
                     <small>
-                      {holiday.start_date === holiday.end_date
-                        ? formatGregorianDate(holiday.start_date)
-                        : `${formatGregorianDate(holiday.start_date)} ← ${formatGregorianDate(holiday.end_date)}`}
+
                       {holiday.days > 1 ? ` • ${holiday.days} أيام` : ""}
                     </small>
                   </div>

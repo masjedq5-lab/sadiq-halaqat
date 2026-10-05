@@ -1,3 +1,5 @@
+import {displayDateFormatter} from "../../lib/calendar";
+import {monthRange, weekRange, formatDate} from "../../lib/calendar";
 import {withSideLessonMetrics,formatSideLessonTotal} from "../../lib/sideLesson";
 import { supabase } from "../../lib/supabase";
 
@@ -25,13 +27,13 @@ export function dateDaysAgo(days) {
 }
 
 export function currentMonthStart() {
-  return `${todayKey().slice(0, 7)}-01`;
+  return monthRange(todayKey()).start;
 }
 
 export function formatGregorian(value) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+    return displayDateFormatter( {
       timeZone: "Asia/Riyadh",
       day: "numeric",
       month: "short",
@@ -45,7 +47,7 @@ export function formatGregorian(value) {
 export function formatHijri(value) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
+    return displayDateFormatter( {
       timeZone: "Asia/Riyadh",
       day: "numeric",
       month: "long",
@@ -73,10 +75,10 @@ export function formatFaces(value) {
 export function getPeriodLabel(filters) {
   if (!filters?.fromDate && !filters?.toDate) return "كل الفترات";
   if (filters.fromDate && filters.toDate) {
-    return `${formatGregorian(filters.fromDate)} — ${formatGregorian(filters.toDate)}`;
+    return `${formatDate(filters.fromDate)} — ${formatDate(filters.toDate)}`;
   }
-  if (filters.fromDate) return `من ${formatGregorian(filters.fromDate)}`;
-  return `حتى ${formatGregorian(filters.toDate)}`;
+  if (filters.fromDate) return `من ${formatDate(filters.fromDate)}`;
+  return `حتى ${formatDate(filters.toDate)}`;
 }
 
 export function getQuickRange(preset) {
@@ -84,6 +86,7 @@ export function getQuickRange(preset) {
   if (preset === "today") return { fromDate: today, toDate: today };
   if (preset === "7") return { fromDate: dateDaysAgo(6), toDate: today };
   if (preset === "30") return { fromDate: dateDaysAgo(29), toDate: today };
+  if (preset === "week") return { fromDate: weekRange(today).start, toDate: today };
   if (preset === "month") return { fromDate: currentMonthStart(), toDate: today };
   return { fromDate: "", toDate: "" };
 }

@@ -190,7 +190,7 @@ export default function MyRecitations() {
         <Metric icon={Target} label="المطلوب القادم" value={nextAssignments.length ? formatNumber(nextAssignments.length) : "—"} note={nextDate ? dateState(nextDate) : "لا يوجد مطلوب مولّد بعد"} />
         <Metric icon={Star} label="نقاط التسميع" value={formatNumber(totalPoints)} note="ضمن السجلات المعروضة" />
         <Metric icon={Sparkles} label="آخر تقييم" value={latestEvaluation} note="أحدث جلسة" />
-        <Metric icon={CalendarDays} label="آخر تسميع" value={records[0]?.recitation_date ? formatHijriDate(records[0].recitation_date) : "—"} note={records[0]?.recitation_date ? formatGregorianDate(records[0].recitation_date) : "لا يوجد"} />
+        <Metric icon={CalendarDays} label="آخر تسميع" value={records[0]?.recitation_date ? formatHijriDate(records[0].recitation_date) : "—"} note={records[0]?.recitation_date ? "" : "لا يوجد"} />
       </section>
 
       <NextAssignmentsPanel
@@ -240,7 +240,7 @@ function NextAssignmentsPanel({ loading, assignments, nextDate, ayahMap }) {
             <h3>{nextDate ? `${dateState(nextDate)} • ${formatGregorianDate(nextDate)}` : "سيظهر بعد اعتماد المطلوب"}</h3>
           </div>
         </div>
-        {nextDate ? <span className="student-soft-badge">{formatHijriDate(nextDate)}</span> : null}
+
       </div>
 
       {loading ? (
@@ -299,7 +299,7 @@ function RecitationItem({ record, segments, ayahMap }) {
         <div className="student-panel-head" style={{ marginBottom: 8 }}>
           <div>
             <strong>{quran ? "القرآن الكريم" : "القاعدة النورانية"}</strong>
-            <p>{formatHijriDate(record.recitation_date)} • {formatGregorianDate(record.recitation_date)}</p>
+            <p>{formatHijriDate(record.recitation_date)}</p>
           </div>
           <span className={`student-eval-badge ${evaluationTone(evaluation)}`}>{evaluation}</span>
         </div>

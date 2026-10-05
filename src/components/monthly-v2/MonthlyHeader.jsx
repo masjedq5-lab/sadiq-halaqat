@@ -1,3 +1,4 @@
+import {displayDateFormatter, calendarLocale} from "../../lib/calendar";
 import { Save, BadgeCheck, Printer, FileSpreadsheet } from "lucide-react";
 
 export default function MonthlyHeader({
@@ -20,8 +21,7 @@ if (selectedMonth) {
     );
 
   const gregorian =
-    date.toLocaleDateString(
-      "ar-SA",
+    date.toLocaleDateString(calendarLocale(),
       {
         year: "numeric",
         month: "long"
@@ -29,8 +29,7 @@ if (selectedMonth) {
     );
 
   const hijri =
-    new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic",
+    displayDateFormatter(
       {
         year: "numeric",
         month: "long"

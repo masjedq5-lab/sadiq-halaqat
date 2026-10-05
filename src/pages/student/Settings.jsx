@@ -1,3 +1,4 @@
+import CalendarSettings from "../../components/CalendarSettings";
 import { useEffect, useState } from "react";
 import { Moon, Palette, Settings, Sparkles, Sun, Type, Waves } from "lucide-react";
 import StudentPage from "../../components/student/StudentPage";
@@ -29,7 +30,7 @@ export default function StudentSettings() {
       description="خصص المظهر وحجم الخط والحركة بالشكل المريح لك."
       icon={Settings}
     >
-      <section className="student-grid student-grid-2">
+      <CalendarSettings /><section className="student-grid student-grid-2">
         <SettingCard title="مظهر النظام" description="اختر الوضع المريح لعينيك." icon={Sun}>
           <div className="student-choice-grid">
             <Choice active={value.theme === "light"} onClick={() => update("theme", "light")} icon={Sun} title="فاتح" />

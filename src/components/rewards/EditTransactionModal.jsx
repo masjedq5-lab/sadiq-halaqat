@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import { useEffect, useState } from "react";
 
 import {
@@ -66,8 +67,7 @@ function formatGregorianDate(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",
@@ -93,8 +93,7 @@ function formatHijriDate(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",

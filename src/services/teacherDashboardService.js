@@ -1,3 +1,5 @@
+import {displayDateFormatter} from "../lib/calendar";
+import {monthRange} from "../lib/calendar";
 import { supabase } from "../lib/supabase";
 
 function localDateKey(date = new Date()) {
@@ -25,7 +27,7 @@ function makeLast30Days() {
 
     days.push({
       key,
-      label: new Intl.DateTimeFormat("ar-SA", {
+      label: displayDateFormatter( {
         timeZone: "Asia/Riyadh",
         day: "numeric",
         month: "short",
@@ -53,7 +55,7 @@ export async function getTeacherAssignments() {
 export async function getTeacherDashboardData({ teacherId, halaqaId }) {
   const today = localDateKey();
   const fromDate = dateDaysAgo(29);
-  const monthStart = `${today.slice(0, 7)}-01`;
+  const monthStart = monthRange(today, "hijri").start;
 
   const [
     studentsResult,

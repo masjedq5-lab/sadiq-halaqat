@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../../lib/calendar";
 import { OrnamentScene } from '../../../components/ornaments/Ornament';
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -497,7 +498,7 @@ function statusLabel(status) {
 function formatDate(value) {
   if (!value) return "—";
 
-  return new Intl.DateTimeFormat("ar-SA", {
+  return displayDateFormatter( {
     timeZone: "Asia/Riyadh",
     day: "numeric",
     month: "short",

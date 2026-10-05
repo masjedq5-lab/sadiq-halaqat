@@ -1,3 +1,4 @@
+import CalendarInput from "./CalendarInput";
 import { useEffect, useState } from "react";
 import { X, Save } from "lucide-react";
 import { supabase } from "../lib/supabase";
@@ -1027,13 +1028,14 @@ onChange,
 type="text"
 }){
 
+const DateField = type === "date" ? CalendarInput : "input";
 return (
 
 <div style={{marginBottom:15}}>
 
 <label>{label}</label>
 
-<input
+<DateField
 
 type={type}
 

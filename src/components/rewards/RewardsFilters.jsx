@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {
   forwardRef,
   useMemo,
@@ -15,7 +16,7 @@ import {
   X,
 } from "lucide-react";
 
-import DatePicker from "react-datepicker";
+import DatePicker from "../CalendarDatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import AppSelect from "../AppSelect";
@@ -100,8 +101,7 @@ function formatHijri(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         day: "numeric",
         month: "long",
@@ -121,8 +121,7 @@ function formatGregorian(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         day: "numeric",
         month: "long",

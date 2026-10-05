@@ -1,4 +1,4 @@
-import moment from "moment-hijri";
+import { formatDate, dateKey } from "../../lib/calendar";
 
 export default function PrintReport({
   selectedReport,
@@ -102,10 +102,7 @@ const tdStyle = {
           <b>التاريخ:</b>
           {" "}
           {
-            moment()
-            .format(
-              "iYYYY/iMM/iDD"
-            )
+            formatDate(dateKey())
           }
         </div>
 

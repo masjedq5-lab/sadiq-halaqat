@@ -1,3 +1,4 @@
+import CalendarInput from "./CalendarInput";
 import { useState } from "react";
 import { Pause, Play, Loader2 } from "lucide-react";
 import { learningDate, saveLearningPolicy } from "../lib/effectiveLearning";
@@ -58,7 +59,7 @@ export default function StudentLessonActivity({ studentId, halaqaId, policy, pla
         <button type="button" className="lesson-date-toggle" onClick={() => setDetails(!details)} disabled={busy}>التاريخ والبداية</button>
       </div>
       {details && <div className="student-lesson-activity-details">
-        <label>يسري من<input type="date" value={date} max={learningDate()} min={policy?.effective_from || undefined} onChange={(e) => setDate(e.target.value)} /></label>
+        <label>يسري من<CalendarInput  value={date} max={learningDate()} min={policy?.effective_from || undefined} onChange={(e) => setDate(e.target.value)} /></label>
         {needsSetup && <>
           <label>بداية الحفظ<select value={startSurah} onChange={(e) => setStartSurah(e.target.value)}><option value="">السورة</option>{surahs.map((name) => <option key={name}>{name}</option>)}</select></label>
           <label>الآية<input type="number" min="1" value={startAyah} onChange={(e) => setStartAyah(e.target.value)} /></label>

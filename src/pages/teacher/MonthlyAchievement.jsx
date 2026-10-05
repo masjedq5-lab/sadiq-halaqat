@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {monthlySideLessonTotals,withSideLessonMetrics,formatSideLessonTotal,formatMonthlySideLessons} from "../../lib/sideLesson";
 import { effectiveMonthlyPlans } from "../../lib/effectiveLearning";
 // src/pages/teacher/MonthlyAchievement.jsx
@@ -310,7 +311,7 @@ function findGregorianForHijri(
   }
 
   throw new Error(
-    "تعذر تحويل التاريخ الهجري إلى الميلادي"
+    "تعذر تحويل التاريخ إلى الميلادي"
   );
 }
 
@@ -392,8 +393,7 @@ function formatHijriFullDate(
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         weekday: "long",
         year: "numeric",
@@ -418,8 +418,7 @@ function formatGregorianDate(
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",
@@ -486,7 +485,7 @@ function selectExistingProgress({
   /*
     النسخة الجديدة:
     progress_month =
-    التاريخ الميلادي لبداية
+    التاريخ لبداية
     الشهر الهجري.
   */
 
@@ -2287,7 +2286,7 @@ export default function MonthlyAchievement() {
         إذا كان السجل قديمًا،
         نحدثه بواسطة id
         ونحوّل progress_month
-        إلى التاريخ الميلادي الصحيح.
+        إلى التاريخ الصحيح.
 
         إذا كان جديدًا نستخدم upsert.
       */
@@ -3253,7 +3252,7 @@ export default function MonthlyAchievement() {
               <div><span>المسجد</span><strong>${escapeHtml(selectedHalaqaData?.mosque_name || "-")}</strong></div>
               <div><span>الحلقة</span><strong>${escapeHtml(selectedHalaqaData?.name || "-")}</strong></div>
               <div><span>المعلم</span><strong>${escapeHtml(teacher?.full_name || "-")}</strong></div>
-              <div><span>الفترة الميلادية</span><strong>${escapeHtml(formatGregorianDate(period.start))} — ${escapeHtml(formatGregorianDate(period.end))}</strong></div>
+              <div><span>حدود الفترة</span><strong>${escapeHtml(formatGregorianDate(period.start))} — ${escapeHtml(formatGregorianDate(period.end))}</strong></div>
             </section>
 
             <section class="stats">
@@ -3717,7 +3716,7 @@ export default function MonthlyAchievement() {
                 className="period-conversion"
               >
                 <span>
-                  الفترة الميلادية
+                  حدود الفترة
                   المقابلة
                 </span>
 

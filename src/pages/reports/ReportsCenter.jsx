@@ -1,3 +1,5 @@
+import { formatDate, dateKey } from "../../lib/calendar";
+import CalendarInput from "../../components/CalendarInput";
 import {formatSideLessonTotal} from "../../lib/sideLesson";
 import { OrnamentScene } from '../../components/ornaments/Ornament';
 import { useEffect, useId, useMemo, useRef, useState } from "react";
@@ -684,6 +686,7 @@ function ReportTypeCard({ item, active, onClick }) {
 function QuickPeriods({ active, onSelect }) {
   const items = [
     ["today", "اليوم"],
+    ["week", "هذا الأسبوع"],
     ["7", "آخر 7 أيام"],
     ["30", "آخر 30 يومًا"],
     ["month", "هذا الشهر"],
@@ -834,7 +837,7 @@ function FilterDate({ label, value, onChange }) {
     <label className="reports-field">
       <span>{label}</span>
       <div>
-        <input type="date" value={value} onChange={(event) => onChange(event.target.value)} />
+        <CalendarInput  value={value} onChange={(event) => onChange(event.target.value)} />
         <CalendarDays size={15} />
       </div>
     </label>
@@ -897,9 +900,7 @@ function ReportDocumentHeader({ report, mode }) {
 
       <div className="report-date-line">
         <CalendarDays size={13} />
-        <span>{formatGregorian(new Date().toISOString().slice(0, 10))}</span>
-        <i />
-        <span>{formatHijri(new Date().toISOString().slice(0, 10))}</span>
+        <span>{formatDate(dateKey())}</span>
       </div>
     </header>
   );

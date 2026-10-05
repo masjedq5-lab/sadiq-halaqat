@@ -1,0 +1,41 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import React from 'react';
+import Renderer, {act} from 'react-test-renderer';
+import {transformWithOxc} from 'vite';
+import * as calendar from '../src/lib/calendar.js';
+const {calendarParts,fromCalendar,monthRange,weekRange,dateKey,shiftDays,daysInMonth,getCalendar,saveCalendar,CALENDAR_KEY}=calendar;
+const values=new Map();globalThis.localStorage={getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)};
+globalThis.window=new EventTarget();globalThis.IS_REACT_ACT_ENVIRONMENT=true;
+assert.equal(getCalendar(),'hijri');values.set(CALENDAR_KEY,'broken');assert.equal(getCalendar(),'hijri');
+saveCalendar('gregorian');assert.equal(getCalendar(),'gregorian');assert.throws(()=>saveCalendar('invalid'));saveCalendar('hijri');
+assert.equal(dateKey('2026-10-04T21:01:00Z'),'2026-10-05');
+assert.deepEqual(calendarParts('2026-10-05'),{year:1448,month:4,day:24});
+assert.deepEqual(monthRange('2026-10-05'),{start:'2026-09-12',end:'2026-10-11',nextStart:'2026-10-12'});
+assert.deepEqual(weekRange('2026-10-05'),{start:'2026-10-04',end:'2026-10-10',nextStart:'2026-10-11'});
+assert.deepEqual(monthRange('2024-02-29','gregorian'),{start:'2024-02-01',end:'2024-02-29',nextStart:'2024-03-01'});
+assert.equal(fromCalendar({year:2025,month:2,day:29},'gregorian'),'');
+let count=0;
+for(let year=1446;year<=1449;year++) for(let month=1;month<=12;month++) {
+ const length=daysInMonth(year,month,'hijri');assert([29,30].includes(length));
+ for(const day of [1,length]) {const iso=fromCalendar({year,month,day},'hijri');assert.deepEqual(calendarParts(iso,'hijri'),{year,month,day});count++;}
+ assert.equal(fromCalendar({year,month,day:length+1},'hijri'),'');
+ const range=monthRange(fromCalendar({year,month,day:1},'hijri'),'hijri');assert.equal(shiftDays(range.end,1),range.nextStart);
+}
+globalThis.calendarTest={React,...calendar};
+const src=(await fs.readFile('src/components/CalendarInput.jsx','utf8')).replace(/^import[\s\S]*?;\n/gm,'');
+const prelude='const {React,calendarParts,dateKey,daysInMonth,fromCalendar,getCalendar,HIJRI_MONTHS}=globalThis.calendarTest;const {useId}=React;\n';
+const compiled=await transformWithOxc(prelude+src,'CalendarInput.jsx',{jsx:{runtime:'classic'}});
+const Input=(await import('data:text/javascript;base64,'+Buffer.from(compiled.code).toString('base64'))).default;
+let renderer,changed;
+await act(()=>{renderer=Renderer.create(React.createElement(Input,{value:'2026-10-05',onChange:e=>{changed=e.target.value;}}));});
+assert.equal(renderer.root.findAllByType('select').length,3);
+await act(()=>renderer.root.findAllByType('select')[0].props.onChange({target:{value:'1'}}));assert.equal(changed,'2026-09-12');
+await act(()=>renderer.root.findByType('button').props.onClick());assert.equal(changed,'');
+await act(()=>renderer.update(React.createElement(Input,{value:'2026-10-05',min:'2026-10-01',onChange:e=>{changed=e.target.value;}})));
+await act(()=>renderer.root.findAllByType('select')[0].props.onChange({target:{value:'1'}}));assert.equal(changed,'2026-10-01');
+await act(()=>renderer.update(React.createElement(Input,{calendar:'gregorian',value:'2026-10-05',onChange:e=>{changed=e.target.value;}})));
+assert.equal(renderer.root.findByType('input').props.type,'date');
+await act(()=>renderer.root.findByType('input').props.onChange({target:{value:'2026-10-06'}}));assert.equal(changed,'2026-10-06');
+await act(()=>renderer.unmount());
+console.log(`PASS: ${count} Hijri round trips, month/week boundaries, Riyadh midnight, leap dates, calendar preference and picker ISO callbacks.`);

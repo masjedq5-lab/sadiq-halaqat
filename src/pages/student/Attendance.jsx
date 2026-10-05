@@ -79,7 +79,7 @@ export default function StudentAttendance() {
                 <div className="student-list-row" key={row.id}>
                   <div className="student-list-avatar"><CalendarDays size={16}/></div>
                   <div className="student-list-copy">
-                    <strong>{formatHijriDate(row.attendance_date)} • {formatGregorianDate(row.attendance_date)}</strong>
+                    <strong>{formatHijriDate(row.attendance_date)}</strong>
                     <span>{row.notes||"بدون ملاحظات"}</span>
                   </div>
                   <strong className={meta.className}>{meta.label}</strong>

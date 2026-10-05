@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {
   Clock3,
   RefreshCw,
@@ -10,8 +11,7 @@ function formatUpdateTime(date) {
     return "—";
   }
 
-  return new Intl.DateTimeFormat(
-    "ar-SA",
+  return displayDateFormatter(
     {
       hour: "2-digit",
       minute: "2-digit",

@@ -1,3 +1,4 @@
+import CalendarInput from "../../components/CalendarInput";
 import { useEffect, useMemo, useState } from "react";
 import { BookOpen, Check, CircleUserRound, GraduationCap, LockKeyhole, Pencil, Save, ShieldCheck, UserRound, X } from "lucide-react";
 
@@ -218,7 +219,7 @@ export default function StudentProfile() {
               <FormGroup title="البيانات الأساسية" icon={UserRound}>
                 <Field label="الاسم الكامل"><input value={form.full_name} onChange={(e) => change("full_name", e.target.value)} /></Field>
                 <Field label="الجوال"><input inputMode="tel" value={form.phone} onChange={(e) => change("phone", e.target.value)} /></Field>
-                <Field label="تاريخ الميلاد"><input type="date" value={form.birth_date} onChange={(e) => change("birth_date", e.target.value)} /></Field>
+                <Field label="تاريخ الميلاد"><CalendarInput  value={form.birth_date} onChange={(e) => change("birth_date", e.target.value)} /></Field>
                 <Field label="الجنسية"><input value={form.nationality} onChange={(e) => change("nationality", e.target.value)} /></Field>
                 <Field label="العنوان"><input value={form.residence_address} onChange={(e) => change("residence_address", e.target.value)} /></Field>
                 <Field label="الجنس"><Select value={form.gender} onChange={(e) => change("gender", e.target.value)} options={GENDERS} /></Field>

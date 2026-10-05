@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, CheckCircle2, ChevronLeft, Clock3, FileText, Loader2, ReceiptText, RefreshCw, Search, WalletCards } from "lucide-react";
@@ -19,7 +20,7 @@ const money = (v, currency = "SAR") =>
   }).format(Number(v || 0));
 
 const date = (v) => v
-  ? new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+  ? displayDateFormatter( {
       year: "numeric", month: "short", day: "numeric"
     }).format(new Date(v))
   : "—";

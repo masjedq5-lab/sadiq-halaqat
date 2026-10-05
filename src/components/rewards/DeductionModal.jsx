@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {
   useEffect,
   useMemo,
@@ -118,8 +119,7 @@ function formatDate(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",

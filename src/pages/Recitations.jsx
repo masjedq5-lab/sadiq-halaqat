@@ -1,3 +1,4 @@
+import {displayDateFormatter, calendarLocale} from "../lib/calendar";
 import useRecitationAttendance from "../lib/useRecitationAttendance";
 import { assertRecitationAttendance } from "../lib/recitationAttendance";
 import SideLessonFields from "../components/SideLessonFields";
@@ -8,7 +9,7 @@ import { supabase } from "../lib/supabase";
 import { surahs, evaluations } from "../data/surahList";
 import { useToast } from "../components/Toast";
 
-import DatePicker from "react-datepicker";
+import DatePicker from "../components/CalendarDatePicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AppSelect from "../components/AppSelect";
 import { ArrowRight, BookOpen, CalendarDays, CheckCircle2, ChevronDown, Clock3, Edit3, FileText, GraduationCap, Loader2, MessageSquareText, Plus, RefreshCw, Search, Sparkles, Target, Trash2, Trophy, UserRound, X } from "lucide-react";
@@ -1080,16 +1081,7 @@ const [selectedDate, setSelectedDate] =
         {formatHijriDate(selectedDate)}
       </div>
 
-      <div
-        style={{
-          color:"var(--app-color-0f766e,#0F766E)",
-          fontSize:"calc(12px * var(--app-font-scale,1))",
-          fontWeight:"700",
-          marginTop:"2px"
-        }}
-      >
-        {formatGregorianDate(selectedDate)}
-      </div>
+
 
     </div>
 
@@ -2003,8 +1995,7 @@ function formatShortDate(
 
   return new Date(
     `${dateString}T00:00:00`
-  ).toLocaleDateString(
-    "ar-SA",
+  ).toLocaleDateString(calendarLocale(),
     {
       day: "numeric",
       month: "short",
@@ -2022,8 +2013,7 @@ function formatGregorianDate(
 
   return new Date(
     `${dateString}T00:00:00`
-  ).toLocaleDateString(
-    "ar",
+  ).toLocaleDateString(calendarLocale(),
     {
       weekday:"long",
       day:"numeric",
@@ -2041,8 +2031,7 @@ function formatHijriDate(
   if (!dateString)
     return "-";
 
-  return new Intl.DateTimeFormat(
-    "ar-SA-u-ca-islamic",
+  return displayDateFormatter(
     {
       weekday:"long",
       day:"numeric",

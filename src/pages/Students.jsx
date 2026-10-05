@@ -1,3 +1,5 @@
+import {displayDateFormatter} from "../lib/calendar";
+import CalendarInput from "../components/CalendarInput";
 import StudentAccessCard from "../components/security/StudentAccessCard";
 import {
   useEffect,
@@ -142,8 +144,7 @@ function formatDate(value) {
       0
     );
 
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "short",
@@ -171,8 +172,7 @@ function formatHijriDate(value) {
       0
     );
 
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "short",
@@ -3223,11 +3223,7 @@ function StudentCard({
 
         <strong>
           {student.last_recitation
-            ? `${formatDate(
-                student.last_recitation
-              )} • ${formatHijriDate(
-                student.last_recitation
-              )}`
+            ? formatDate(student.last_recitation)
             : "لا يوجد"}
         </strong>
       </div>
@@ -3830,6 +3826,7 @@ function Field({
   readOnly = false,
   hint = "",
 }) {
+  const Input = type === "date" ? CalendarInput : "input";
   return (
     <div
       className={`student-form-field ${className}`}
@@ -3848,7 +3845,7 @@ function Field({
           placeholder={placeholder}
         />
       ) : (
-        <input
+        <Input
           type={type}
           value={value}
           onChange={(event) =>

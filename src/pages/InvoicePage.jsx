@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -13,7 +14,7 @@ const STATUS = {
   refunded:{label:"مستردة",cls:"info"},
 };
 const money=(v,c="SAR")=>new Intl.NumberFormat("ar-SA",{style:"currency",currency:c||"SAR",minimumFractionDigits:2}).format(Number(v||0));
-const dt=(v,withTime=false)=>v?new Intl.DateTimeFormat("ar-SA-u-ca-gregory",withTime?{year:"numeric",month:"long",day:"numeric",hour:"numeric",minute:"2-digit"}:{year:"numeric",month:"long",day:"numeric"}).format(new Date(v)):"—";
+const dt=(v,withTime=false)=>v?displayDateFormatter(withTime?{year:"numeric",month:"long",day:"numeric",hour:"numeric",minute:"2-digit"}:{year:"numeric",month:"long",day:"numeric"}).format(new Date(v)):"—";
 
 function Mark(){return <div className="iv-mark"><svg viewBox="0 0 64 64"><path d="M32 17C25 11 16 9 8 12v35c9-3 17-1 24 5V17Z"/><path d="M32 17c7-6 16-8 24-5v35c-9-3-17-1-24 5V17Z"/><path className="line" d="M32 18v34"/></svg></div>}
 function Block({icon:Icon,title,children}){return <section className="iv-block"><div className="iv-block-title"><span><Icon size={14}/></span>{title}</div>{children}</section>}

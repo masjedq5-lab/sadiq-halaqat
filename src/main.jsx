@@ -1,3 +1,4 @@
+import CalendarRoot from "./components/CalendarRoot";
 import "./lib/appearanceBootstrap";
 import React from "react";
 import ReactDOM from "react-dom/client";
@@ -23,9 +24,9 @@ ReactDOM.createRoot(
   <React.StrictMode>
     <ToastProvider>
       <ConfirmProvider>
-        <RouterProvider
+        <CalendarRoot><RouterProvider
           router={router}
-        />
+        /></CalendarRoot>
         <PwaExperience />
       </ConfirmProvider>
     </ToastProvider>

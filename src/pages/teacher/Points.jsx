@@ -1,3 +1,5 @@
+import { dateKey } from "../../lib/calendar";
+import CalendarInput from "../../components/CalendarInput";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
@@ -41,7 +43,7 @@ export default function RewardsPage() {
   const [activeTab, setActiveTab] = useState("points");
 
   const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
+    dateKey()
   );
 
   const [selectedPeriod, setSelectedPeriod] = useState(
@@ -619,9 +621,9 @@ export default function RewardsPage() {
 
             <div className="tp-field">
               <label>تاريخ جلسة اليوم</label>
-              <input
+              <CalendarInput
                 className="tp-control"
-                type="date"
+
                 value={selectedDate}
                 onChange={(event) => setSelectedDate(event.target.value)}
               />

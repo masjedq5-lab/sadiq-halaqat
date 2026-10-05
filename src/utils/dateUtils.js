@@ -1,19 +1,4 @@
-import moment from "moment-hijri";
-
-export function formatGregorian(date) {
-  if (!date) return "-";
-
-  return moment(date).format("YYYY/MM/DD");
-}
-
-export function formatHijri(date) {
-  if (!date) return "-";
-
-  return moment(date).format("iYYYY/iMM/iDD");
-}
-
-export function formatDualDate(date) {
-  if (!date) return "-";
-
-  return `${formatGregorian(date)} | ${formatHijri(date)}`;
-}
+import {formatDate,getCalendar} from "../lib/calendar";
+export function formatGregorian(date) {return formatDate(date,{},'gregorian');}
+export function formatHijri(date) {return formatDate(date,{},'hijri');}
+export function formatDualDate(date) {return getCalendar()==='hijri'?`${formatHijri(date)} | ${formatGregorian(date)}`:`${formatGregorian(date)} | ${formatHijri(date)}`;}

@@ -366,10 +366,7 @@ function ExamCard({ row, onDetails, onCertificate }) {
           <CalendarDays size={13} />
           <span>{formatHijriDate(row.start_date)}</span>
         </div>
-        <div>
-          <Clock3 size={13} />
-          <span>{formatGregorianDate(row.start_date)}</span>
-        </div>
+
       </div>
 
       <div className="sex-card-info">
@@ -513,13 +510,10 @@ function ResultModal({ row, onClose, onCertificate }) {
 
           <div className="sex-result-footer">
             <div>
-              <span>التاريخ الهجري</span>
+              <span>التاريخ</span>
               <strong>{formatHijriDate(row.end_date || row.start_date)}</strong>
             </div>
-            <div>
-              <span>التاريخ الميلادي</span>
-              <strong>{formatGregorianDate(row.end_date || row.start_date)}</strong>
-            </div>
+
           </div>
 
           {row.certificate && (

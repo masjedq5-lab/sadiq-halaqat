@@ -1,3 +1,4 @@
+import CalendarSettings from "../../components/CalendarSettings";
 // src/pages/teacher/SettingsPage.jsx
 
 import { useEffect, useMemo, useState } from "react";
@@ -872,16 +873,7 @@ function ExperienceTab({ p, setP, halaqat }) {
             ]}
           />
 
-          <Segment
-            label="التقويم"
-            value={p.calendar_mode}
-            onChange={(value) => setP("calendar_mode", value)}
-            options={[
-              { value: "hijri", label: "هجري" },
-              { value: "gregorian", label: "ميلادي" },
-              { value: "both", label: "الاثنان" },
-            ]}
-          />
+          <CalendarSettings />
 
           <Segment
             label="كثافة الواجهة"

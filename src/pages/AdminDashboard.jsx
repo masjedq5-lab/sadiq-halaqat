@@ -1,3 +1,5 @@
+import {displayDateFormatter} from "../lib/calendar";
+import {monthRange, dateKey} from "../lib/calendar";
 import Ornament, { OrnamentScene } from '../components/ornaments/Ornament';
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -29,8 +31,7 @@ import {
 
 function formatHijri(date) {
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         weekday: "long",
         year: "numeric",
@@ -43,20 +44,6 @@ function formatHijri(date) {
   }
 }
 
-function formatGregorian(date) {
-  try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    ).format(date);
-  } catch {
-    return "";
-  }
-}
 
 function percent(value, total) {
   if (!total) return 0;
@@ -262,31 +249,8 @@ export default function AdminDashboard() {
     try {
       setLoading(true);
 
-      const now = new Date();
-      const today = now
-        .toISOString()
-        .split("T")[0];
-
-      const monthStartDate = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        1
-      );
-
-      const nextMonthStartDate = new Date(
-        now.getFullYear(),
-        now.getMonth() + 1,
-        1
-      );
-
-      const monthStart = monthStartDate
-        .toISOString()
-        .split("T")[0];
-
-      const nextMonthStart =
-        nextMonthStartDate
-          .toISOString()
-          .split("T")[0];
+      const today = dateKey();
+      const {start: monthStart, nextStart: nextMonthStart} = monthRange(today, "hijri");
 
       const [
         studentsRes,
@@ -452,8 +416,7 @@ export default function AdminDashboard() {
   const todayHijri = formatHijri(
     new Date()
   );
-  const todayGregorian =
-    formatGregorian(new Date());
+
 
   const attendanceRate = percent(
     attendance.present,
@@ -596,9 +559,7 @@ export default function AdminDashboard() {
                 <strong>
                   {todayHijri}
                 </strong>
-                <small>
-                  {todayGregorian}
-                </small>
+
               </div>
 
               <div className="supervisor-vital-card">

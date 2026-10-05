@@ -19,7 +19,7 @@ const hijriMonths = [
 const currentHijriYear =
   parseInt(
     new Intl.DateTimeFormat(
-      "en-TN-u-ca-islamic",
+      "en-US-u-ca-islamic-umalqura-nu-latn",
       {
         year:"numeric"
       }

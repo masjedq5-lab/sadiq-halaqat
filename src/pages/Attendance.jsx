@@ -1,3 +1,5 @@
+import {calendarLocale} from "../lib/calendar";
+import CalendarInput from "../components/CalendarInput";
 import { OrnamentScene } from '../components/ornaments/Ornament';
 import {
   useEffect,
@@ -75,8 +77,7 @@ export default function Attendance() {
       `${dateString}T00:00:00`
     );
 
-    return date.toLocaleDateString(
-      "ar-SA",
+    return date.toLocaleDateString(calendarLocale(),
       {
         weekday: "long",
         year: "numeric",
@@ -91,8 +92,7 @@ export default function Attendance() {
       `${dateString}T00:00:00`
     );
 
-    return date.toLocaleDateString(
-      "ar-SA",
+    return date.toLocaleDateString(calendarLocale(),
       {
         day: "numeric",
         month: "short",
@@ -736,8 +736,8 @@ export default function Attendance() {
             <ArrowRight size={15} /> السابق
           </button>
 
-          <input
-            type="date"
+          <CalendarInput
+
             value={selectedDate}
             max={getLocalDate()}
             onChange={(event) => setSelectedDate(event.target.value)}

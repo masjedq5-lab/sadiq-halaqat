@@ -67,7 +67,7 @@ export default function ReportFilters({
     من تاريخ
   </label>
 
-<AppDatePicker
+<AppDatePicker calendar={filters.dateType}
   value={filters.fromDate}
   onChange={(value)=>
     setFilters(prev=>({
@@ -83,7 +83,7 @@ export default function ReportFilters({
     إلى تاريخ
   </label>
 
-  <AppDatePicker
+  <AppDatePicker calendar={filters.dateType}
     value={filters.toDate}
     onChange={(value)=>
       setFilters(prev=>({

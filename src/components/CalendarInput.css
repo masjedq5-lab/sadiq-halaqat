@@ -1,0 +1,7 @@
+.sadiq-calendar-input{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-width:0;direction:rtl;box-sizing:border-box;background:#fff;border:1px solid #d8e1dc;border-radius:10px;padding:4px;color:#243e34}
+.sadiq-calendar-input select{font:inherit!important;color:inherit!important;min-width:0!important;width:auto!important;flex:1;height:36px!important;padding:2px!important;border:0!important;background:transparent!important;box-shadow:none!important}
+.sadiq-calendar-input select:nth-child(2){flex:1.7}
+.sadiq-calendar-input button{border:0;background:transparent;color:inherit;padding:4px;cursor:pointer}
+.sadiq-calendar-setting{display:block;padding:16px;margin:12px 0;border:1px solid #d8e1dc;border-radius:12px;background:#fff;color:#243e34}
+.sadiq-calendar-setting select{font:inherit;padding:8px;margin:8px;border-radius:8px}
+.sadiq-calendar-setting p{font-size:13px;margin:4px 0}

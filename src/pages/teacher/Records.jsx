@@ -1,3 +1,5 @@
+import {displayDateFormatter} from "../../lib/calendar";
+import CalendarInput from "../../components/CalendarInput";
 import {
   useCallback,
   useEffect,
@@ -95,7 +97,7 @@ function formatDate(value) {
   if (!value) return "—";
 
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-gregory", {
+    return displayDateFormatter( {
       day: "numeric",
       month: "short",
       year: "numeric",
@@ -896,8 +898,8 @@ export default function Records() {
 
           <label>
             <span>من تاريخ</span>
-            <input
-              type="date"
+            <CalendarInput
+
               value={fromDate}
               onChange={(event) => setFromDate(event.target.value)}
             />
@@ -905,8 +907,8 @@ export default function Records() {
 
           <label>
             <span>إلى تاريخ</span>
-            <input
-              type="date"
+            <CalendarInput
+
               value={toDate}
               onChange={(event) => setToDate(event.target.value)}
             />

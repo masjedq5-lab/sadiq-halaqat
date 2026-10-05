@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {
   useEffect,
   useMemo,
@@ -255,8 +256,7 @@ function formatHijriDate(value) {
   if (!value) return "—";
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",
@@ -272,7 +272,7 @@ function formatDateTime(value) {
   if (!value) return "—";
 
   try {
-    return new Intl.DateTimeFormat("ar-SA", {
+    return displayDateFormatter( {
       dateStyle: "medium",
       timeStyle: "short",
     }).format(new Date(value));

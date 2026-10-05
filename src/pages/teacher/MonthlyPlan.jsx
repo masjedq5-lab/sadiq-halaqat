@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 // src/pages/teacher/MonthlyPlan.jsx
 
 import {
@@ -245,7 +246,7 @@ function findGregorianForHijri(
   }
 
   throw new Error(
-    "تعذر تحويل التاريخ الهجري إلى الميلادي"
+    "تعذر تحويل التاريخ إلى الميلادي"
   );
 }
 
@@ -325,8 +326,7 @@ function formatGregorianDate(
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year:
           "numeric",
@@ -5919,9 +5919,7 @@ export default function MonthlyPlan() {
                 className="period-gregorian"
               >
                 <span>
-                  التخزين
-                  والاستعلام
-                  بالميلادي
+                  حدود الفترة
                 </span>
 
                 <strong>

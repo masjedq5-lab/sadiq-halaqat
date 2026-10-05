@@ -1,3 +1,5 @@
+import { displayDateFormatter } from "../../lib/calendar";
+import CalendarInput from "../../components/CalendarInput";
 import StudentAccessCard from "../../components/security/StudentAccessCard";
 import { functionErrorMessage } from "../../lib/functionErrors";
 import { useEffect, useMemo, useState } from "react";
@@ -135,14 +137,11 @@ function formatNumber(value) {
   }
 }
 
-function formatDate(value, calendar = "gregory") {
+function formatDate(value) {
   if (!value) return "غير مسجل";
 
   try {
-    return new Intl.DateTimeFormat(
-      calendar === "islamic"
-        ? "ar-SA-u-ca-islamic-umalqura"
-        : "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "short",
@@ -1214,10 +1213,7 @@ function StudentDetailsModal({
                 label="تاريخ الميلاد"
                 value={
                   student.birth_date
-                    ? `${formatDate(student.birth_date)} • ${formatDate(
-                        student.birth_date,
-                        "islamic"
-                      )}`
+                    ? formatDate(student.birth_date)
                     : "غير مسجل"
                 }
               />
@@ -1986,6 +1982,7 @@ function Field({
   textarea = false,
   className = "",
 }) {
+  const Input = type === "date" ? CalendarInput : "input";
   return (
     <label className={`student-form-field ${className}`}>
       <span>
@@ -2000,7 +1997,7 @@ function Field({
           placeholder={placeholder}
         />
       ) : (
-        <input
+        <Input
           type={type}
           value={value}
           onChange={(event) => onChange(event.target.value)}

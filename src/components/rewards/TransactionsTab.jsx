@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {
   useMemo,
   useState,
@@ -71,8 +72,7 @@ function formatGregorian(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         day: "numeric",
         month: "short",
@@ -84,27 +84,6 @@ function formatGregorian(value) {
   }
 }
 
-function formatHijri(value) {
-  const date =
-    toLocalDate(value);
-
-  if (!date) {
-    return "—";
-  }
-
-  try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
-      {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      }
-    ).format(date);
-  } catch {
-    return "—";
-  }
-}
 
 function getCategoryMeta(item) {
   if (
@@ -216,11 +195,7 @@ function TransactionCard({
               )}
             </strong>
 
-            <small>
-              {formatHijri(
-                item.transaction_date
-              )}
-            </small>
+
           </div>
         </div>
       </div>
@@ -558,7 +533,7 @@ export default function TransactionsTab({
               </h2>
 
               <p>
-                مراجعة المنح والخصومات وتعديلها أو حذفها مع عرض التاريخ الهجري والميلادي.
+                مراجعة المنح والخصومات وتعديلها أو حذفها مع عرض التاريخ وفق التقويم الافتراضي.
               </p>
             </div>
           </div>

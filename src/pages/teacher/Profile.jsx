@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../../lib/calendar";
 import {
   useEffect,
   useMemo,
@@ -97,8 +98,7 @@ function formatGregorianDate(value) {
   }
 
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
+    return displayDateFormatter(
       {
         year: "numeric",
         month: "long",
@@ -112,26 +112,6 @@ function formatGregorianDate(value) {
   }
 }
 
-function formatHijriDate(value) {
-  if (!value) {
-    return "—";
-  }
-
-  try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    ).format(
-      new Date(value)
-    );
-  } catch {
-    return "—";
-  }
-}
 
 function cleanPhone(value) {
   return String(
@@ -1747,11 +1727,7 @@ export default function Profile() {
                   profile?.created_at
                 )
               }
-              secondary={
-                formatHijriDate(
-                  profile?.created_at
-                )
-              }
+
             />
 
             <AccountInfo

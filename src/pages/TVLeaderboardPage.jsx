@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import Ornament, { OrnamentScene } from '../components/ornaments/Ornament';
 import {
   useCallback,
@@ -69,7 +70,7 @@ function buildPageRanges(total) {
 }
 
 function formatTime(date) {
-  return new Intl.DateTimeFormat("ar-SA", {
+  return displayDateFormatter( {
     hour: "2-digit",
     minute: "2-digit",
     second: "2-digit",
@@ -77,7 +78,7 @@ function formatTime(date) {
 }
 
 function formatDate(date) {
-  return new Intl.DateTimeFormat("ar-SA", {
+  return displayDateFormatter( {
     weekday: "long",
     day: "numeric",
     month: "long",

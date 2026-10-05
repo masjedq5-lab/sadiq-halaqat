@@ -2,7 +2,7 @@
 
 export const TEACHER_PREFERENCES_DEFAULTS = {
   default_halaqa_id: null,
-  calendar_mode: "both",
+  calendar_mode: "hijri",
   ui_density: "comfortable",
   remember_last_halaqa: true,
   remember_last_tab: true,

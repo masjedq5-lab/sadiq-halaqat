@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 // src/pages/examV2Utils.js
 const UMM_AL_QURA = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
   year: "numeric",
@@ -41,7 +42,7 @@ export function gregorianFromHijri({ year, month, day }) {
     }
     cursor.setDate(cursor.getDate() + 1);
   }
-  throw new Error("تعذر تحويل التاريخ الهجري");
+  throw new Error("تعذر تحويل التاريخ");
 }
 
 export function getHijriMonthDays(year, month) {
@@ -60,7 +61,7 @@ export function getHijriMonthDays(year, month) {
 export function formatHijri(value) {
   if (!value) return "—";
   try {
-    return new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
+    return displayDateFormatter( {
       year: "numeric", month: "long", day: "numeric"
     }).format(new Date(`${String(value).slice(0,10)}T12:00:00`));
   } catch {

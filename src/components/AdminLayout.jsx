@@ -1,3 +1,4 @@
+import {displayDateFormatter} from "../lib/calendar";
 import { removeCurrentPushSubscription } from "../lib/pwa";
 import {
   useEffect,
@@ -154,8 +155,7 @@ const sections = [
 
 function formatHijri(date) {
   try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-islamic-umalqura",
+    return displayDateFormatter(
       {
         weekday: "long",
         year: "numeric",
@@ -168,20 +168,6 @@ function formatHijri(date) {
   }
 }
 
-function formatGregorian(date) {
-  try {
-    return new Intl.DateTimeFormat(
-      "ar-SA-u-ca-gregory",
-      {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }
-    ).format(date);
-  } catch {
-    return "";
-  }
-}
 
 function findCurrentItem(pathname) {
   const items =
@@ -1218,11 +1204,7 @@ export default function AdminLayout() {
                   )}
                 </strong>
 
-                <span>
-                  {formatGregorian(
-                    now
-                  )}
-                </span>
+
               </div>
             </div>
 

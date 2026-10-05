@@ -1,7 +1,6 @@
 import { createPortal } from "react-dom";
 import { Award, Printer, ShieldCheck, X } from "lucide-react";
 import {
-  formatGregorianDate,
   formatHijriDate,
 } from "../../lib/studentPortalUtils";
 import "./ExamCertificate.css";
@@ -154,16 +153,11 @@ export default function ExamCertificate({ row, studentName, onClose }) {
 
               <div className="sec-pro-footer-center">
                 <div>
-                  <span>التاريخ الهجري</span>
+                  <span>التاريخ</span>
                   <strong>{formatHijriDate(certificateDate)}</strong>
                 </div>
 
-                <i />
 
-                <div>
-                  <span>التاريخ الميلادي</span>
-                  <strong>{formatGregorianDate(certificateDate)}</strong>
-                </div>
               </div>
 
               <div className="sec-pro-footer-item sec-pro-footer-left">

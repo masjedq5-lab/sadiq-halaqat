@@ -1,3 +1,4 @@
+import CalendarInput from "./CalendarInput";
 export default function FormField({
   label,
   value,
@@ -8,6 +9,7 @@ export default function FormField({
   disabled = false,
   icon: Icon,
 }) {
+  const Input = type === "date" ? CalendarInput : "input";
   return (
     <div style={{ minWidth: 0 }}>
       <label
@@ -54,7 +56,7 @@ export default function FormField({
           />
         )}
 
-        <input
+        <Input
           type={type}
           value={value}
           onChange={(event) =>

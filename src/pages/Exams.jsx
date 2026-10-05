@@ -1,3 +1,4 @@
+import CalendarInput from "../components/CalendarInput";
 // src/pages/Exams.jsx
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
@@ -429,7 +430,7 @@ function CreateExamWizard({mosques,onClose,onCreated}){
       </section>
     </>}
 
-    {step===3&&<section className="exv2-section"><Title icon={CalendarDays}>المدة بالتاريخ الهجري</Title><div className="exv2-form-grid"><HijriDate label="من" value={fromHijri} onChange={setFromHijri}/><HijriDate label="إلى" value={toHijri} onChange={setToHijri}/></div><Info good icon={CheckCircle2}>سيظهر التاريخ هجريًا أثناء الاستخدام.</Info></section>}
+    {step===3&&<section className="exv2-section"><Title icon={CalendarDays}>مدة الاختبار</Title><div className="exv2-form-grid"><HijriDate label="من" value={fromHijri} onChange={setFromHijri}/><HijriDate label="إلى" value={toHijri} onChange={setToHijri}/></div><Info good icon={CheckCircle2}>يُعرض التاريخ وفق التقويم الافتراضي في الإعدادات.</Info></section>}
 
     {step===4&&<section className="exv2-section"><Title icon={CheckCircle2}>المراجعة النهائية</Title><div className="exv2-review">
       <Review label="الاختبار" value={title}/><Review label="المسجد" value={mosques.find(m=>Number(m.id)===Number(mosqueId))?.name||"—"}/><Review label="الحلقات" value={`${selectedHalaqat.length} حلقة`}/>
@@ -807,11 +808,7 @@ function Info({good=false,icon:Icon,children}){return <div className={`exv2-read
 function Review({label,value}){return <div className="exv2-review-card"><span>{label}</span><strong>{value}</strong></div>}
 function SmallEmpty({text}){return <div style={{padding:"calc(18px * var(--app-density,1))",border:"1px dashed #cbd9d3",borderRadius:"calc(12px * var(--app-radius-scale,1))",color:"#7c8b85",textAlign:"center",fontSize:"calc(10px * var(--app-font-scale,1))"}}>{text}</div>}
 function HijriDate({label,value,onChange,disabled=false}){
-  const days=getHijriMonthDays(value.year,value.month),current=getHijriParts(new Date()),years=Array.from({length:5},(_,i)=>current.year-1+i);
-  return <Field label={label}><div className="exv2-hijri-row">
-    <select className="exv2-select" value={value.day} disabled={disabled} onChange={e=>onChange({...value,day:Number(e.target.value)})}>{Array.from({length:days},(_,i)=>i+1).map(d=><option key={d} value={d}>{d}</option>)}</select>
-    <select className="exv2-select" value={value.month} disabled={disabled} onChange={e=>{const month=Number(e.target.value),max=getHijriMonthDays(value.year,month);onChange({...value,month,day:Math.min(value.day,max)})}}>{HIJRI_MONTHS.map((m,i)=><option key={m} value={i+1}>{m}</option>)}</select>
-    <select className="exv2-select" value={value.year} disabled={disabled} onChange={e=>onChange({...value,year:Number(e.target.value)})}>{years.map(y=><option key={y} value={y}>{y} هـ</option>)}</select>
-  </div></Field>;
+  return <Field label={label}><CalendarInput aria-label={label} value={gregorianFromHijri(value)} disabled={disabled} required
+    onChange={e=>{if(e.target.value)onChange(hijriInputFromGregorian(e.target.value));}} /></Field>;
 }
 function ConfirmDeleteExam({exam,onCancel,onConfirm}){return <Modal title="حذف الاختبار نهائيًا" subtitle={exam.title} icon={Trash2} onClose={onCancel}><Info icon={AlertTriangle}>سيتم حذف الاختبار نهائيًا مع جميع بياناته المرتبطة: الطلاب، المختبرون، الحلقات، الأجزاء، الأسئلة، المحاولات، الدرجات، النتائج والشهادات. لا يمكن التراجع عن هذا الإجراء.</Info><div className="exv2-modal-foot"><button type="button" className="exv2-secondary" onClick={onCancel}>إلغاء</button><button type="button" className="exv2-danger" onClick={onConfirm}><Trash2 size={14}/>حذف نهائي بكل البيانات</button></div></Modal>}

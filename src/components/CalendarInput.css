@@ -1,7 +1,68 @@
-.sadiq-calendar-input{display:inline-flex;align-items:center;gap:4px;max-width:100%;min-width:0;direction:rtl;box-sizing:border-box;background:#fff;border:1px solid #d8e1dc;border-radius:10px;padding:4px;color:#243e34}
-.sadiq-calendar-input select{font:inherit!important;color:inherit!important;min-width:0!important;width:auto!important;flex:1;height:36px!important;padding:2px!important;border:0!important;background:transparent!important;box-shadow:none!important}
-.sadiq-calendar-input select:nth-child(2){flex:1.7}
-.sadiq-calendar-input button{border:0;background:transparent;color:inherit;padding:4px;cursor:pointer}
+.sadiq-calendar-input{display:inline-flex;align-items:center;width:100%;max-width:100%;min-width:0;min-height:44px;position:relative;direction:rtl;box-sizing:border-box;background:#fff;border:1px solid #d8e1dc;border-radius:12px;padding:0!important;color:#243e34;transition:border-color .2s,box-shadow .2s}
+.sadiq-calendar-input:focus-within{border-color:#34856b;box-shadow:0 0 0 3px rgb(36 115 84 / 9%)}
+.date-input-wrap:has(>.sadiq-calendar-input)>svg{display:none}
+.sadiq-calendar-input .sadiq-calendar-trigger{display:flex!important;align-items:center;gap:10px;width:100%;min-width:0;min-height:42px;margin:0!important;padding:7px 10px!important;border:0!important;border-radius:inherit;background:transparent!important;box-shadow:none!important;font:inherit;color:inherit;text-align:right;cursor:pointer}
+.sadiq-calendar-trigger:disabled{opacity:.55;cursor:default}
+.sadiq-calendar-trigger svg{position:static!important;transform:none!important;flex-shrink:0;color:#176048!important}
+.sadiq-calendar-symbol{display:grid;place-items:center;flex:0 0 31px;width:31px;height:31px;border-radius:9px;background:#eef6f1;color:#176048}
+.sadiq-calendar-value{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;color:#244b3e}
+.sadiq-calendar-value.is-placeholder{color:#89948e;font-weight:500}
+.sadiq-calendar-chevron{margin-right:auto;opacity:.6}
+.sadiq-calendar-validation{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;min-width:0!important;padding:0!important;border:0!important;opacity:0;pointer-events:none;clip-path:inset(50%)}
+.sadiq-date-overlay{position:fixed;inset:0;z-index:2147483000;display:grid;place-items:center;padding:20px;background:rgb(7 31 24 / 42%);backdrop-filter:blur(6px);isolation:isolate;animation:sadiqDateOverlayIn .16s ease-out}
+.sadiq-date-panel{--date-green:#155e46;--date-ink:#1b3e31;display:flex;flex-direction:column;width:min(100%,430px);max-height:calc(100dvh - 40px);box-sizing:border-box;background:#fff;color:var(--date-ink);border:0;border-radius:24px;overflow:hidden;box-shadow:0 24px 90px rgb(5 30 20 / 25%);font-family:inherit;direction:rtl;text-align:right;animation:sadiqDatePanelIn .2s ease-out}
+.sadiq-date-panel *{box-sizing:border-box}
+.sadiq-date-panel button{font-family:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.sadiq-date-panel button:focus-visible{outline:2px solid #238967;outline-offset:3px}
+.sadiq-date-panel button:disabled{cursor:default;opacity:.32}
+.sadiq-date-panel svg{position:static!important;flex-shrink:0}
+.sadiq-date-header{position:relative;display:flex;align-items:center;gap:12px;flex-shrink:0;padding:23px 24px 20px;background:linear-gradient(115deg,#eef7f1,#fbfdfb);overflow:hidden}
+.sadiq-date-header::after{content:"";position:absolute;left:37px;top:-50px;width:145px;height:145px;opacity:.065;background:url('/ornaments/sadiq/emerald/03-falak.svg') center/contain no-repeat;pointer-events:none}
+.sadiq-date-header-icon{position:relative;z-index:1;display:grid;place-items:center;width:47px;height:47px;flex-shrink:0;border-radius:15px;background:var(--date-green);color:#fff;box-shadow:0 7px 16px rgb(21 94 70 / 13%)}
+.sadiq-date-header-icon svg{color:#fff}
+.sadiq-date-header>div{position:relative;z-index:1}
+.sadiq-date-kicker{display:block;margin-bottom:3px;color:#5a7d6a;font-size:11px;font-weight:600;letter-spacing:.05px}
+.sadiq-date-header h2{margin:0;font-size:21px;line-height:1.4;font-weight:900;color:var(--date-ink)}
+.sadiq-date-panel .sadiq-date-close{position:relative;z-index:1;display:grid;place-items:center;margin-right:auto;width:32px;height:32px;border:0;border-radius:50%;background:rgb(255 255 255 / 72%);color:#53705f;padding:0}
+.sadiq-date-body{min-height:0;padding:17px 23px 7px;overflow:auto;overscroll-behavior:contain}
+.sadiq-date-navigation{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px}
+.sadiq-date-panel .sadiq-date-arrow{display:grid;place-items:center;width:34px;height:34px;flex-shrink:0;padding:0;border:0;border-radius:10px;background:#f3f7f4;color:#28634d}
+.sadiq-date-arrow:hover:not(:disabled){background:#e3f1e8}
+.sadiq-date-period{display:flex;align-items:center;justify-content:center;gap:8px;min-width:0}
+.sadiq-date-period strong{font-size:16px;font-weight:900;color:#285842}
+.sadiq-date-panel .sadiq-date-month,.sadiq-date-panel .sadiq-date-year{display:flex;align-items:center;gap:5px;padding:6px 7px;border:0;border-radius:8px;background:transparent;color:var(--date-ink);font-size:16px;font-weight:900;white-space:nowrap}
+.sadiq-date-panel .sadiq-date-year{color:#6b8174;font-size:14px;font-weight:600}
+.sadiq-date-month:hover,.sadiq-date-year:hover{background:#f3f7f4}
+.sadiq-date-grid{width:100%;border-collapse:separate;border-spacing:3px;table-layout:fixed;direction:rtl;box-shadow:none;background:transparent}
+.sadiq-date-grid th{border:0;background:transparent;padding:0 0 8px;text-align:center;color:#89958e;font-size:10px;font-weight:600;line-height:1.5}
+.sadiq-date-grid td{border:0;background:transparent;padding:0;text-align:center;height:41px}
+.sadiq-date-panel .sadiq-date-day{position:relative;display:grid;place-items:center;width:100%;height:39px;margin:0;padding:0;border:0;border-radius:11px;background:transparent;color:#2d4538;font-size:15px;font-weight:600;line-height:1;transition:background .15s,color .15s}
+.sadiq-date-day:hover:not(:disabled){background:#edf5ef;color:#145839}
+.sadiq-date-panel .sadiq-date-day.is-outside{color:#bac3bc;font-weight:400}
+.sadiq-date-panel .sadiq-date-day.is-today{color:#146b48;font-weight:900;background:#f2f8f3}
+.sadiq-date-day.is-today::after{content:"";position:absolute;bottom:4px;left:calc(50% - 2px);width:4px;height:4px;border-radius:50%;background:currentColor}
+.sadiq-date-panel .sadiq-date-day.is-selected{color:#fff;background:var(--date-green);box-shadow:0 4px 9px rgb(21 94 70 / 17%);font-weight:900}
+.sadiq-date-day:disabled{opacity:.25;background:transparent!important;box-shadow:none!important}
+.sadiq-date-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;min-height:269px;align-content:center;padding:5px 2px 12px}
+.sadiq-date-panel .sadiq-date-choices button{display:flex;align-items:center;justify-content:center;min-height:53px;margin:0;padding:8px 4px;border:0;border-radius:12px;background:#f5f8f5;color:#4c6656;font-size:13px;font-weight:700}
+.sadiq-date-choices button:hover:not(:disabled){background:#e8f2eb}
+.sadiq-date-panel .sadiq-date-choices button.is-chosen{background:var(--date-green);color:#fff}
+.sadiq-date-footer{flex-shrink:0;padding:10px 24px 21px;background:#fff}
+.sadiq-date-selection{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px;padding:12px 13px;border-radius:13px;background:#f6f9f6}
+.sadiq-date-selection>div{min-width:0}
+.sadiq-date-selection span{display:block;font-size:10px;font-weight:500;color:#8a9a8f;margin-bottom:3px}
+.sadiq-date-selection strong{display:block;font-size:12px;font-weight:800;color:#31553e;line-height:1.65}
+.sadiq-date-panel .sadiq-date-today{flex-shrink:0;border:0;border-radius:8px;padding:6px 10px;background:#e5f0e7;color:#276a42;font-size:12px;font-weight:800}
+.sadiq-date-actions{display:flex;align-items:center;gap:9px}
+.sadiq-date-panel .sadiq-date-apply{display:flex;align-items:center;justify-content:center;gap:7px;flex:1;min-height:43px;margin:0;border:0;border-radius:12px;padding:10px 12px;background:var(--date-green);color:#fff;font-size:13px;font-weight:800;box-shadow:0 5px 13px rgb(21 94 70 / 13%)}
+.sadiq-date-panel .sadiq-date-cancel,.sadiq-date-panel .sadiq-date-clear{flex-shrink:0;min-height:40px;margin:0;border:0;border-radius:10px;padding:8px 11px;background:#f3f6f3;color:#738375;font-size:12px;font-weight:700}
+.sadiq-date-panel .sadiq-date-clear{background:transparent;font-size:11px;color:#9a7972}
+.sadiq-date-panel.is-inline{width:100%;max-height:none;box-shadow:none;border-radius:17px;animation:none}
 .sadiq-calendar-setting{display:block;padding:16px;margin:12px 0;border:1px solid #d8e1dc;border-radius:12px;background:#fff;color:#243e34}
 .sadiq-calendar-setting select{font:inherit;padding:8px;margin:8px;border-radius:8px}
 .sadiq-calendar-setting p{font-size:13px;margin:4px 0}
+@keyframes sadiqDateOverlayIn{from{opacity:0}to{opacity:1}}
+@keyframes sadiqDatePanelIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:540px){.sadiq-date-overlay{align-items:end;padding:0 10px 10px}.sadiq-date-panel{width:100%;max-height:calc(100dvh - 20px);border-radius:24px 24px 20px 20px}.sadiq-date-header{padding:20px 20px 17px}.sadiq-date-body{padding-right:18px;padding-left:18px}.sadiq-date-footer{padding-right:20px;padding-left:20px;padding-bottom:calc(19px + env(safe-area-inset-bottom,0px))}.sadiq-date-panel .sadiq-date-day{height:41px}}
+@media(max-height:560px){.sadiq-date-header{padding:12px 20px}.sadiq-date-footer{padding-bottom:12px}.sadiq-date-selection{margin-bottom:9px;padding:8px 12px}.sadiq-date-body{padding-top:10px}}
+@media(prefers-reduced-motion:reduce){.sadiq-date-overlay,.sadiq-date-panel{animation:none}.sadiq-date-day{transition:none}}

@@ -2038,7 +2038,7 @@ function SelectField({
 
 function LoadingState() {
   return (
-    <div className="students-state">
+    <div className="students-state sadiq-loading-state">
       <Loader2 size={30} className="students-spin" />
       <strong>جارٍ تحميل الطلاب…</strong>
       <span>يتم تجهيز بيانات حلقاتك وطلابها.</span>

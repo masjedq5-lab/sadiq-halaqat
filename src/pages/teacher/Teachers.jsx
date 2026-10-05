@@ -2373,7 +2373,7 @@ function StatCard({
 
 function LoadingState() {
   return (
-    <div
+    <div className="sadiq-loading-state"
       style={{
         ...cardStyle,
         padding:

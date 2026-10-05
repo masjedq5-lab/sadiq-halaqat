@@ -1387,7 +1387,7 @@ function EmptyState({
 
 function LoadingState() {
   return (
-    <div
+    <div className="sadiq-loading-state"
       style={{
         background: "#fff",
         border:

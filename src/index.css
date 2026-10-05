@@ -138,11 +138,34 @@ button.primary,
 /* SADIQ_A4_GLOBAL_LOADER_START */
 /*
   Global loading identity only.
-  Uses the existing public/ornaments/sadiq/gold/01-noor.svg asset.
+  Uses the existing green ornament without a surrounding frame.
   No page logic, data flow, Supabase calls, or component behavior is changed.
 */
 :root {
-  --sadiq-a4-loader-image: url("/ornaments/sadiq/gold/01-noor.svg");
+  --sadiq-a4-loader-image: url("/ornaments/sadiq/emerald/01-noor.svg");
+}
+
+/* Dedicated loading states and their ornament holders have no frame. */
+.sadiq-loading-state,
+.reports-loading-state,
+.exv2-loading,
+.ornate-loader,
+.ornate-loader__frame,
+.sadiq-loading-state .loading-icon {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+svg.lucide-loader-circle,
+svg.lucide-loader-2,
+svg.lucide-loader,
+.ornate-loader__svg {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
 }
 
 /* Lucide Loader2 / LoaderCircle used across pages and action buttons. */
@@ -233,7 +256,7 @@ span[style*="confirmSpin"] {
   50% {
     scale: 1.10;
     opacity: 1;
-    filter: drop-shadow(0 7px 14px rgba(180, 137, 45, .18));
+    filter: drop-shadow(0 7px 14px rgba(18, 100, 72, .18));
   }
 }
 

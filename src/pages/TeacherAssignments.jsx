@@ -1419,7 +1419,7 @@ function EmptyState({
 
 function LoadingState() {
   return (
-    <div
+    <div className="sadiq-loading-state"
       style={{
         ...cardStyle,
         padding: "calc(55px * var(--app-density,1)) calc(20px * var(--app-density,1))",

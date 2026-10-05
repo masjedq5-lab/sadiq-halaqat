@@ -3,7 +3,7 @@ export default function LoadingState({
   minHeight = "220px",
 }) {
   return (
-    <div
+    <div className="sadiq-loading-state"
       style={{
         width: "100%",
         minHeight,

@@ -7562,7 +7562,7 @@ function EmptyState({
 function LoadingState() {
   return (
     <div
-      className="recitations-loading"
+      className="recitations-loading sadiq-loading-state"
     >
       <PageStyles />
 

@@ -3708,7 +3708,7 @@ function SmartMetric({ label, value, note, icon }) {
 
 function LoadingState() {
   return (
-    <div
+    <div className="sadiq-loading-state"
       style={{
         ...cardStyle,
         padding:

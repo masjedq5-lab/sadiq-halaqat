@@ -32,10 +32,6 @@ import {
   Users,
   X,
 } from "lucide-react";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 
 import { showToast } from "../../components/Toast";
 import {
@@ -226,7 +222,7 @@ export default function ReportsCenter({ mode: requestedMode }) {
     }
   }
 
-  function handleExcel() {
+  async function handleExcel() {
     if (!report?.rows?.length) {
       showToast("لا توجد بيانات للتصدير", "info");
       return;
@@ -234,6 +230,8 @@ export default function ReportsCenter({ mode: requestedMode }) {
 
     try {
       setExporting("excel");
+      const [XLSX, fileSaver] = await Promise.all([import("xlsx"), import("file-saver")]);
+      const saveAs = fileSaver.saveAs || fileSaver.default?.saveAs || fileSaver.default;
       const rows = getExcelRows(report);
       const worksheet = XLSX.utils.json_to_sheet(rows);
       worksheet["!views"] = [{ rightToLeft: true }];
@@ -350,6 +348,7 @@ export default function ReportsCenter({ mode: requestedMode }) {
     try {
       setExporting("pdf");
       showToast("جارٍ تجهيز PDF…", "info");
+      const [{ default: html2canvas }, { jsPDF }] = await Promise.all([import("html2canvas"), import("jspdf")]);
 
       const header = root.querySelector('[data-pdf-role="header"]');
       const units = [...root.querySelectorAll('[data-pdf-unit="true"]')].filter(

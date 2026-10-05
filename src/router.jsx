@@ -1,128 +1,84 @@
-import { lazy, Suspense } from "react";
+import lazyWithRetry from "./lib/lazyWithRetry";
+import { pageLoaders, preloadRoute } from "./lib/routeModules";
+import { Suspense } from "react";
 import {
   createBrowserRouter,
   Navigate,
 } from "react-router-dom";
 
-import AdminLayout from "./components/AdminLayout";
+const AdminLayout = lazyWithRetry(pageLoaders.AdminLayout);
 
-const CHUNK_RELOAD_KEY = "sadiq:chunk-reload";
-
-function lazyWithRetry(importer) {
-  return lazy(async () => {
-    try {
-      const module = await importer();
-
-      if (typeof window !== "undefined") {
-        window.sessionStorage.removeItem(CHUNK_RELOAD_KEY);
-      }
-
-      return module;
-    } catch (error) {
-      const message = String(error?.message || error || "");
-      const isChunkLoadError =
-        /Failed to fetch dynamically imported module/i.test(message) ||
-        /Importing a module script failed/i.test(message) ||
-        /Loading chunk/i.test(message) ||
-        /dynamically imported module/i.test(message) ||
-        /MIME type/i.test(message) ||
-        /valid JavaScript MIME type/i.test(message);
-
-      if (isChunkLoadError && typeof window !== "undefined") {
-        const lastReload = Number(
-          window.sessionStorage.getItem(CHUNK_RELOAD_KEY) || 0
-        );
-
-        // A production deployment can replace hashed Vite chunks while an
-        // already-open tab still has the previous app shell in memory.
-        // Reload once to fetch the current index and chunk manifest.
-        if (!lastReload || Date.now() - lastReload > 15000) {
-          window.sessionStorage.setItem(
-            CHUNK_RELOAD_KEY,
-            String(Date.now())
-          );
-          window.location.reload();
-
-          return new Promise(() => {});
-        }
-      }
-
-      throw error;
-    }
-  });
-}
-
-const Login = lazyWithRetry(() => import("./pages/Login"));
-const ForgotPassword = lazyWithRetry(() => import("./pages/ForgotPassword"));
-const ResetPassword = lazyWithRetry(() => import("./pages/ResetPassword"));
-const SystemAdmin = lazyWithRetry(() => import("./pages/SystemAdmin"));
-const AdminDashboard = lazyWithRetry(() => import("./pages/AdminDashboard"));
-const Profile = lazyWithRetry(() => import("./pages/Profile"));
-const Reports = lazyWithRetry(() => import("./pages/Reports"));
-const RewardsPage = lazyWithRetry(() => import("./pages/RewardsPage"));
-const Competitions = lazyWithRetry(() => import("./pages/Competitions"));
-const Badges = lazyWithRetry(() => import("./pages/Badges"));
-const Mosques = lazyWithRetry(() => import("./pages/Mosques"));
-const Halaqat = lazyWithRetry(() => import("./pages/Halaqat"));
-const Teachers = lazyWithRetry(() => import("./pages/Teachers"));
-const Students = lazyWithRetry(() => import("./pages/Students"));
-const HalaqaStudents = lazyWithRetry(() => import("./pages/HalaqaStudents"));
-const HalaqaTeachers = lazyWithRetry(() => import("./pages/HalaqaTeachers"));
-const Attendance = lazyWithRetry(() => import("./pages/Attendance"));
-const Recitations = lazyWithRetry(() => import("./pages/Recitations"));
-const Exams = lazyWithRetry(() => import("./pages/Exams"));
-const MonthlyAchievement = lazyWithRetry(() => import("./pages/MonthlyAchievement"));
-const TVLeaderboardPage = lazyWithRetry(() => import("./pages/TVLeaderboardPage"));
-const SettingsPage = lazyWithRetry(() => import("./pages/SettingsPage"));
-const JoinRequests = lazyWithRetry(() => import("./pages/JoinRequests"));
-const AdminInvoices = lazyWithRetry(() => import("./pages/AdminInvoices"));
-const Notifications = lazyWithRetry(() => import("./pages/Notifications"));
-const InvoicePage = lazyWithRetry(() => import("./pages/InvoicePage"));
+const Login = lazyWithRetry(pageLoaders.Login);
+const ForgotPassword = lazyWithRetry(pageLoaders.ForgotPassword);
+const ResetPassword = lazyWithRetry(pageLoaders.ResetPassword);
+const SystemAdmin = lazyWithRetry(pageLoaders.SystemAdmin);
+const AdminDashboard = lazyWithRetry(pageLoaders.AdminDashboard);
+const Profile = lazyWithRetry(pageLoaders.Profile);
+const Reports = lazyWithRetry(pageLoaders.Reports);
+const RewardsPage = lazyWithRetry(pageLoaders.RewardsPage);
+const Competitions = lazyWithRetry(pageLoaders.Competitions);
+const Badges = lazyWithRetry(pageLoaders.Badges);
+const Mosques = lazyWithRetry(pageLoaders.Mosques);
+const Halaqat = lazyWithRetry(pageLoaders.Halaqat);
+const Teachers = lazyWithRetry(pageLoaders.Teachers);
+const Students = lazyWithRetry(pageLoaders.Students);
+const HalaqaStudents = lazyWithRetry(pageLoaders.HalaqaStudents);
+const HalaqaTeachers = lazyWithRetry(pageLoaders.HalaqaTeachers);
+const Attendance = lazyWithRetry(pageLoaders.Attendance);
+const Recitations = lazyWithRetry(pageLoaders.Recitations);
+const Exams = lazyWithRetry(pageLoaders.Exams);
+const MonthlyAchievement = lazyWithRetry(pageLoaders.MonthlyAchievement);
+const TVLeaderboardPage = lazyWithRetry(pageLoaders.TVLeaderboardPage);
+const SettingsPage = lazyWithRetry(pageLoaders.SettingsPage);
+const JoinRequests = lazyWithRetry(pageLoaders.JoinRequests);
+const AdminInvoices = lazyWithRetry(pageLoaders.AdminInvoices);
+const Notifications = lazyWithRetry(pageLoaders.Notifications);
+const InvoicePage = lazyWithRetry(pageLoaders.InvoicePage);
 /* =========================================================
    Teacher Portal
 ========================================================= */
-import TeacherLayout from "./layouts/TeacherLayout";
+const TeacherLayout = lazyWithRetry(pageLoaders.TeacherLayout);
 
-const TeacherDashboard = lazyWithRetry(() => import("./pages/teacher/Dashboard"));
-const TeacherStudents = lazyWithRetry(() => import("./pages/teacher/Students"));
-const TeacherAttendance = lazyWithRetry(() => import("./pages/teacher/Attendance"));
-const TeacherRecitations = lazyWithRetry(() => import("./pages/teacher/Recitations"));
-const TeacherPoints = lazyWithRetry(() => import("./pages/teacher/Points"));
-const TeacherMonthlyAchievement = lazyWithRetry(() => import("./pages/teacher/MonthlyAchievement"));
-const TeacherExams = lazyWithRetry(() => import("./pages/teacher/Exams"));
-const TeacherReports = lazyWithRetry(() => import("./pages/teacher/Reports"));
-const TeacherProfile = lazyWithRetry(() => import("./pages/teacher/Profile"));
-const TeacherSettings = lazyWithRetry(() => import("./pages/teacher/Settings"));
-const TeacherHalaqat = lazyWithRetry(() => import("./pages/teacher/Halaqat"));
-const TeacherMonthlyPlan = lazyWithRetry(() => import("./pages/teacher/MonthlyPlan"));
-const TeacherStudentCare = lazyWithRetry(() => import("./pages/teacher/StudentCare"));
-const TeacherRecords = lazyWithRetry(() => import("./pages/teacher/Records"));
-const TeacherJoinRequests = lazyWithRetry(() => import("./pages/teacher/JoinRequests"));
+const TeacherDashboard = lazyWithRetry(pageLoaders.TeacherDashboard);
+const TeacherStudents = lazyWithRetry(pageLoaders.TeacherStudents);
+const TeacherAttendance = lazyWithRetry(pageLoaders.TeacherAttendance);
+const TeacherRecitations = lazyWithRetry(pageLoaders.TeacherRecitations);
+const TeacherPoints = lazyWithRetry(pageLoaders.TeacherPoints);
+const TeacherMonthlyAchievement = lazyWithRetry(pageLoaders.TeacherMonthlyAchievement);
+const TeacherExams = lazyWithRetry(pageLoaders.TeacherExams);
+const TeacherReports = lazyWithRetry(pageLoaders.TeacherReports);
+const TeacherProfile = lazyWithRetry(pageLoaders.TeacherProfile);
+const TeacherSettings = lazyWithRetry(pageLoaders.TeacherSettings);
+const TeacherHalaqat = lazyWithRetry(pageLoaders.TeacherHalaqat);
+const TeacherMonthlyPlan = lazyWithRetry(pageLoaders.TeacherMonthlyPlan);
+const TeacherStudentCare = lazyWithRetry(pageLoaders.TeacherStudentCare);
+const TeacherRecords = lazyWithRetry(pageLoaders.TeacherRecords);
+const TeacherJoinRequests = lazyWithRetry(pageLoaders.TeacherJoinRequests);
 /* =========================================================
    Student Portal
 ========================================================= */
-import StudentLayout from "./layouts/StudentLayout";
+const StudentLayout = lazyWithRetry(pageLoaders.StudentLayout);
 
-const StudentDashboard = lazyWithRetry(() => import("./pages/student/Dashboard"));
-const MyHalaqa = lazyWithRetry(() => import("./pages/student/MyHalaqa"));
-const Classmates = lazyWithRetry(() => import("./pages/student/Classmates"));
-const StudentRecitations = lazyWithRetry(() => import("./pages/student/Recitations"));
-const StudentMonthlyPlan = lazyWithRetry(() => import("./pages/student/MonthlyPlan"));
-const StudentMonthlyAchievement = lazyWithRetry(() => import("./pages/student/MonthlyAchievement"));
-const StudentAttendance = lazyWithRetry(() => import("./pages/student/Attendance"));
-const StudentPoints = lazyWithRetry(() => import("./pages/student/Points"));
-const StudentExams = lazyWithRetry(() => import("./pages/student/Exams"));
-const StudentNotifications = lazyWithRetry(() => import("./pages/student/Notifications"));
-const StudentSettings = lazyWithRetry(() => import("./pages/student/Settings"));
-const StudentProfile = lazyWithRetry(() => import("./pages/student/Profile"));
+const StudentDashboard = lazyWithRetry(pageLoaders.StudentDashboard);
+const MyHalaqa = lazyWithRetry(pageLoaders.MyHalaqa);
+const Classmates = lazyWithRetry(pageLoaders.Classmates);
+const StudentRecitations = lazyWithRetry(pageLoaders.StudentRecitations);
+const StudentMonthlyPlan = lazyWithRetry(pageLoaders.StudentMonthlyPlan);
+const StudentMonthlyAchievement = lazyWithRetry(pageLoaders.StudentMonthlyAchievement);
+const StudentAttendance = lazyWithRetry(pageLoaders.StudentAttendance);
+const StudentPoints = lazyWithRetry(pageLoaders.StudentPoints);
+const StudentExams = lazyWithRetry(pageLoaders.StudentExams);
+const StudentNotifications = lazyWithRetry(pageLoaders.StudentNotifications);
+const StudentSettings = lazyWithRetry(pageLoaders.StudentSettings);
+const StudentProfile = lazyWithRetry(pageLoaders.StudentProfile);
 /* =========================================================
    Public / Setup
 ========================================================= */
 import PublicLayout from "./layouts/PublicLayout";
-const LandingPage = lazyWithRetry(() => import("./pages/LandingPage"));
-const Register = lazyWithRetry(() => import("./pages/Register"));
-const StudentOnboarding = lazyWithRetry(() => import("./pages/student/Onboarding"));
-const SupervisorSetup = lazyWithRetry(() => import("./pages/supervisor/SupervisorSetup"));
+const LandingPage = lazyWithRetry(pageLoaders.LandingPage);
+const Register = lazyWithRetry(pageLoaders.Register);
+const StudentOnboarding = lazyWithRetry(pageLoaders.StudentOnboarding);
+const SupervisorSetup = lazyWithRetry(pageLoaders.SupervisorSetup);
 
 function renderLazy(Component) {
   return (
@@ -146,6 +102,10 @@ function renderLazy(Component) {
       <Component />
     </Suspense>
   );
+}
+
+if (typeof window !== "undefined") {
+  void preloadRoute(window.location.pathname).catch(() => {});
 }
 
 const router = createBrowserRouter([
@@ -197,7 +157,7 @@ const router = createBrowserRouter([
 
   {
     path: "/admin",
-    element: <AdminLayout />,
+    element: renderLazy(AdminLayout),
 
     children: [
       {
@@ -314,7 +274,7 @@ const router = createBrowserRouter([
 
   {
     path: "/teacher",
-    element: <TeacherLayout />,
+    element: renderLazy(TeacherLayout),
 
     children: [
       {
@@ -396,7 +356,7 @@ const router = createBrowserRouter([
 
   {
     path: "/student",
-    element: <StudentLayout />,
+    element: renderLazy(StudentLayout),
 
     children: [
       {

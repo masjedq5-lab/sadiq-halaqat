@@ -22,6 +22,7 @@
     "security:edge": "deno check --node-modules-dir=manual --no-lock --config supabase/functions/deno.json supabase/functions/*/index.ts supabase/functions/_shared/*_test.ts && deno test --allow-read=supabase/functions,node_modules --allow-env=SUPABASE_URL,SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,STUDENT_AUTH_SECRET --node-modules-dir=manual --no-lock --config supabase/functions/deno.json supabase/functions/_shared/*_test.ts",
     "security:ui": "node scripts/verify-security-ui.mjs",
     "test:side-lessons": "node scripts/verify-simple-side-lessons.mjs",
+    "test:performance": "vite build --manifest && node scripts/verify-performance.mjs",
     "test:calendar": "node scripts/verify-calendar.mjs",
     "test:attendance": "node scripts/verify-recitation-attendance.mjs"
   },

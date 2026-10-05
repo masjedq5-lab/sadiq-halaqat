@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import lazyWithRetry from "../../lib/lazyWithRetry";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { RefreshCw, UserRoundCheck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 
 import { supabase } from "../../lib/supabase";
 import {
@@ -11,7 +12,7 @@ import {
 import DashboardSkeleton from "./dashboard/DashboardSkeleton";
 import TeacherHero from "./dashboard/TeacherHero";
 import TeacherStats from "./dashboard/TeacherStats";
-import TeacherCharts from "./dashboard/TeacherCharts";
+const TeacherCharts = lazyWithRetry(() => import("./dashboard/TeacherCharts"));
 import TopStudents from "./dashboard/TopStudents";
 import LatestRecitations from "./dashboard/LatestRecitations";
 import TeacherAlerts from "./dashboard/TeacherAlerts";
@@ -22,6 +23,7 @@ import { showToast } from "../../components/Toast";
 import "./dashboard/TeacherDashboard.css";
 
 export default function Dashboard() {
+  const { teacher: layoutTeacher, assignmentsPromise } = useOutletContext() || {};
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [teacher, setTeacher] = useState(null);
@@ -45,26 +47,25 @@ export default function Dashboard() {
       if (!silent) setLoading(true);
       setFatalError("");
 
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser();
-
-      if (authError) throw authError;
-      if (!user) throw new Error("AUTH_REQUIRED");
-
-      const { data: profile, error: profileError } = await supabase
-        .from("profiles")
-        .select("id, full_name, user_number, role, status, is_active")
-        .eq("auth_user_id", user.id)
-        .single();
-
-      if (profileError) throw profileError;
+      // The layout already verified this profile. Explicit refreshes still
+      // revalidate with Supabase and fetch current assignments.
+      let profile = !silent ? layoutTeacher : null;
+      if (!profile) {
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!user) throw new Error("AUTH_REQUIRED");
+        const result = await supabase.from("profiles")
+          .select("id, full_name, user_number, role, status, is_active")
+          .eq("auth_user_id", user.id).single();
+        if (result.error) throw result.error;
+        profile = result.data;
+      }
       if (!profile || profile.role !== "teacher") {
         throw new Error("TEACHER_PROFILE_REQUIRED");
       }
 
-      const teacherAssignments = await getTeacherAssignments();
+      const teacherAssignments = await (!silent && assignmentsPromise
+        ? assignmentsPromise : getTeacherAssignments());
 
       setTeacher(profile);
       setAssignments(teacherAssignments);
@@ -88,7 +89,7 @@ export default function Dashboard() {
     } finally {
       if (!silent) setLoading(false);
     }
-  }, []);
+  }, [layoutTeacher, assignmentsPromise]);
 
   const loadOperationalData = useCallback(
     async ({ silent = false } = {}) => {
@@ -221,10 +222,12 @@ export default function Dashboard() {
 
       <TeacherAlerts alerts={alerts} />
 
+      <Suspense fallback={<div className="td-panel" role="status" style={{minHeight:300}}>جارٍ تحميل الرسوم البيانية…</div>}>
       <TeacherCharts
         attendanceData={attendanceData}
         recitationData={recitationData}
       />
+      </Suspense>
 
       <div className="td-two-column">
         <TopStudents students={topStudents} />

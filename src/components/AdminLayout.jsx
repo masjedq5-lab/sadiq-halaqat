@@ -1,3 +1,4 @@
+import NavLink from "./PrefetchNavLink";
 import {displayDateFormatter} from "../lib/calendar";
 import { removeCurrentPushSubscription } from "../lib/pwa";
 import {
@@ -8,7 +9,6 @@ import {
 } from "react";
 
 import {
-  NavLink,
   Outlet,
   useLocation,
   useNavigate,

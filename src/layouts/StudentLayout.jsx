@@ -1,3 +1,4 @@
+import NavLink from "../components/PrefetchNavLink";
 import { removeCurrentPushSubscription } from "../lib/pwa";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -21,7 +22,6 @@ import {
   X,
 } from "lucide-react";
 import {
-  NavLink,
   Outlet,
   useLocation,
   useNavigate,

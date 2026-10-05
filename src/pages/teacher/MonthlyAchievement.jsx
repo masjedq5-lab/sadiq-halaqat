@@ -19,7 +19,6 @@ import {
   showToast,
 } from "../../components/Toast";
 
-import * as XLSX from "xlsx";
 import { escapeHtml } from "../../utils/htmlSecurity";
 
 /* =========================================================
@@ -2945,12 +2944,14 @@ export default function MonthlyAchievement() {
      Excel
   ===================================================== */
 
-  function exportExcel() {
+  async function exportExcel() {
     if (rows.length === 0) {
       showToast("لا توجد بيانات للتصدير", "error");
       return;
     }
 
+    try {
+      const XLSX = await import("xlsx");
     const selectedHalaqaData = halaqat.find(
       (item) => Number(item.id) === Number(selectedHalaqa)
     );
@@ -3070,6 +3071,10 @@ export default function MonthlyAchievement() {
 
     XLSX.writeFile(workbook, `الإنجاز-الشهري-${hijriYear}-${pad2(hijriMonth)}.xlsx`);
     showToast("تم إنشاء ملف Excel الاحترافي", "success");
+    } catch (error) {
+      console.error("Excel export failed:", error);
+      showToast("تعذر تصدير Excel. أعد المحاولة.", "error");
+    }
   }
 
   /* =====================================================

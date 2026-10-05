@@ -1,4 +1,6 @@
+import NavLink from "../components/PrefetchNavLink";
 import { removeCurrentPushSubscription } from "../lib/pwa";
+import { getTeacherAssignments } from "../services/teacherDashboardService";
 import { useEffect, useMemo, useState } from "react";
 import {
   Archive,
@@ -21,7 +23,6 @@ import {
   X,
 } from "lucide-react";
 import {
-  NavLink,
   Outlet,
   useLocation,
   useNavigate,
@@ -151,6 +152,7 @@ export default function TeacherLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [teacher, setTeacher] = useState(null);
+  const [assignmentsPromise, setAssignmentsPromise] = useState(null);
   const [hasAssignment, setHasAssignment] = useState(true);
   const [loadingProfile, setLoadingProfile] = useState(true);
   const [teacherPreferences, setTeacherPreferences] = useState(
@@ -285,17 +287,21 @@ export default function TeacherLayout() {
         return;
       }
 
+      // Start both independent requests before mounting the dashboard.
+      // The child reuses this promise rather than asking for the same scope again.
+      const request = getTeacherAssignments();
+      setAssignmentsPromise(request);
       setTeacher(profile);
-      await refreshTeacherPreferences(profile.id);
+      const [, result] = await Promise.all([
+        refreshTeacherPreferences(profile.id),
+        request.then(data => ({ data }), error => ({ error })),
+      ]);
 
-      const { data: assignments, error: assignmentsError } =
-        await supabase.rpc("get_my_teacher_assignments");
-
-      if (assignmentsError) {
-        console.error("Teacher layout assignments:", assignmentsError);
+      if (result.error) {
+        console.error("Teacher layout assignments:", result.error);
         setHasAssignment(true);
       } else {
-        setHasAssignment((assignments ?? []).length > 0);
+        setHasAssignment(result.data.length > 0);
       }
     } catch (error) {
       console.error("Teacher layout context error:", error);
@@ -535,7 +541,7 @@ export default function TeacherLayout() {
               refreshTeacherPreferences,
             }}
           >
-            <Outlet />
+            <Outlet context={{ teacher, assignmentsPromise }} />
           </TeacherPreferencesContext.Provider>
         </main>
       </div>

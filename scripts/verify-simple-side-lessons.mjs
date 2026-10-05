@@ -153,7 +153,9 @@ for(const file of ["src/pages/teacher/MonthlyAchievement.jsx","src/pages/Monthly
   await test(`Excel export aligns the side quantity with its column (${file})`,async()=>{
     const source=await fs.readFile(file,"utf8");let sheets=[];
     const context={rows:[{student_name:"Fixture",side_lesson_faces:2.2,side_lesson_lines_per_face:15}],period:{start:"2026-10-01",end:"2026-10-31"},teacher:{},halaqat:[],selectedHalaqa:202,hijriMonth:4,hijriYear:1448,HIJRI_MONTHS:Array(12).fill("Month"),showToast:()=>{},formatGregorianDate:String,pad2:String,getOverallCompletion:()=>null,formatFaces:value=>String(value||0),formatSideLessonTotal:side.formatSideLessonTotal,XLSX:{utils:{aoa_to_sheet:rows=>{sheets.push(rows);return {};},book_new:()=>({}),book_append_sheet:()=>{}},writeFile:()=>{}}};
-    installed(source,"exportExcel",context)();const header=sheets[0].find(row=>row.includes("هدف الحفظ"));const body=sheets[0].find(row=>row[1]==="Fixture");
+    context.XLSXFixture = context.XLSX;
+    const fixtureSource = source.replace('await import("xlsx")', 'await Promise.resolve(XLSXFixture)');
+    await installed(fixtureSource,"exportExcel",context)();const header=sheets[0].find(row=>row.includes("هدف الحفظ"));const body=sheets[0].find(row=>row[1]==="Fixture");
     assert.equal(header.length,body.length);assert.equal(body[header.indexOf("جنب الدرس")],"2 وجه و 3 سطر");
   });
 }

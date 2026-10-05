@@ -15,8 +15,17 @@ export function saveCalendar(value) {
 export function calendarLocale(calendar = getCalendar()) {
   return calendar === 'gregorian' ? 'ar-SA-u-ca-gregory' : 'ar-SA-u-ca-islamic-umalqura';
 }
+const displayFormatters = new Map();
 export function displayDateFormatter(options = {}, calendar = getCalendar()) {
-  return new Intl.DateTimeFormat(calendarLocale(calendar), { timeZone: 'Asia/Riyadh', ...options });
+  const locale = calendarLocale(calendar);
+  const resolved = { timeZone: 'Asia/Riyadh', ...options };
+  const key = JSON.stringify([locale, resolved]);
+  if (!displayFormatters.has(key)) {
+    const formatter = new Intl.DateTimeFormat(locale, resolved);
+    if (displayFormatters.size >= 64) displayFormatters.delete(displayFormatters.keys().next().value);
+    displayFormatters.set(key, formatter);
+  }
+  return displayFormatters.get(key);
 }
 export function dateKey(value = new Date()) {
   if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;

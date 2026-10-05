@@ -1989,16 +1989,14 @@ export default function LandingPage() {
       setStatsError("");
 
       try {
-        const statsResult = await publicRpcWithSessionRetry("get_public_mosque_stats",
-          { p_mosque_id: null }
-        );
+        const [statsResult, directoryResult] = await Promise.all([
+          publicRpcWithSessionRetry("get_public_mosque_stats", { p_mosque_id: null }),
+          publicRpcWithSessionRetry("get_public_mosque_directory"),
+        ]);
 
         if (statsResult.error) throw statsResult.error;
 
         let directoryRows = [];
-
-        const directoryResult = await publicRpcWithSessionRetry("get_public_mosque_directory"
-        );
 
         if (!directoryResult.error) {
           directoryRows = Array.isArray(directoryResult.data)
@@ -2027,7 +2025,7 @@ export default function LandingPage() {
         setSelectedMosque(normalized);
         setLastRefresh(new Date());
 
-        await loadInsights("all");
+        void loadInsights("all");
       } catch (error) {
         console.error("Public landing load failed:", error);
 
@@ -2098,7 +2096,7 @@ export default function LandingPage() {
         setAllStats(normalized);
       }
 
-      await loadInsights(nextMosqueId);
+      void loadInsights(nextMosqueId);
       setLastRefresh(new Date());
     } catch (error) {
       console.error("Mosque stats load failed:", error);

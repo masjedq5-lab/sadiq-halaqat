@@ -142,7 +142,7 @@ button.primary,
   No page logic, data flow, Supabase calls, or component behavior is changed.
 */
 :root {
-  --sadiq-a4-loader-image: url("/ornaments/sadiq/emerald/01-noor.svg");
+  --sadiq-a4-loader-image: url("/ornaments/sadiq/emerald/loader-noor-bold.svg");
 }
 
 /* Dedicated loading states and their ornament holders have no frame. */
@@ -249,12 +249,12 @@ span[style*="confirmSpin"] {
 
 @keyframes sadiqA4LoaderPulse {
   0%, 100% {
-    scale: .86;
-    opacity: .82;
+    scale: .96;
+    opacity: .96;
     filter: drop-shadow(0 4px 8px rgba(15, 81, 50, .08));
   }
   50% {
-    scale: 1.10;
+    scale: 1.045;
     opacity: 1;
     filter: drop-shadow(0 7px 14px rgba(18, 100, 72, .18));
   }
@@ -273,3 +273,97 @@ span[style*="confirmSpin"] {
   }
 }
 /* SADIQ_A4_GLOBAL_LOADER_END */
+
+/* SADIQ_A5_LOADING_CLARITY_START
+   Prominent loading emblems only. Inline action-button spinners keep their
+   original compact dimensions; loading logic and other icons are unchanged. */
+:root {
+  --sadiq-main-loader-size: clamp(64px, 8vw, 76px);
+}
+
+/* Full-page states with a direct SVG loader (teacher students, teachers,
+   rewards, competitions, mosque list, reports). */
+.sadiq-loading-state > svg.lucide-loader-circle,
+.sadiq-loading-state > svg.lucide-loader-2,
+.sadiq-loading-state > svg.lucide-loader,
+.sadiq-loading-state > svg.lucide-refresh-cw[class*="spin"],
+.mosques-loading-state > svg.lucide-loader-circle,
+.mosques-loading-state > svg.lucide-loader-2,
+.reports-loading-state > svg.lucide-loader-circle,
+.reports-loading-state > svg.lucide-loader-2,
+.exv2-loading > svg.lucide-loader-circle,
+.ornate-loader__svg {
+  width: var(--sadiq-main-loader-size) !important;
+  height: var(--sadiq-main-loader-size) !important;
+  min-width: var(--sadiq-main-loader-size) !important;
+  flex-shrink: 0 !important;
+  margin-inline: auto;
+}
+
+/* Older page loading states that used an inline-styled spinning div. */
+.sadiq-loading-state > div[style*="animation"] {
+  width: var(--sadiq-main-loader-size) !important;
+  height: var(--sadiq-main-loader-size) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: var(--sadiq-a4-loader-image) center / contain no-repeat !important;
+  animation: sadiqA4LoaderRotate 2.65s linear infinite,
+             sadiqA4LoaderPulse 1.45s ease-in-out infinite !important;
+}
+
+/* Icon holders in the attendance, recitation, progress, plan and care screens.
+   Only loading holders are targeted; empty-state icons are untouched. */
+:is(.recitations-loading, .attendance-loading-screen) .loading-icon,
+.monthly-page-loading-icon,
+.plan-loading-icon,
+.care-loading-icon,
+.students-state-card .students-state-icon:has(svg.students-spin) {
+  width: calc(var(--sadiq-main-loader-size) + 4px) !important;
+  height: calc(var(--sadiq-main-loader-size) + 4px) !important;
+  min-width: calc(var(--sadiq-main-loader-size) + 4px) !important;
+  margin-inline: auto;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+:is(.recitations-loading, .attendance-loading-screen) .loading-icon > svg.lucide-loader-circle,
+:is(.recitations-loading, .attendance-loading-screen) .loading-icon > svg.lucide-loader-2,
+.monthly-page-loading-icon > svg.lucide-loader-circle,
+.monthly-page-loading-icon > svg.lucide-loader-2,
+.plan-loading-icon > svg.lucide-loader-circle,
+.plan-loading-icon > svg.lucide-loader-2,
+.care-loading-icon > svg.lucide-loader-circle,
+.care-loading-icon > svg.lucide-loader-2,
+.students-state-card .students-state-icon > svg.students-spin {
+  width: var(--sadiq-main-loader-size) !important;
+  height: var(--sadiq-main-loader-size) !important;
+  flex-shrink: 0;
+}
+
+/* The TV view uses a legacy div spinner. */
+.tv-loader {
+  width: var(--sadiq-main-loader-size) !important;
+  height: var(--sadiq-main-loader-size) !important;
+}
+
+/* Make loading easier to see without drawing a frame around the emblem. */
+@media (max-width: 600px) {
+  :root { --sadiq-main-loader-size: 68px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sadiq-loading-state > div[style*="animation"],
+  .tv-loader,
+  svg.lucide-loader-circle,
+  svg.lucide-loader-2,
+  svg.lucide-loader,
+  svg.lucide-refresh-cw[class*="spin"],
+  .landing-refresh-button.is-loading svg.lucide-refresh-cw,
+  .ornate-loader__svg {
+    animation: none !important;
+    rotate: none !important;
+    scale: 1 !important;
+    opacity: 1 !important;
+  }
+}
+/* SADIQ_A5_LOADING_CLARITY_END */
+

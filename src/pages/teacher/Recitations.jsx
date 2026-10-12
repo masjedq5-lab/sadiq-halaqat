@@ -25,6 +25,7 @@ import {
   surahs,
   evaluations,
 } from "../../data/surahList";
+import { finishedSurahBoundary, nextSurahConsolidation } from "../../lib/surahConsolidation";
 
 import {
   useToast,
@@ -320,6 +321,12 @@ export default function Recitations() {
     planSuggestion,
     setPlanSuggestion,
   ] = useState(null);
+
+  // The teacher can select one or two reinforcement days before recording
+  // the first consolidation session. The preference is scoped by lesson ID.
+  const [surahConsolidationPreference, setSurahConsolidationPreference] = useState({
+    key: "", days: 1,
+  });
 
   const [
     rangeMetrics,
@@ -1414,6 +1421,20 @@ export default function Recitations() {
       editing,
     ]);
 
+  async function getSurahMetadata(surahName) {
+    if (!surahName) return null;
+    const { data: surahNo, error: resolveError } = await supabase.rpc(
+      "quran_resolve_surah_no", { p_surah: surahName }
+    );
+    if (resolveError) throw resolveError;
+    if (!surahNo) return null;
+    const { data, error } = await supabase.from("quran_surahs")
+      .select("sura_name_ar,ayah_count").eq("sura_no", Number(surahNo))
+      .limit(1).maybeSingle();
+    if (error) throw error;
+    return data ? { surah: data.sura_name_ar, ayahCount: Number(data.ayah_count) } : null;
+  }
+
   /* =====================================================
      الخطة الشهرية → المطلوب القرآني الفعلي
   ===================================================== */
@@ -1739,7 +1760,7 @@ export default function Recitations() {
         const interventionType =
           activeIntervention?.intervention_type || null;
 
-        const lessonSuppressed =
+        let lessonSuppressed =
           policy?.lesson_enabled === false || Number(baseMemorizationAmount || 0) <= 0 ||
           interventionType === "stabilization_full" ||
           interventionType === "pause";
@@ -1754,7 +1775,7 @@ export default function Recitations() {
             ? (activeIntervention?.lesson_override_unit || baseMemorizationUnit)
             : baseMemorizationUnit;
 
-        const revisionAmount =
+        let revisionAmount =
           interventionType === "pause"
             ? null
             : (
@@ -1762,7 +1783,7 @@ export default function Recitations() {
                 baseRevisionAmount
               );
 
-        const revisionUnit =
+        let revisionUnit =
           interventionType === "pause"
             ? baseRevisionUnit
             : (
@@ -1770,19 +1791,20 @@ export default function Recitations() {
                 baseRevisionUnit
               );
 
-        const reviewSegmentType =
+        let reviewSegmentType =
           interventionType === "stabilization_full"
             ? "stabilization_review"
             : "revision";
 
         const [lessonHistory, reviewHistory] = await Promise.all([
-          supabase.from("recitations").select("to_surah,to_ayah,recitation_date")
+          supabase.from("recitations").select("id,to_surah,to_ayah,recitation_date")
             .eq("student_id", Number(commonForm.student_id)).eq("halaqa_id", Number(commonForm.halaqa_id))
             .lte("recitation_date", commonForm.recitation_date).not("to_surah", "is", null).not("to_ayah", "is", null)
             .or("lesson_evaluation.is.null,lesson_evaluation.neq.إعادة")
             .order("recitation_date", { ascending: false }).order("id", { ascending: false }).limit(1).maybeSingle(),
           supabase.from("recitations").select("review_to_surah,review_to_ayah,recitation_date")
             .eq("student_id", Number(commonForm.student_id)).eq("halaqa_id", Number(commonForm.halaqa_id))
+            .is("surah_consolidation_origin_id", null)
             .lte("recitation_date", commonForm.recitation_date).not("review_to_surah", "is", null).not("review_to_ayah", "is", null)
             .or("review_evaluation.is.null,review_evaluation.neq.إعادة")
             .order("recitation_date", { ascending: false }).order("id", { ascending: false }).limit(1).maybeSingle(),
@@ -1791,6 +1813,42 @@ export default function Recitations() {
         if (reviewHistory.error) throw reviewHistory.error;
         const previousLesson = lessonHistory.data;
         const previousReview = reviewHistory.data;
+
+        // A completed surah is followed by reinforcement, not another surah.
+        // Only an earlier dated lesson can open this stage: no same-day jump.
+        let consolidation = null;
+        if (previousLesson && interventionType !== "pause") {
+          const surahInfo = await getSurahMetadata(previousLesson.to_surah);
+          if (surahInfo && finishedSurahBoundary(
+            previousLesson.to_ayah,
+            surahInfo.ayahCount,
+            plan.memorization_direction
+          )) {
+            const { data: consolidationHistory, error: consolidationError } =
+              await supabase.from("recitations")
+                .select("surah_consolidation_origin_id,surah_consolidation_step,surah_consolidation_total,recitation_date,review_surah,review_from_ayah,review_to_surah,review_to_ayah,review_evaluation")
+                .eq("student_id", Number(commonForm.student_id))
+                .eq("halaqa_id", Number(commonForm.halaqa_id))
+                .eq("surah_consolidation_origin_id", Number(previousLesson.id))
+                .lt("recitation_date", commonForm.recitation_date);
+            if (consolidationError) throw consolidationError;
+
+            const preferenceKey = `${previousLesson.id}-${previousLesson.to_surah}`;
+            consolidation = nextSurahConsolidation({
+              lesson: previousLesson,
+              ayahCount: surahInfo.ayahCount,
+              direction: plan.memorization_direction,
+              selectedDate: commonForm.recitation_date,
+              history: consolidationHistory || [],
+              preferredDays: surahConsolidationPreference.key === preferenceKey
+                ? surahConsolidationPreference.days : 1,
+            });
+            if (consolidation) {
+              consolidation.surah = surahInfo.surah;
+              consolidation.ayahCount = surahInfo.ayahCount;
+            }
+          }
+        }
 
         let lessonStart = {
           surah: plan.memorization_from_surah,
@@ -1855,6 +1913,33 @@ export default function Recitations() {
         let generatedLesson = null;
         let generatedReview = null;
 
+        if (consolidation) {
+          lessonSuppressed = true;
+          reviewSegmentType = "stabilization_review";
+          revisionUnit = "faces";
+
+          const { data: metricRows, error: metricError } = await supabase.rpc(
+            "quran_range_metrics", {
+              p_from_surah: consolidation.surah,
+              p_from_ayah: consolidation.startAyah,
+              p_to_surah: consolidation.surah,
+              p_to_ayah: consolidation.endAyah,
+            }
+          );
+          if (metricError) throw metricError;
+          const metrics = Array.isArray(metricRows) ? metricRows[0] : metricRows;
+          if (!metrics) throw new Error("تعذر تجهيز نطاق تثبيت السورة");
+          revisionAmount = Number(metrics.faces || 0);
+          generatedReview = {
+            start_surah_name: consolidation.surah,
+            start_ayah: consolidation.startAyah,
+            end_surah_name: consolidation.surah,
+            end_ayah: consolidation.endAyah,
+            quran_lines: metrics.quran_lines,
+            faces: metrics.faces,
+          };
+        }
+
         if (!lessonSuppressed) {
           try {
             generatedLesson = await generateRange({
@@ -1873,7 +1958,7 @@ export default function Recitations() {
           }
         }
 
-        if (interventionType !== "pause") {
+        if (!consolidation && interventionType !== "pause") {
           generatedReview = await generateReviewRange({
             plan,
             startSurah: reviewStart.surah,
@@ -1901,6 +1986,7 @@ export default function Recitations() {
           lessonSuppressed,
           reviewSegmentType,
           revisionCycleBounds,
+          consolidation,
         });
 
         setCompletionModes(createCompletionModes());
@@ -1974,6 +2060,7 @@ export default function Recitations() {
     commonForm.recitation_date,
     profiles,
     learningRevision,
+    surahConsolidationPreference,
   ]);
 
   /* =====================================================

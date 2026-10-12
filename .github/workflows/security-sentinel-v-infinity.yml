@@ -58,6 +58,9 @@ jobs:
       - name: Side lesson recitation and monthly achievement tests
         run: npm run test:side-lessons
 
+      - name: Surah completion reinforcement regression tests
+        run: npm run test:surah-consolidation
+
       - name: Absent student recitation regression tests
         run: npm run test:attendance
 

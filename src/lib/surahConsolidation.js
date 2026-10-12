@@ -36,10 +36,16 @@ export function nextSurahConsolidation({
 
   const completedStep = relevant.reduce((highest, row) => {
     // 'إعادة' never advances the reinforcement sequence.
+    const rowStep = Number(row.surah_consolidation_step) || 0;
+    const requiredEnd = total === 2 && rowStep === 1 ? Math.floor(count / 2) : count;
+    const expectedStart = total === 2 && rowStep === 2 ? Math.floor(count / 2) + 1 : 1;
     if (row.review_evaluation === "إعادة" ||
-      !row.review_surah || !Number(row.review_from_ayah) ||
-      !Number(row.review_to_ayah)) return highest;
-    return Math.max(highest, Number(row.surah_consolidation_step) || 0);
+      rowStep < 1 || rowStep > total ||
+      !row.review_surah || row.review_surah !== lesson.to_surah ||
+      row.review_to_surah !== lesson.to_surah ||
+      Number(row.review_from_ayah) > expectedStart ||
+      Number(row.review_to_ayah) < requiredEnd) return highest;
+    return Math.max(highest, rowStep);
   }, 0);
 
   if (completedStep >= total) return null;

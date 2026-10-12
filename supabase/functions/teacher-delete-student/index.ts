@@ -17,21 +17,6 @@ function json(body: unknown, status = 200) {
   });
 }
 
-function isMissingResource(error: any) {
-  const code = String(error?.code || "");
-  const message = String(error?.message || "").toLowerCase();
-
-  return (
-    code === "42P01" ||
-    code === "42703" ||
-    code === "PGRST204" ||
-    code === "PGRST205" ||
-    message.includes("could not find the table") ||
-    message.includes("does not exist") ||
-    message.includes("could not find the")
-  );
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -207,10 +192,7 @@ Deno.serve(async (req) => {
     return json(
       {
         ok: false,
-        message:
-          error instanceof Error
-            ? error.message
-            : "تعذر حذف الطالب.",
+        message: "تعذر إكمال طلب الحذف. لم يُنفّذ حذف جزئي؛ حدّث الصفحة ثم حاول مرة أخرى أو تواصل مع الإدارة.",
       },
       500
     );

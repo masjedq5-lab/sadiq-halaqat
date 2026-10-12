@@ -38,6 +38,10 @@ import {
    ثوابت
 ========================================================= */
 
+// Immutable Mushaf metadata is cached between student forms to avoid repeated
+// network requests during a busy recitation session.
+const surahMetadataCache = new Map();
+
 const LESSON_AMOUNTS = [
   {
     value: "three_lines",
@@ -1422,18 +1426,30 @@ export default function Recitations() {
     ]);
 
   async function getSurahMetadata(surahName) {
-    if (!surahName) return null;
-    const { data: surahNo, error: resolveError } = await supabase.rpc(
-      "quran_resolve_surah_no", { p_surah: surahName }
-    );
-    if (resolveError) throw resolveError;
-    if (!surahNo) return null;
-    const { data, error } = await supabase.from("quran_surahs")
-      .select("sura_no,sura_name_ar,ayah_count").eq("sura_no", Number(surahNo))
-      .limit(1).maybeSingle();
-    if (error) throw error;
-    return data ? { surah: data.sura_name_ar, ayahCount: Number(data.ayah_count),
-      surahNo: Number(data.sura_no) } : null;
+    const key = String(surahName || "").trim();
+    if (!key) return null;
+    if (!surahMetadataCache.has(key)) {
+      const task = (async () => {
+        const { data: surahNo, error: resolveError } = await supabase.rpc(
+          "quran_resolve_surah_no", { p_surah: key }
+        );
+        if (resolveError) throw resolveError;
+        if (!surahNo) return null;
+        const { data, error } = await supabase.from("quran_surahs")
+          .select("sura_no,sura_name_ar,ayah_count").eq("sura_no", Number(surahNo))
+          .limit(1).maybeSingle();
+        if (error) throw error;
+        return data ? { surah: data.sura_name_ar, ayahCount: Number(data.ayah_count),
+          surahNo: Number(data.sura_no) } : null;
+      })();
+      surahMetadataCache.set(key, task);
+    }
+    try {
+      return await surahMetadataCache.get(key);
+    } catch (error) {
+      surahMetadataCache.delete(key);
+      throw error;
+    }
   }
 
   async function boundedLessonSurahLimit({
@@ -1444,14 +1460,12 @@ export default function Recitations() {
 
     const [start, end] = await Promise.all([
       getSurahMetadata(startSurah),
-      supabase.rpc("quran_resolve_surah_no", { p_surah: planEndSurah }),
+      getSurahMetadata(planEndSurah),
     ]);
-    if (end.error) throw end.error;
-    const endNo = Number(end.data);
-    if (!start || !endNo || start.surahNo === endNo) return fallback;
+    if (!start || !end || start.surahNo === end.surahNo) return fallback;
 
     const alongRoute = normalizeQuranPlanDirection(direction) === "backward"
-      ? start.surahNo > endNo : start.surahNo < endNo;
+      ? start.surahNo > end.surahNo : start.surahNo < end.surahNo;
     if (!alongRoute) return fallback;
 
     // Never put an ayah of the next surah in the CURRENT day's lesson.

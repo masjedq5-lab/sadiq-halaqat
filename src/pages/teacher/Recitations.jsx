@@ -1429,10 +1429,37 @@ export default function Recitations() {
     if (resolveError) throw resolveError;
     if (!surahNo) return null;
     const { data, error } = await supabase.from("quran_surahs")
-      .select("sura_name_ar,ayah_count").eq("sura_no", Number(surahNo))
+      .select("sura_no,sura_name_ar,ayah_count").eq("sura_no", Number(surahNo))
       .limit(1).maybeSingle();
     if (error) throw error;
-    return data ? { surah: data.sura_name_ar, ayahCount: Number(data.ayah_count) } : null;
+    return data ? { surah: data.sura_name_ar, ayahCount: Number(data.ayah_count),
+      surahNo: Number(data.sura_no) } : null;
+  }
+
+  async function boundedLessonSurahLimit({
+    startSurah, planEndSurah, planEndAyah, direction = "forward",
+  }) {
+    const fallback = { surah: planEndSurah, ayah: Number(planEndAyah) };
+    if (!startSurah || !planEndSurah || !planEndAyah) return fallback;
+
+    const [start, end] = await Promise.all([
+      getSurahMetadata(startSurah),
+      supabase.rpc("quran_resolve_surah_no", { p_surah: planEndSurah }),
+    ]);
+    if (end.error) throw end.error;
+    const endNo = Number(end.data);
+    if (!start || !endNo || start.surahNo === endNo) return fallback;
+
+    const alongRoute = normalizeQuranPlanDirection(direction) === "backward"
+      ? start.surahNo > endNo : start.surahNo < endNo;
+    if (!alongRoute) return fallback;
+
+    // Never put an ayah of the next surah in the CURRENT day's lesson.
+    return {
+      surah: start.surah,
+      ayah: normalizeQuranPlanDirection(direction) === "backward"
+        ? 1 : start.ayahCount,
+    };
   }
 
   /* =====================================================
@@ -1942,13 +1969,19 @@ export default function Recitations() {
 
         if (!lessonSuppressed) {
           try {
+            const lessonLimit = await boundedLessonSurahLimit({
+              startSurah: lessonStart.surah,
+              planEndSurah: plan.memorization_to_surah,
+              planEndAyah: plan.memorization_to_ayah,
+              direction: plan.memorization_direction,
+            });
             generatedLesson = await generateRange({
               startSurah: lessonStart.surah,
               startAyah: lessonStart.ayah,
               amount: memorizationAmount,
               unit: memorizationUnit,
-              limitSurah: plan.memorization_to_surah,
-              limitAyah: plan.memorization_to_ayah,
+              limitSurah: lessonLimit.surah,
+              limitAyah: lessonLimit.ayah,
               direction: plan.memorization_direction,
             });
           } catch (generationError) {
@@ -3985,6 +4018,15 @@ export default function Recitations() {
         };
       }
 
+      const lessonLimit = segmentType === "lesson" && !cycleBounds
+        ? await boundedLessonSurahLimit({
+            startSurah: nextStart.surah_name,
+            planEndSurah,
+            planEndAyah,
+            direction,
+          })
+        : { surah: planEndSurah, ayah: planEndAyah };
+
       nextRange = cycleBounds
         ? await generateCyclicQuranAssignmentRange({
             startSurah: nextStart.surah_name,
@@ -3999,8 +4041,8 @@ export default function Recitations() {
             startAyah: nextStart.ayah,
             amount,
             unit,
-            limitSurah: planEndSurah,
-            limitAyah: planEndAyah,
+            limitSurah: lessonLimit.surah,
+            limitAyah: lessonLimit.ayah,
             direction,
           });
     }
@@ -4437,6 +4479,10 @@ export default function Recitations() {
       }
       if (lessonComplete && planSuggestion?.generatedLesson) await resolveGeneratedCompletion({track:"lesson",generated:planSuggestion.generatedLesson,
         actualEndSurah:quranForm.to_surah,actualEndAyah:quranForm.to_ayah,evaluation:quranForm.lesson_evaluation,direction:planSuggestion.memorization_direction});
+      if (lessonComplete && planSuggestion?.generatedLesson &&
+        quranForm.to_surah !== planSuggestion.generatedLesson.start_surah_name) {
+        throw new Error("يجب إنهاء السورة الحالية وتثبيتها قبل بدء سورة جديدة.");
+      }
       if (reviewComplete && planSuggestion?.generatedReview) await resolveGeneratedCompletion({track:"review",generated:planSuggestion.generatedReview,
         actualEndSurah:quranForm.review_to_surah,actualEndAyah:quranForm.review_to_ayah,evaluation:quranForm.review_evaluation,direction:planSuggestion.revision_direction});
       setSaving(true);

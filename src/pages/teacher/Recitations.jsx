@@ -6041,6 +6041,45 @@ export default function Recitations() {
                     </div>
                   )}
 
+                  {!editing && planSuggestion?.consolidation && (
+                    <div className="surah-consolidation-card" role="status">
+                      <div className="surah-consolidation-heading">
+                        <ShieldCheck size={21} />
+                        <div>
+                          <strong>تثبيت سورة {planSuggestion.consolidation.surah}</strong>
+                          <span>
+                            {planSuggestion.consolidation.total === 1
+                              ? "مراجعة السورة كاملة قبل البدء بسورة جديدة"
+                              : `الجزء ${planSuggestion.consolidation.step} من ${planSuggestion.consolidation.total} — دون حفظ جديد`}
+                          </span>
+                        </div>
+                      </div>
+                      {!planSuggestion.consolidation.locked ? (
+                        <div className="surah-consolidation-options" aria-label="طريقة تثبيت السورة">
+                          {[{ days: 1, label: "كاملة في يوم" }, { days: 2, label: "مقسمة على يومين" }]
+                            .map((option) => (
+                              <button
+                                key={option.days}
+                                type="button"
+                                className={planSuggestion.consolidation.total === option.days ? "selected" : ""}
+                                disabled={saving || (option.days === 2 && planSuggestion.consolidation.ayahCount < 2)}
+                                aria-pressed={planSuggestion.consolidation.total === option.days}
+                                onClick={() => setSurahConsolidationPreference({
+                                  key: planSuggestion.consolidation.key,
+                                  days: option.days,
+                                })}
+                              >
+                                {option.label}
+                              </button>
+                            ))}
+                        </div>
+                      ) : (
+                        <small>تم اعتماد تقسيم التثبيت من جلسة سابقة.</small>
+                      )}
+                      <p>بعد قبول تثبيت السورة، سيُفتح الحفظ من السورة التالية تلقائيًا في الجلسة اللاحقة.</p>
+                    </div>
+                  )}
+
                   <FormSection
                     icon={<BookOpen size={17} />}
                     title="الحفظ"
@@ -6158,7 +6197,7 @@ export default function Recitations() {
 
                   <FormSection
                     icon={<RefreshCw size={17} />}
-                    title="المراجعة"
+                    title={planSuggestion?.consolidation ? "تثبيت السورة" : "المراجعة"}
                     collapsible
                     summary={
                       planSuggestion?.generatedReview
@@ -6184,7 +6223,9 @@ export default function Recitations() {
                       <>
                         <PlannedQuranTask
                           title={
-                            planSuggestion.reviewSegmentType === "stabilization_review"
+                            planSuggestion?.consolidation
+                              ? `تثبيت السورة — الجزء ${planSuggestion.consolidation.step} من ${planSuggestion.consolidation.total}`
+                              : planSuggestion.reviewSegmentType === "stabilization_review"
                               ? "مراجعة التثبيت المطلوبة"
                               : "المراجعة المطلوبة"
                           }
@@ -6249,7 +6290,9 @@ export default function Recitations() {
 
                         <EvaluationSelector
                           label={
-                            planSuggestion?.reviewSegmentType === "stabilization_review"
+                            planSuggestion?.consolidation
+                              ? "تقييم تثبيت السورة"
+                              : planSuggestion?.reviewSegmentType === "stabilization_review"
                               ? "تقييم مراجعة التثبيت"
                               : "تقييم المراجعة"
                           }
@@ -8161,6 +8204,33 @@ function PageStyles() {
   return (
     <style>
       {`
+        .surah-consolidation-card {
+          border: 1px solid #b8d9c8; border-radius: 17px;
+          background: linear-gradient(135deg, #eef8f1, #fffdf8);
+          padding: 17px 18px; margin: 14px 0; color: #194b38;
+        }
+        .surah-consolidation-heading { display:flex; align-items:center; gap:12px; }
+        .surah-consolidation-heading > svg { flex-shrink:0; color:#147153; }
+        .surah-consolidation-heading strong { display:block; font-size:16px; }
+        .surah-consolidation-heading span { display:block; font-size:13px; margin-top:4px; color:#587769; }
+        .surah-consolidation-options { display:flex; gap:9px; margin-top:15px; flex-wrap:wrap; }
+        .surah-consolidation-options button {
+          flex:1; min-height:43px; border:1px solid #cbded1;
+          border-radius:11px; background:#fff; color:#225840;
+          padding:8px 12px; font-size:13px; font-weight:750;
+        }
+        .surah-consolidation-options button.selected {
+          background:#166047; color:#fff; border-color:#166047;
+        }
+        .surah-consolidation-options button:disabled { opacity:.55; cursor:not-allowed; }
+        .surah-consolidation-card > small { display:block; margin-top:10px; color:#657f71; }
+        .surah-consolidation-card > p { font-size:12px; color:#597467; margin:12px 0 0; line-height:1.7; }
+        @media (max-width:550px) {
+          .surah-consolidation-card { padding:13px; }
+          .surah-consolidation-options { gap:7px; }
+          .surah-consolidation-options button { min-width:120px; }
+        }
+
         .recitations-page {
           width: 100%;
           max-width: 1600px;

@@ -765,7 +765,9 @@ export default function Students() {
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        throw new Error(await functionErrorMessage(error, "تعذر حذف الطالب. حاول مجددًا أو تواصل مع الإدارة."));
+      }
       if (!data?.ok) {
         throw new Error(data?.message || "تعذر حذف الطالب.");
       }
@@ -773,9 +775,19 @@ export default function Students() {
       setViewStudent(null);
       setConfirmAction(null);
 
-      await loadData(true);
+      // The deletion has succeeded, so a subsequent refresh error must not
+      // be presented as if the student was not deleted.
+      try {
+        await loadData(true);
+      } catch (refreshError) {
+        console.error("REFRESH STUDENTS AFTER DELETE:", refreshError);
+        showToast("تم حذف الطالب، لكن تعذر تحديث القائمة. حدّث الصفحة.", "info");
+      }
 
-      showToast("تم حذف الطالب نهائيًا.", "success");
+      showToast(
+        data.warning || "تم حذف الطالب نهائيًا.",
+        data.warning ? "info" : "success"
+      );
     } catch (error) {
       console.error("DELETE STUDENT:", error);
       showToast(

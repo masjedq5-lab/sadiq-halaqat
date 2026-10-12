@@ -1,6 +1,7 @@
 import {displayDateFormatter} from "../lib/calendar";
 import {monthlySideLessonTotals,withSideLessonMetrics,formatSideLessonTotal,formatMonthlySideLessons} from "../lib/sideLesson";
 import { effectiveMonthlyPlans } from "../lib/effectiveLearning";
+import {getOverallCompletion, hasMonthlyDelay, monthlyDelayReason, monthlyDelayReportLabel} from "../lib/monthlyAchievementDelay";
 // src/pages/MonthlyAchievement.jsx
 // Admin Monthly Achievement Intelligence Center
 
@@ -619,14 +620,6 @@ function buildSmartDelayAnalysis({
     sessions,
     reasons,
   };
-}
-
-function getOverallCompletion(row) {
-  const planned = [];
-  if (Number(row.memorization_target_faces || 0) > 0) planned.push(Boolean(row.memorization_completed));
-  if (Number(row.revision_target_faces || 0) > 0) planned.push(Boolean(row.revision_completed));
-  if (!planned.length) return null;
-  return planned.every(Boolean);
 }
 
 /* =========================================================
@@ -1970,12 +1963,8 @@ export default function MonthlyAchievement() {
           row.revision_completed
         ),
 
-      delay_reason:
-        String(
-          row.delay_reason ||
-            ""
-        ).trim() ||
-        null,
+      // An achieved month has no delay diagnosis even when retries occurred.
+      delay_reason: monthlyDelayReason(row) || null,
 
       notes:
         String(
@@ -2752,7 +2741,7 @@ export default function MonthlyAchievement() {
             ? "منجز"
             : "غير منجز",
         overall === null ? "لا توجد خطة" : overall ? "منجز" : "غير منجز",
-        row.delay_reason || "لا يوجد تعثر ظاهر",
+        monthlyDelayReportLabel(row),
         Number(row.smart_delay?.absent || 0),
         Number(row.smart_delay?.excused || 0),
         Number(row.smart_delay?.repeats || 0),
@@ -2795,7 +2784,7 @@ export default function MonthlyAchievement() {
       ["عدد الطلاب", rows.length],
       ["المنجزون", rows.filter((row) => getOverallCompletion(row) === true).length],
       ["غير المنجزين", rows.filter((row) => getOverallCompletion(row) === false).length],
-      ["حالات التعثر", rows.filter((row) => row.smart_delay?.hasDelay).length],
+      ["حالات التعثر", rows.filter(hasMonthlyDelay).length],
       ["إجمالي حفظ منجز", formatFaces(rows.reduce((sum, row) => sum + Number(row.final_memorization_faces || 0), 0))],
       ["إجمالي مراجعة منجزة", formatFaces(rows.reduce((sum, row) => sum + Number(row.final_revision_faces || 0), 0))],
     ]);
@@ -2847,7 +2836,7 @@ export default function MonthlyAchievement() {
     );
 
     const completedCount = rows.filter((row) => getOverallCompletion(row) === true).length;
-    const delayedCount = rows.filter((row) => row.smart_delay?.hasDelay).length;
+    const delayedCount = rows.filter(hasMonthlyDelay).length;
     const achievementRate = rows.length
       ? Math.round((completedCount / rows.length) * 100)
       : 0;
@@ -2872,7 +2861,7 @@ export default function MonthlyAchievement() {
           <td>${formatFaces(row.final_revision_faces)} / ${formatFaces(row.revision_target_faces)}</td>
           <td><span class="status ${revStatus === "منجز" ? "ok" : revStatus === "غير منجز" ? "bad" : "muted"}">${revStatus}</span></td>
           <td><span class="status ${overall === true ? "ok" : overall === false ? "bad" : "muted"}">${overall === null ? "لا توجد خطة" : overall ? "منجز" : "غير منجز"}</span></td>
-          <td class="reason">${escapeHtml(row.delay_reason || "لا يوجد تعثر ظاهر")}</td>
+          <td class="reason">${escapeHtml(monthlyDelayReportLabel(row))}</td>
           <td>${row.smart_total_sessions ?? row.source_recitations_count ?? 0}</td>
         </tr>
       `;
@@ -3959,13 +3948,15 @@ function StudentAchievementCard({
         />
       <div className="achievement-summary-item"><span>جنب الدرس</span><strong>{formatSideLessonTotal(row.side_lesson_faces,row.side_lesson_lines_per_face)}</strong><em>من التسميع تلقائيًا</em></div></div>
 
-      <div className={`smart-delay-summary ${row.smart_delay?.hasDelay ? "has-delay" : "clear"}`}>
-        {row.smart_delay?.hasDelay ? <AlertTriangle size={15} /> : <CheckCircle2 size={15} />}
+      {getOverallCompletion(row) !== true && (
+      <div className={`smart-delay-summary ${hasMonthlyDelay(row) ? "has-delay" : "clear"}`}>
+        {hasMonthlyDelay(row) ? <AlertTriangle size={15} /> : <CheckCircle2 size={15} />}
         <div>
           <span>سبب التعثر الذكي</span>
-          <strong>{row.delay_reason || "لا يوجد تعثر ظاهر"}</strong>
+          <strong>{monthlyDelayReportLabel(row)}</strong>
         </div>
       </div>
+      )}
 
       <div className="achievement-summary-footer">
         <div>
@@ -4294,7 +4285,7 @@ function DetailsModal({
             <Sparkles size={16} />
             <div>
               <span>التحليل الذكي</span>
-              <strong>{student.delay_reason || "لا يوجد تعثر ظاهر"}</strong>
+              <strong>{getOverallCompletion(student) === true ? "اكتمل الإنجاز الشهري" : monthlyDelayReportLabel(student)}</strong>
             </div>
           </div>
 

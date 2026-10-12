@@ -102,34 +102,36 @@ Deno.serve(async (req) => {
       return json({ ok: false, message: "رقم الطالب الداخلي غير صالح." }, 400);
     }
 
-    const { data: link, error: linkError } = await admin
+    // A student can have more than one active circle. The requesting teacher
+    // must be assigned to every one of them before a permanent deletion.
+    const { data: studentLinks, error: linkError } = await admin
       .from("student_halaqat")
-      .select("id, halaqa_id")
+      .select("halaqa_id")
       .eq("student_id", studentId)
-      .eq("is_current", true)
-      .maybeSingle();
+      .eq("is_current", true);
 
     if (linkError) throw linkError;
 
-    if (!link) {
+    if (!studentLinks?.length) {
       return json(
-        { ok: false, message: "الطالب غير مرتبط بحلقة حالية." },
-        404
+        { ok: false, message: "الطالب غير مرتبط بحلقة حالية. ربما أزيل الارتباط في محاولة حذف سابقة؛ أعد ربط الطالب بحلقته عبر الإدارة أولًا." },
+        409
       );
     }
 
-    const { data: teacherLink, error: teacherLinkError } = await admin
+    const assignedHalaqat = [...new Set(studentLinks.map((item) => Number(item.halaqa_id)))];
+    const { data: teacherLinks, error: teacherLinkError } = await admin
       .from("teacher_halaqat")
-      .select("id")
+      .select("halaqa_id")
       .eq("teacher_id", teacher.id)
-      .eq("halaqa_id", link.halaqa_id)
-      .maybeSingle();
+      .in("halaqa_id", assignedHalaqat);
 
     if (teacherLinkError) throw teacherLinkError;
 
-    if (!teacherLink) {
+    const allowed = new Set((teacherLinks || []).map((item) => Number(item.halaqa_id)));
+    if (assignedHalaqat.some((halaqaId) => !allowed.has(halaqaId))) {
       return json(
-        { ok: false, message: "لا تملك صلاحية حذف هذا الطالب." },
+        { ok: false, message: "لا تملك صلاحية حذف الطالب من جميع حلقاته الحالية." },
         403
       );
     }
@@ -146,47 +148,35 @@ Deno.serve(async (req) => {
       return json({ ok: false, message: "الطالب غير موجود." }, 404);
     }
 
-    const cleanupTargets = [
-      ["student_guardians", "student_id"],
-      ["student_care_actions", "student_id"],
-      ["student_communications", "student_id"],
-      ["exam_results", "student_id"],
-      ["exam_students", "student_id"],
-      ["monthly_plans", "student_id"],
-      ["monthly_progress", "student_id"],
-      ["noorania_recitations", "student_id"],
-      ["recitations", "student_id"],
-      ["attendance", "student_id"],
-      ["points_transactions", "student_id"],
-      ["student_rewards", "student_id"],
-      ["membership_requests", "requester_id"],
-      ["student_halaqat", "student_id"],
-    ] as const;
+    // Database changes run atomically in one Postgres transaction. On any
+    // FK error all deleted rows are rolled back (unlike sequential REST calls).
+    const { data: deleted, error: deletionError } = await admin.rpc(
+      "teacher_delete_student_atomic",
+      {
+        p_student_id: studentId,
+        p_teacher_id: teacher.id,
+      },
+    );
 
-    for (const [table, column] of cleanupTargets) {
-      const { error } = await admin
-        .from(table)
-        .delete()
-        .eq(column, studentId);
-
-      if (error && !isMissingResource(error)) {
-        console.error(`cleanup ${table}:`, error);
-        throw new Error(
-          `تعذر حذف بيانات الطالب المرتبطة في ${table}: ${error.message}`
-        );
+    if (deletionError) {
+      console.error("atomic student deletion:", {
+        code: deletionError.code,
+        message: deletionError.message,
+      });
+      if (deletionError.code === "42501") {
+        return json({ ok: false, message: "ليس لديك صلاحية حذف هذا الطالب." }, 403);
       }
+      if (deletionError.code === "P0002") {
+        return json({ ok: false, message: "تعذر العثور على ارتباط الطالب الحالي. حدّث الصفحة أو تواصل مع الإدارة." }, 409);
+      }
+      return json({
+        ok: false,
+        message: "تعذر الحذف بسبب ارتباط بيانات أخرى بالطالب. لم يُحذف أي سجل في هذه المحاولة، ويمكن مراجعة سجلات الخادم.",
+      }, 409);
     }
 
-    const { error: finalProfileError } = await admin
-      .from("profiles")
-      .delete()
-      .eq("id", studentId)
-      .eq("role", "student");
-
-    if (finalProfileError) {
-      throw new Error(
-        `تعذر حذف ملف الطالب: ${finalProfileError.message}`
-      );
+    if (deleted !== true) {
+      return json({ ok: false, message: "تعذر إكمال حذف الطالب. لم تُحذف بياناته في هذه المحاولة." }, 500);
     }
 
     let authWarning: string | null = null;

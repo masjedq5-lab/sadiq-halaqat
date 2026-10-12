@@ -4426,6 +4426,8 @@ export default function Recitations() {
       lessonCompletion,
 
       reviewCompletion,
+      surahCompleted: Boolean(justCompletedSurah),
+      completedSurah: justCompletedSurah ? recitationRecord.to_surah : null,
     };
 
 
@@ -4864,7 +4866,12 @@ export default function Recitations() {
       type === "quran" &&
       postPersistResult
     ) {
-      if (planSuggestion?.consolidation && persistedRecord?.surah_consolidation_origin_id) {
+      if (postPersistResult.surahCompleted) {
+        showToast(
+          `اكتمل حفظ سورة ${postPersistResult.completedSurah}. الجلسة القادمة لتثبيت السورة كاملة أو على يومين قبل بدء سورة جديدة.`,
+          "info"
+        );
+      } else if (planSuggestion?.consolidation && persistedRecord?.surah_consolidation_origin_id) {
         const step = planSuggestion.consolidation.step;
         const total = planSuggestion.consolidation.total;
         const finishedStep = persistedRecord.review_evaluation !== "إعادة" &&

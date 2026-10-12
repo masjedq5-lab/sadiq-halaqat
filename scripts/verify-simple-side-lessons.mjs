@@ -5,6 +5,7 @@ import Renderer, {act} from "react-test-renderer";
 import {transformWithOxc} from "vite";
 import {evaluations} from "../src/data/surahList.js";
 import * as side from "../src/lib/sideLesson.js";
+import {getOverallCompletion, hasMonthlyDelay, monthlyDelayReason, monthlyDelayReportLabel} from "../src/lib/monthlyAchievementDelay.js";
 
 globalThis.IS_REACT_ACT_ENVIRONMENT = true;
 globalThis.simpleSideTests = {React, evaluations, ...side};
@@ -152,12 +153,25 @@ const facesToPretty=String;const clampPercent=value=>value;const scheduledProgre
 for(const file of ["src/pages/teacher/MonthlyAchievement.jsx","src/pages/MonthlyAchievement.jsx"]){
   await test(`Excel export aligns the side quantity with its column (${file})`,async()=>{
     const source=await fs.readFile(file,"utf8");let sheets=[];
-    const context={rows:[{student_name:"Fixture",side_lesson_faces:2.2,side_lesson_lines_per_face:15}],period:{start:"2026-10-01",end:"2026-10-31"},teacher:{},halaqat:[],selectedHalaqa:202,hijriMonth:4,hijriYear:1448,HIJRI_MONTHS:Array(12).fill("Month"),showToast:()=>{},formatGregorianDate:String,pad2:String,getOverallCompletion:()=>null,formatFaces:value=>String(value||0),formatSideLessonTotal:side.formatSideLessonTotal,XLSX:{utils:{aoa_to_sheet:rows=>{sheets.push(rows);return {};},book_new:()=>({}),book_append_sheet:()=>{}},writeFile:()=>{}}};
+    const context={monthlyDelayReportLabel,rows:[{student_name:"Fixture",side_lesson_faces:2.2,side_lesson_lines_per_face:15}],period:{start:"2026-10-01",end:"2026-10-31"},teacher:{},halaqat:[],selectedHalaqa:202,hijriMonth:4,hijriYear:1448,HIJRI_MONTHS:Array(12).fill("Month"),showToast:()=>{},formatGregorianDate:String,pad2:String,getOverallCompletion:()=>null,formatFaces:value=>String(value||0),formatSideLessonTotal:side.formatSideLessonTotal,XLSX:{utils:{aoa_to_sheet:rows=>{sheets.push(rows);return {};},book_new:()=>({}),book_append_sheet:()=>{}},writeFile:()=>{}}};
     context.XLSXFixture = context.XLSX;
     const fixtureSource = source.replace('await import("xlsx")', 'await Promise.resolve(XLSXFixture)');
     await installed(fixtureSource,"exportExcel",context)();const header=sheets[0].find(row=>row.includes("هدف الحفظ"));const body=sheets[0].find(row=>row[1]==="Fixture");
     assert.equal(header.length,body.length);assert.equal(body[header.indexOf("جنب الدرس")],"2 وجه و 3 سطر");
   });
 }
+await test("Completed monthly goals suppress delay labels without erasing retry counts",async()=>{
+  const row={memorization_target_faces:6.83,revision_target_faces:100,memorization_completed:true,revision_completed:true,
+    smart_delay:{hasDelay:true,repeats:8},delay_reason:"تكرار الإعادة في التسميع"};
+  assert.equal(getOverallCompletion(row),true);
+  assert.equal(hasMonthlyDelay(row),false);
+  assert.equal(monthlyDelayReason(row),"");
+  assert.equal(monthlyDelayReportLabel(row),"—");
+  assert.equal(row.smart_delay.repeats,8);
+  const incomplete={...row,revision_completed:false};
+  assert.equal(hasMonthlyDelay(incomplete),true);
+  assert.equal(monthlyDelayReason(incomplete),"تكرار الإعادة في التسميع");
+  assert.equal(monthlyDelayReportLabel(incomplete),"تكرار الإعادة في التسميع");
+});
 assert(!teacherSource.includes('rpc("quran_generate_side_lesson'),"Retired generators are not requested by the teacher form");
 console.log(`PASS: ${cases} side lesson application checks; no live writes or notifications.`);

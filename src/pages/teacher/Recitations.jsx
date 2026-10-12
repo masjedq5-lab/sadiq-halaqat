@@ -1860,9 +1860,9 @@ export default function Recitations() {
                 .lt("recitation_date", commonForm.recitation_date);
             if (consolidationError) throw consolidationError;
 
-            const preferenceKey = `${previousLesson.id}-${previousLesson.to_surah}`;
+            const preferenceKey = `${previousLesson.id}-${surahInfo.surah}`;
             consolidation = nextSurahConsolidation({
-              lesson: previousLesson,
+              lesson: { ...previousLesson, to_surah: surahInfo.surah },
               ayahCount: surahInfo.ayahCount,
               direction: plan.memorization_direction,
               selectedDate: commonForm.recitation_date,

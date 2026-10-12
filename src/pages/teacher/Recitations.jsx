@@ -4144,7 +4144,9 @@ export default function Recitations() {
         buildRecitationSegment({
           recitationRecord,
           segmentType:
-            planSuggestion?.reviewSegmentType || "revision",
+            recitationRecord.surah_consolidation_origin_id
+              ? "stabilization_review"
+              : (planSuggestion?.reviewSegmentType || "revision"),
           sequenceNo: 1,
           actualRange: {
             fromSurah: recitationRecord.review_surah,
@@ -4206,8 +4208,22 @@ export default function Recitations() {
       return null;
     }
 
+    const justCompletedSurah =
+      lessonCompletion && lessonCompletion !== "repeat" &&
+      recitationRecord.lesson_evaluation !== "إعادة" &&
+      (await (async () => {
+        const info = await getSurahMetadata(recitationRecord.to_surah);
+        return Boolean(info && finishedSurahBoundary(
+          recitationRecord.to_ayah,
+          info.ayahCount,
+          planSuggestion.memorization_direction
+        ));
+      })());
+
+    // Do not enqueue the next surah here: the next recitation day is
+    // reserved for a complete/two-part review of the surah just finished.
     const nextLesson =
-      lessonCompletion
+      lessonCompletion && !justCompletedSurah
         ? await buildNextAssignment({
             recitationRecord,
             segmentType: "lesson",
@@ -4239,7 +4255,7 @@ export default function Recitations() {
         : null;
 
     const nextReview =
-      reviewCompletion
+      reviewCompletion && !recitationRecord.surah_consolidation_origin_id
         ? await buildNextAssignment({
             recitationRecord,
             segmentType:
@@ -4382,6 +4398,16 @@ export default function Recitations() {
     const original = editing?.type === "quran" ? quranRecords.find(row => Number(row.id) === Number(editing.id)) : null;
     const preserveSide = original && !quranForm.side_amount_changed && !storedSideLesson(original).manual;
     const lessonComplete = hasCompleteQuranRange(quranForm.from_surah,quranForm.from_ayah,quranForm.to_surah,quranForm.to_ayah);
+    const consolidation = !editing
+      ? planSuggestion?.consolidation || null
+      : original?.surah_consolidation_origin_id
+        ? {
+            originId: Number(original.surah_consolidation_origin_id),
+            surah: original.surah_consolidation_surah,
+            step: original.surah_consolidation_step,
+            total: original.surah_consolidation_total,
+          }
+        : null;
     const lessonPartial = hasAnyQuranRange(quranForm.from_surah,quranForm.from_ayah,quranForm.to_surah,quranForm.to_ayah);
     const reviewComplete = hasCompleteQuranRange(quranForm.review_surah,quranForm.review_from_ayah,quranForm.review_to_surah,quranForm.review_to_ayah);
     const reviewPartial = hasAnyQuranRange(quranForm.review_surah,quranForm.review_from_ayah,quranForm.review_to_surah,quranForm.review_to_ayah);
@@ -4394,6 +4420,21 @@ export default function Recitations() {
       if (lessonComplete && !quranForm.lesson_evaluation) throw new Error("حدد تقييم الدرس.");
       if (reviewPartial && !reviewComplete) throw new Error("أكمل نطاق المراجعة: من سورة وآية إلى سورة وآية.");
       if (reviewComplete && !quranForm.review_evaluation) throw new Error("حدد تقييم المراجعة.");
+      if (consolidation) {
+        if (lessonPartial || lessonComplete) {
+          throw new Error("خلال تثبيت السورة لا يُسجل حفظ جديد. أكمل تثبيت السورة أولًا.");
+        }
+        if (!reviewComplete || quranForm.review_surah !== consolidation.surah ||
+          quranForm.review_to_surah !== consolidation.surah) {
+          throw new Error("سجّل مراجعة تثبيت السورة المحددة قبل الانتقال إلى حفظ جديد.");
+        }
+        if (!editing && (
+          Number(quranForm.review_from_ayah) !== consolidation.startAyah ||
+          Number(quranForm.review_to_ayah) > consolidation.endAyah
+        )) {
+          throw new Error("نطاق تثبيت السورة يجب أن يبدأ من الجزء المطلوب ولا يتجاوزه.");
+        }
+      }
       if (lessonComplete && planSuggestion?.generatedLesson) await resolveGeneratedCompletion({track:"lesson",generated:planSuggestion.generatedLesson,
         actualEndSurah:quranForm.to_surah,actualEndAyah:quranForm.to_ayah,evaluation:quranForm.lesson_evaluation,direction:planSuggestion.memorization_direction});
       if (reviewComplete && planSuggestion?.generatedReview) await resolveGeneratedCompletion({track:"review",generated:planSuggestion.generatedReview,
@@ -4408,6 +4449,10 @@ export default function Recitations() {
         ...sideLessonPayload({original,changed:quranForm.side_amount_changed,faces:quranForm.side_lesson_faces,lines:quranForm.side_lesson_lines,evaluation:quranForm.next_evaluation}),
         review_surah:textOrNull(quranForm.review_surah),review_from_ayah:numberOrNull(quranForm.review_from_ayah),review_to_surah:textOrNull(quranForm.review_to_surah),review_to_ayah:numberOrNull(quranForm.review_to_ayah),
         review_evaluation:textOrNull(quranForm.review_evaluation),review_faces:reviewComplete?null:numberOrNull(quranForm.review_faces),notes:textOrNull(commonForm.notes),points:quranPoints,
+        surah_consolidation_origin_id: consolidation?.originId || null,
+        surah_consolidation_surah: consolidation?.surah || null,
+        surah_consolidation_step: consolidation?.step || null,
+        surah_consolidation_total: consolidation?.total || null,
       };
       await saveToTable({table:"recitations",type:"quran",payload,points:quranPoints,reason:"تسميع القرآن",afterPersist:syncQuranEngineAfterSave});
     } catch (error) { showToast(error.message || "تعذر حفظ التسميع","error"); }
@@ -4773,6 +4818,21 @@ export default function Recitations() {
       type === "quran" &&
       postPersistResult
     ) {
+      if (planSuggestion?.consolidation && persistedRecord?.surah_consolidation_origin_id) {
+        const step = planSuggestion.consolidation.step;
+        const total = planSuggestion.consolidation.total;
+        const finishedStep = persistedRecord.review_evaluation !== "إعادة" &&
+          Number(persistedRecord.review_to_ayah) >= Number(planSuggestion.consolidation.endAyah) &&
+          persistedRecord.review_to_surah === planSuggestion.consolidation.surah;
+        showToast(
+          finishedStep
+            ? step < total
+              ? `تم تثبيت الجزء ${step} من ${total}، والجزء التالي في جلسة التسميع القادمة.`
+              : "اكتمل تثبيت السورة. يمكن بدء السورة التالية في جلسة التسميع القادمة."
+            : "لم يكتمل تثبيت السورة؛ سيُعاد الجزء نفسه في الجلسة القادمة.",
+          "info"
+        );
+      } else {
       const nextParts = [];
 
       if (postPersistResult.lesson) {
@@ -4805,6 +4865,7 @@ export default function Recitations() {
           "تم تسجيل الجلسة ولا يوجد مطلوب تالٍ داخل حدود الخطة الحالية لهذا المسار",
           "info"
         );
+      }
       }
     }
 

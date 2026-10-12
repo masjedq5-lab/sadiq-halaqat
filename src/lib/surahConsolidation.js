@@ -34,8 +34,8 @@ export function nextSurahConsolidation({
   const requested = savedTotal || (Number(preferredDays) === 2 ? 2 : 1);
   const total = requested === 2 && count > 1 ? 2 : 1;
 
-  const completedStep = relevant.reduce((highest, row) => {
-    // 'إعادة' never advances the reinforcement sequence.
+  const completedSteps = relevant.reduce((steps, row) => {
+    // 'إعادة' and a partial review never complete a reinforcement step.
     const rowStep = Number(row.surah_consolidation_step) || 0;
     const requiredEnd = total === 2 && rowStep === 1 ? Math.floor(count / 2) : count;
     const expectedStart = total === 2 && rowStep === 2 ? Math.floor(count / 2) + 1 : 1;
@@ -44,13 +44,15 @@ export function nextSurahConsolidation({
       !row.review_surah || row.review_surah !== lesson.to_surah ||
       row.review_to_surah !== lesson.to_surah ||
       Number(row.review_from_ayah) > expectedStart ||
-      Number(row.review_to_ayah) < requiredEnd) return highest;
-    return Math.max(highest, rowStep);
-  }, 0);
+      Number(row.review_to_ayah) < requiredEnd) return steps;
+    steps.add(rowStep);
+    return steps;
+  }, new Set());
 
-  if (completedStep >= total) return null;
-
-  const step = completedStep + 1;
+  // Both halves must remain accepted: editing/deleting the first review
+  // cannot leave the student's second-half completion incorrectly unlocked.
+  if (completedSteps.has(1) && (total === 1 || completedSteps.has(2))) return null;
+  const step = completedSteps.has(1) ? 2 : 1;
   const midpoint = Math.floor(count / 2);
   return {
     key: `${lesson.id}-${lesson.to_surah}`,

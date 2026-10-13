@@ -61,6 +61,9 @@ jobs:
       - name: Surah completion reinforcement regression tests
         run: npm run test:surah-consolidation
 
+      - name: Memorized-scope input and Mushaf validation regression tests
+        run: npm run test:memorized-scope
+
       - name: Absent student recitation regression tests
         run: npm run test:attendance
 

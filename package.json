@@ -23,6 +23,7 @@
     "security:ui": "node scripts/verify-security-ui.mjs",
     "test:side-lessons": "node scripts/verify-simple-side-lessons.mjs",
     "test:surah-consolidation": "node scripts/verify-surah-consolidation.mjs",
+    "test:memorized-scope": "node scripts/verify-memorized-scope.mjs",
     "test:performance": "vite build --manifest && node scripts/verify-performance.mjs",
     "test:calendar": "node scripts/verify-calendar.mjs",
     "test:attendance": "node scripts/verify-recitation-attendance.mjs"

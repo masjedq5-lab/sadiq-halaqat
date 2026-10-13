@@ -749,19 +749,14 @@ async function generateAutomaticQuranRange({
 function hasAnyRevisionScope(row) {
   return Boolean(
     String(row?.revision_scope_start_surah || "").trim() ||
-    Number(row?.revision_scope_start_ayah || 0) > 0 ||
+    parseScopeAyah(row?.revision_scope_start_ayah) ||
     String(row?.revision_scope_end_surah || "").trim() ||
-    Number(row?.revision_scope_end_ayah || 0) > 0
+    parseScopeAyah(row?.revision_scope_end_ayah)
   );
 }
 
 function hasCompleteRevisionScope(row) {
-  return Boolean(
-    String(row?.revision_scope_start_surah || "").trim() &&
-    Number(row?.revision_scope_start_ayah || 0) > 0 &&
-    String(row?.revision_scope_end_surah || "").trim() &&
-    Number(row?.revision_scope_end_ayah || 0) > 0
-  );
+  return !manualScopeError({...row, revision_scope_mode: "manual"});
 }
 
 async function getRevisionCycleBounds({
@@ -781,9 +776,9 @@ async function getRevisionCycleBounds({
 
     return {
       startSurah: row.revision_scope_start_surah,
-      startAyah: Number(row.revision_scope_start_ayah),
+      startAyah: parseScopeAyah(row.revision_scope_start_ayah),
       endSurah: row.revision_scope_end_surah,
-      endAyah: Number(row.revision_scope_end_ayah),
+      endAyah: parseScopeAyah(row.revision_scope_end_ayah),
       source: "manual",
     };
   }
@@ -4106,6 +4101,22 @@ export default function MonthlyPlan() {
     );
 
     if (revisionScopeField) {
+      if (nextSnapshot.revision_scope_mode === "manual" &&
+          manualScopeError(nextSnapshot)) {
+        // Selecting manual mode is not an error. Wait until all four fields
+        // are selected before regenerating the revision route.
+        const key = `${studentId}-revision`;
+        const timer = routeTimerRef.current.get(key);
+        if (timer) clearTimeout(timer);
+        routeTimerRef.current.delete(key);
+        routeRequestRef.current.set(key, Number(routeRequestRef.current.get(key) || 0) + 1);
+        setRows(current => current.map(item =>
+          Number(item.student_id) === Number(studentId)
+            ? { ...item, revision_generating: false, revision_route_error: "" }
+            : item
+        ));
+        return;
+      }
       if (
         !isLockedPlan(currentRow) &&
         nextSnapshot.revision_auto_range &&
@@ -4271,8 +4282,7 @@ export default function MonthlyPlan() {
 
       if (
         row.revision_scope_mode === "manual" &&
-        (revAny || Number(row.revision_daily_amount || 0) > 0) &&
-        !hasCompleteRevisionScope(row)
+        Boolean(manualScopeError(row))
       ) {
         showToast(
           `أكمل نطاق محفوظ الطالب ${row.student_name} قبل إرسال الخطة`,

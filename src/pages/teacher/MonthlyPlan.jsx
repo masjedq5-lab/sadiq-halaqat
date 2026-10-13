@@ -10,6 +10,7 @@ import {
 
 import StudentLessonActivity from "../../components/StudentLessonActivity";
 import { effectiveMonthlyPlans, learningDate, saveLearningPolicy } from "../../lib/effectiveLearning";
+import { manualScopeError, parseScopeAyah, validateManualScopeAgainstMushaf } from "../../lib/memorizedScopeValidation";
 
 import { BadgeCheck, BookOpen, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Copy, Layers3, Loader2, MessageSquareText, RefreshCw, Save, Search, Send, ShieldCheck, Sparkles, Target, Undo2, UserRound, Users, X } from "lucide-react";
 
@@ -4551,9 +4552,13 @@ export default function MonthlyPlan() {
     };
   }
 
-  async function saveQuranStudentPolicy(row) {
+  async function saveQuranStudentPolicy(row, { scopeValidated = false } = {}) {
     if (!isQuranGoal(row.learning_goal)) return;
     const manual = row.revision_scope_mode === "manual";
+    // Reject incomplete or nonexistent Quran positions before writing policy.
+    if (manual && !scopeValidated) {
+      await validateManualScopeAgainstMushaf(row, supabase);
+    }
     await saveLearningPolicy(row.student_id, selectedHalaqa, {
 
 
@@ -4563,9 +4568,9 @@ export default function MonthlyPlan() {
       boundary_suggestion_mode: row.boundary_suggestion_mode || "ayah_and_surah",
       revision_scope_mode: manual ? "manual" : "lesson_derived",
       revision_scope_start_surah: manual ? textOrNull(row.revision_scope_start_surah) : null,
-      revision_scope_start_ayah: manual ? numberOrNull(row.revision_scope_start_ayah) : null,
+      revision_scope_start_ayah: manual ? parseScopeAyah(row.revision_scope_start_ayah) : null,
       revision_scope_end_surah: manual ? textOrNull(row.revision_scope_end_surah) : null,
-      revision_scope_end_ayah: manual ? numberOrNull(row.revision_scope_end_ayah) : null,
+      revision_scope_end_ayah: manual ? parseScopeAyah(row.revision_scope_end_ayah) : null,
       revision_scope_updated_at: manual ? row.revision_scope_updated_at || null : null,
       lesson_enabled: row.lesson_enabled,
       lesson_daily_amount: numberOrNull(row.memorization_daily_amount),
@@ -4583,8 +4588,13 @@ export default function MonthlyPlan() {
       showToast("تم حفظ نطاق محفوظ الطالب", "success");
       await loadMonthlyPlan();
     } catch (error) {
-      showToast(String(error?.message || "").includes("MEMORIZED_SCOPE")
-        ? "أكمل حدود محفوظ الطالب" : error?.message || "تعذر حفظ نطاق المحفوظ", "error");
+      const rawMessage = String(error?.message || "");
+      const message = rawMessage.includes("MEMORIZED_SCOPE_INVALID")
+        ? "حدود المحفوظ غير صحيحة. اختر السورتين وتأكد من أرقام الآيات."
+        : rawMessage.includes("POLICY_DATE_BEFORE_LAST_CHANGE")
+          ? "تاريخ التغيير يسبق آخر تعديل محفوظ للطالب."
+          : rawMessage || "تعذر حفظ نطاق المحفوظ";
+      showToast(message, "error");
     }
   }
 
@@ -4653,6 +4663,23 @@ export default function MonthlyPlan() {
       return true;
     }
 
+    // Validate all manual Mushaf ranges BEFORE saving any monthly plan,
+    // so a bad scope cannot leave half of the operation already persisted.
+    try {
+      for (const row of saveRows) {
+        if (isQuranGoal(row.learning_goal) && row.revision_scope_mode === "manual") {
+          try {
+            await validateManualScopeAgainstMushaf(row, supabase);
+          } catch (error) {
+            throw new Error(`${row.student_name}: ${error?.message || "تحقق من حدود المحفوظ"}`);
+          }
+        }
+      }
+    } catch (error) {
+      showToast(error?.message || "تعذر التحقق من حدود المحفوظ", "error");
+      return false;
+    }
+
     if (
       controlLoading
     ) {
@@ -4690,7 +4717,7 @@ export default function MonthlyPlan() {
                 throw error;
               }
 
-              await saveQuranStudentPolicy(row);
+              await saveQuranStudentPolicy(row, { scopeValidated: true });
               return;
             }
 
@@ -4713,7 +4740,7 @@ export default function MonthlyPlan() {
               throw error;
             }
 
-            await saveQuranStudentPolicy(row);
+            await saveQuranStudentPolicy(row, { scopeValidated: true });
           }
         )
       );
@@ -6705,12 +6732,14 @@ function ReviewMemoryScopeEditor({
   onChange,
 }) {
   const manual = scope?.mode === "manual";
-  const complete = manual && Boolean(
-    String(scope?.startSurah || "").trim() &&
-    Number(scope?.startAyah || 0) > 0 &&
-    String(scope?.endSurah || "").trim() &&
-    Number(scope?.endAyah || 0) > 0
-  );
+  const missing = manualScopeError({
+    revision_scope_mode: scope?.mode,
+    revision_scope_start_surah: scope?.startSurah,
+    revision_scope_start_ayah: scope?.startAyah,
+    revision_scope_end_surah: scope?.endSurah,
+    revision_scope_end_ayah: scope?.endAyah,
+  });
+  const complete = manual && !missing;
 
   return (
     <section className={`review-memory-scope compact ${manual ? "manual" : "derived"}`}>
@@ -6775,9 +6804,9 @@ function ReviewMemoryScopeEditor({
             />
           </div>
 
-          <div className={`review-memory-scope-status compact ${complete ? "ready" : "waiting"}`}>
+          <div className={`review-memory-scope-status compact ${complete ? "ready" : "waiting"}`} aria-live="polite">
             {complete ? <CheckCircle2 size={14} /> : <CircleAlert size={14} />}
-            <span>{complete ? "نطاق المحفوظ جاهز" : "أكمل حدود المحفوظ"}</span>
+            <span>{complete ? "نطاق المحفوظ جاهز للحفظ" : missing}</span>
           </div>
         </>
       )}
@@ -6847,6 +6876,14 @@ function PlanSection({
     normalizedRouteSegments.length > 1 &&
     Number(cycleInfo?.wrapCount || 0) > 0;
 
+  const scopeSaveError = type === "revision" ? manualScopeError({
+    revision_scope_mode: reviewScope?.mode,
+    revision_scope_start_surah: reviewScope?.startSurah,
+    revision_scope_start_ayah: reviewScope?.startAyah,
+    revision_scope_end_surah: reviewScope?.endSurah,
+    revision_scope_end_ayah: reviewScope?.endAyah,
+  }) : "";
+
   const dailyValue = Number(dailyAmount || 0);
   const dailyLabel = dailyValue
     ? `${formatFaces(dailyValue)} ${dailyUnit === "lines" ? "سطر" : "صفحة"}`
@@ -6892,8 +6929,10 @@ function PlanSection({
               locked={false}
               onChange={onChange}
             />
-            <button type="button" className="plan-view-button" onClick={onRevisionScopeSaved}>
-              <Save size={14} /> حفظ نطاق المحفوظ
+            <button type="button" className="plan-view-button" onClick={onRevisionScopeSaved}
+              disabled={Boolean(scopeSaveError)}
+              title={scopeSaveError || undefined}>
+              <Save size={14} /> {reviewScope?.mode === "manual" ? "حفظ نطاق المحفوظ" : "حفظ الإعداد التلقائي"}
             </button></div>
           )}
 

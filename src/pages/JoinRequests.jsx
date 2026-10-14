@@ -1,17 +1,7 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
-import {
-  CheckCircle2,
-  Clock3,
-  GraduationCap,
-  Loader2,
-  RefreshCw,
-  Search,
-  ShieldCheck,
-  UserRoundCheck,
-  Users,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, Clock3, GraduationCap, Loader2, RefreshCw, Search, UserRoundCheck, Users, XCircle } from "lucide-react";
 
 import AppPage from "../components/AppPage";
 import { supabase } from "../lib/supabase";
@@ -185,20 +175,8 @@ export default function JoinRequests() {
   return (
     <AppPage>
       <div className="jr-page" dir="rtl">
-        <section className="jr-hero">
-          <div>
-            <span className="jr-kicker">
-              <ShieldCheck size={16} />
-              بوابة المشرف
-            </span>
-            <h1>طلبات الالتحاق</h1>
-            <p>
-              اعتماد طلبات المعلمين والطلاب للمساجد والحلقات
-              التابعة لك.
-            </p>
-          </div>
-
-          <button
+        <CompactPageHeader title="طلبات الالتحاق" actions={<>
+<button
             type="button"
             className="jr-refresh"
             onClick={load}
@@ -207,7 +185,7 @@ export default function JoinRequests() {
             <RefreshCw size={17} className={loading ? "jr-spin" : ""} />
             تحديث
           </button>
-        </section>
+</>} />
 
         <section className="jr-stats">
           <Stat icon={Clock3} label="بانتظار الموافقة" value={stats.pending} />

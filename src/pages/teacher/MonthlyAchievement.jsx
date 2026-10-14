@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import {monthlySideLessonTotals,withSideLessonMetrics,formatSideLessonTotal,formatMonthlySideLessons} from "../../lib/sideLesson";
 import { effectiveMonthlyPlans } from "../../lib/effectiveLearning";
@@ -3347,47 +3348,8 @@ export default function MonthlyAchievement() {
           HERO
       ================================================= */}
 
-      <section
-        className="monthly-hero"
-      >
-        <div
-          className="monthly-hero-main"
-        >
-          <div
-            className="monthly-hero-icon"
-          >
-            <Target
-              size={24}
-            />
-          </div>
-
-          <div>
-            <div
-              className="monthly-eyebrow"
-            >
-              <ShieldCheck
-                size={13}
-              />
-
-              مركز متابعة
-              الإنجاز
-            </div>
-
-            <h1>
-              الإنجاز الشهري
-            </h1>
-
-            <p>
-              احتساب فعلي من
-              جلسات التسميع، مع
-              إمكانية إضافة الأوجه
-              غير المسجلة يدويًا
-              وتوثيق مصدر كل رقم.
-            </p>
-          </div>
-        </div>
-
-        <div
+      <CompactPageHeader title="الإنجاز الشهري" actions={<>
+<div
           className="monthly-actions"
         >
           <button
@@ -3502,7 +3464,7 @@ export default function MonthlyAchievement() {
             </span>
           </button>
         </div>
-      </section>
+</>} />
 
       {/* =================================================
           UNSAVED

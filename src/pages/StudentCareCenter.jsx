@@ -1,21 +1,6 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import { useEffect, useMemo, useState } from "react";
-import {
-  Activity,
-  AlertTriangle,
-  BookOpenCheck,
-  CheckCircle2,
-  ChevronLeft,
-  CircleDot,
-  HeartHandshake,
-  RefreshCw,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  UserRoundSearch,
-  Users,
-  X,
-} from "lucide-react";
+import { Activity, AlertTriangle, BookOpenCheck, CheckCircle2, ChevronLeft, CircleDot, RefreshCw, Search, ShieldCheck, Sparkles, Target, UserRoundSearch, Users, X } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import "./StudentCareCenter.css";
 
@@ -258,17 +243,11 @@ export default function StudentCareCenter() {
 
   return (
     <div className="care-page" dir="rtl">
-      <header className="care-hero">
-        <div className="care-hero-mark"><HeartHandshake size={28}/></div>
-        <div className="care-hero-copy">
-          <span>مركز العناية بالطالب</span>
-          <h1>نرى الإشارة مبكرًا… والمعلم يقرر التدخل</h1>
-          <p>تحليل موحّد للحضور والتسميع والخطة والمراجعة والاختبارات. المؤشرات لا تغيّر الخطة تلقائيًا ولا تفترض سببًا لم يؤكده المعلم.</p>
-        </div>
-        <button type="button" className="care-refresh" onClick={() => halaqaId && loadCare(Number(halaqaId))} disabled={loadingRows}>
+      <CompactPageHeader title="العناية بالطلاب" actions={<>
+<button type="button" className="care-refresh" onClick={() => halaqaId && loadCare(Number(halaqaId))} disabled={loadingRows}>
           <RefreshCw size={17}/><span>{loadingRows ? "جارٍ التحديث" : "تحديث"}</span>
         </button>
-      </header>
+</>} />
 
       {error && <div className="care-error"><AlertTriangle size={17}/><span>{error}</span></div>}
 

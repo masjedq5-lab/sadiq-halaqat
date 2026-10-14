@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter, calendarLocale} from "../lib/calendar";
 import useRecitationAttendance from "../lib/useRecitationAttendance";
 import { assertRecitationAttendance } from "../lib/recitationAttendance";
@@ -859,29 +860,8 @@ const [selectedDate, setSelectedDate] =
         <div className="page-shell">
           {/* HEADER */}
 
-          <header className="page-header">
-            <div className="header-main">
-              <div className="header-icon">
-                <BookOpen size={26} />
-              </div>
-
-              <div>
-                <div className="eyebrow">
-                  نظام الصديق
-                </div>
-
-                <h1>
-                  التسميع اليومي
-                </h1>
-
-                <p>
-                  تسجيل ومتابعة حفظ ومراجعة
-                  القرآن الكريم للطلاب
-                </p>
-              </div>
-            </div>
-
-            <button type="button"
+          <CompactPageHeader title="التسميع اليومي" actions={<>
+<button type="button"
               className="ghost-button"
               onClick={() =>
                 navigate("/admin")
@@ -890,7 +870,7 @@ const [selectedDate, setSelectedDate] =
               <ArrowRight size={18} />
               لوحة المشرف
             </button>
-          </header>
+</>} />
 
           {/* STATS */}
 

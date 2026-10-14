@@ -1,5 +1,6 @@
+import CompactPageHeader from "../CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
-import { OrnamentScene } from '../ornaments/Ornament';
+
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link, useNavigate } from "react-router-dom";
@@ -51,21 +52,13 @@ export function HalaqaFrame({ id, data, tab, loading, reload, children }) {
   const status = { active: "نشطة", inactive: "غير نشطة", paused: "متوقفة مؤقتًا", closed: "مغلقة", archived: "مؤرشفة" }[h.status] || "حالة غير محددة";
   return (
     <main className="hm-page" dir="rtl">
-      <header className="hm-hero">
-        <OrnamentScene primary="01-noor" />
-        <div className="hm-hero-top">
-          <button type="button" className="hm-back" onClick={() => navigate("/admin/halaqat")}><ArrowRight size={16} /> الحلقات</button>
-          <span className={`hm-hero-status ${h.status === "active" ? "is-active" : ""}`}><i /> {status}</span>
-        </div>
-        <div className="hm-hero-content">
-          <div>
-            <span className="hm-eyebrow"><Building2 size={15} /> {h.mosque_name || "إدارة الحلقة"}</span>
-            <h1>{h.name || "الحلقة"}</h1>
-            <p>{tab === "teachers" ? "فريق تعليمي متكامل، وأدوار واضحة لكل معلم." : "كل طالب أمامك، ومتابعته تبدأ من ربطه بالمعلم المناسب."}</p>
-          </div>
-          <div className="hm-hero-count"><span>{tab === "teachers" ? "معلمو الحلقة" : "طلاب الحلقة"}</span><strong>{number(tab === "teachers" ? data.teachers.length : data.students.length)}</strong></div>
-        </div>
-      </header>
+      <CompactPageHeader title={h.name || "الحلقة"} actions={<>
+<button type="button" className="hm-back" onClick={() => navigate("/admin/halaqat")}><ArrowRight size={16} /> الحلقات</button>
+</>}>
+<span className={`hm-hero-status ${h.status === "active" ? "is-active" : ""}`}><i /> {status}</span>
+<span className="hm-eyebrow"><Building2 size={15} /> {h.mosque_name || "إدارة الحلقة"}</span>
+<div className="hm-hero-count"><span>{tab === "teachers" ? "معلمو الحلقة" : "طلاب الحلقة"}</span><strong>{number(tab === "teachers" ? data.teachers.length : data.students.length)}</strong></div>
+</CompactPageHeader>
       <div className="hm-nav-row">
         <nav className="hm-tabs" aria-label="إدارة الحلقة">
           <Link to={`/admin/halaqa-teachers/${id}`} className={tab === "teachers" ? "is-active" : ""} aria-current={tab === "teachers" ? "page" : undefined}><GraduationCap size={17} /> المعلمون <span>{number(data.teachers.length)}</span></Link>

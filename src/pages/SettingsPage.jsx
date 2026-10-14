@@ -1,11 +1,8 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import CalendarSettings from "../components/CalendarSettings";
 import Ornament from '../components/ornaments/Ornament';
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  Settings, SlidersHorizontal, Palette, Tv, Quote, ShieldCheck, Info,
-  Check, RotateCcw, Type, LayoutGrid, MonitorCog, Save, ChevronLeft,
-  MousePointer2, Accessibility, History, AlertCircle,
-} from "lucide-react";
+import { SlidersHorizontal, Palette, Tv, Quote, ShieldCheck, Info, Check, RotateCcw, Type, LayoutGrid, Save, ChevronLeft, MousePointer2, Accessibility, History, AlertCircle } from "lucide-react";
 import TVSettings from "../components/settings/TVSettings";
 import QuoteManager from "../components/settings/QuoteManager";
 import SecuritySettings from "../components/settings/SecuritySettings";
@@ -96,16 +93,7 @@ export default function SettingsPage() {
 
   return <div className="settings-page-pro" dir="rtl">
     <IslamicBackdrop />
-    <header className="settings-hero-pro">
-      <div>
-        <span className="settings-eyebrow"><Settings size={15} /> الصِّديق · مركز الإعدادات</span>
-        <div className="settings-hero-title">
-          <span className="settings-hero-icon"><MonitorCog size={25} /></span>
-          <div><h1>الإعدادات</h1><p>اضبط تجربة الاستخدام بما يناسبك.</p></div>
-        </div>
-      </div>
-      <div className="settings-hero-seal" aria-hidden="true"><IslamicSeal /></div>
-    </header>
+    <CompactPageHeader title="الإعدادات" />
     <div className="settings-layout-pro">
       <aside className="settings-nav-pro">
         <div className="settings-nav-head"><span>أقسام الإعدادات</span><small>{TABS.length} أقسام</small></div>

@@ -1,5 +1,6 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
-import { OrnamentScene } from '../components/ornaments/Ornament';
+
 import {
   useCallback,
   useEffect,
@@ -7,7 +8,7 @@ import {
   useState,
 } from "react";
 
-import { Building2, Search, Plus, RefreshCw, Loader2, PencilLine, Power, PowerOff, X, Save, ShieldCheck, Clock3, CheckCircle2, XCircle, CircleAlert, Users, GraduationCap, BookOpenCheck, Sparkles, Send, FileText, SlidersHorizontal, MapPin, Landmark, Ban, RotateCcw, Activity } from "lucide-react";
+import { Building2, Search, Plus, RefreshCw, Loader2, PencilLine, Power, PowerOff, X, Save, ShieldCheck, Clock3, CheckCircle2, XCircle, CircleAlert, Users, GraduationCap, BookOpenCheck, Sparkles, Send, FileText, SlidersHorizontal, MapPin, Landmark, Ban, RotateCcw } from "lucide-react";
 
 import { supabase } from "../lib/supabase";
 import { useToast } from "../components/Toast";
@@ -801,47 +802,8 @@ export default function Mosques() {
       className="mosques-command-page"
       dir="rtl"
     >
-      <section className="mosques-hero">
-        <OrnamentScene primary="02-shams" />
-
-        <div className="mosques-hero-copy">
-          <div className="mosques-eyebrow">
-            <span className="mosques-eyebrow-mark">
-              <Sparkles size={14} />
-            </span>
-            مركز الإدارة المؤسسية
-          </div>
-
-          <h1>
-            إدارة المساجد المرتبطة
-          </h1>
-
-          <p>
-            مركز موحّد للمساجد التي تشرف عليها؛
-            تعديل البيانات، متابعة الحالة التشغيلية،
-            إدارة التفعيل، ورفع طلبات إضافة جديدة
-            إلى مدير النظام.
-          </p>
-
-          <div className="mosques-hero-tags">
-            <span>
-              <ShieldCheck size={14} />
-              صلاحيات مرتبطة بالمشرف
-            </span>
-
-            <span>
-              <Activity size={14} />
-              متابعة تشغيلية مباشرة
-            </span>
-
-            <span>
-              <Clock3 size={14} />
-              طلبات إضافة بمسار اعتماد
-            </span>
-          </div>
-        </div>
-
-        <div className="mosques-hero-actions">
+      <CompactPageHeader title="المساجد" actions={<>
+<div className="mosques-hero-actions">
           <button
             type="button"
             className="mosques-button ghost"
@@ -870,7 +832,7 @@ export default function Mosques() {
             طلب إضافة مسجد
           </button>
         </div>
-      </section>
+</>} />
 
       <section className="mosques-metrics-grid">
         <MetricCard

@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import {
   useEffect,
@@ -1307,10 +1308,54 @@ export default function Profile() {
           HERO
       ================================================= */}
 
-      <section
-        className="profile-hero"
-      >
-        <div
+      <CompactPageHeader title={profile?.display_name ||
+                  profile?.full_name ||
+                  roleLabel} actions={<>
+<div
+          className="profile-hero-actions"
+        >
+          <button
+            type="button"
+            className="profile-security-btn"
+            onClick={() =>
+              setShowPasswordModal(
+                true
+              )
+            }
+          >
+            <LockKeyhole
+              size={16}
+            />
+
+            تغيير كلمة المرور
+          </button>
+
+          <button
+            type="button"
+            className="profile-logout-btn"
+            onClick={
+              handleLogout
+            }
+            disabled={
+              signingOut
+            }
+          >
+            {signingOut ? (
+              <Loader2
+                size={16}
+                className="profile-spin"
+              />
+            ) : (
+              <LogOut
+                size={16}
+              />
+            )}
+
+            تسجيل الخروج
+          </button>
+        </div>
+</>}>
+<div
           className="profile-identity"
         >
           <div
@@ -1368,11 +1413,7 @@ export default function Profile() {
             <div
               className="profile-name-row"
             >
-              <h1>
-                {profile?.display_name ||
-                  profile?.full_name ||
-                  roleLabel}
-              </h1>
+
 
               <span
                 className={
@@ -1425,51 +1466,7 @@ export default function Profile() {
             </div>
           </div>
         </div>
-
-        <div
-          className="profile-hero-actions"
-        >
-          <button
-            type="button"
-            className="profile-security-btn"
-            onClick={() =>
-              setShowPasswordModal(
-                true
-              )
-            }
-          >
-            <LockKeyhole
-              size={16}
-            />
-
-            تغيير كلمة المرور
-          </button>
-
-          <button
-            type="button"
-            className="profile-logout-btn"
-            onClick={
-              handleLogout
-            }
-            disabled={
-              signingOut
-            }
-          >
-            {signingOut ? (
-              <Loader2
-                size={16}
-                className="profile-spin"
-              />
-            ) : (
-              <LogOut
-                size={16}
-              />
-            )}
-
-            تسجيل الخروج
-          </button>
-        </div>
-      </section>
+</CompactPageHeader>
 
       {/* =================================================
           STATS

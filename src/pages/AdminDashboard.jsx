@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
 import {monthRange, dateKey} from "../lib/calendar";
 import Ornament, { OrnamentScene } from '../components/ornaments/Ornament';
@@ -531,38 +532,8 @@ export default function AdminDashboard() {
         dir="rtl"
       >
         {/* HERO */}
-        <section className="supervisor-hero">
-          <IslamicHeroOrnament />
-
-          <div className="supervisor-hero-grid">
-            <div className="supervisor-hero-content">
-              <div className="supervisor-hero-eyebrow">
-                <HeroSeal />
-                <span>مركز الإشراف والمتابعة</span>
-              </div>
-
-              <h1 className="supervisor-hero-title">
-                لوحة التحكم
-              </h1>
-
-              <p className="supervisor-hero-text">
-                رؤية موحّدة لأداء الحلقات والطلاب والمعلمين،
-                ومتابعة المؤشرات اليومية والإنجاز من مكان واحد.
-              </p>
-
-              <Ornament name="10-ittizan" className="supervisor-hero-divider" />
-            </div>
-
-            <div className="supervisor-hero-side">
-              <div className="supervisor-date-card">
-                <span>تاريخ اليوم</span>
-                <strong>
-                  {todayHijri}
-                </strong>
-
-              </div>
-
-              <div className="supervisor-vital-card">
+        <CompactPageHeader title="لوحة التحكم" dateLabel={todayHijri}>
+<div className="supervisor-vital-card">
                 <div className="supervisor-vital-head">
                   <span>
                     المؤشر الحيوي
@@ -590,9 +561,7 @@ export default function AdminDashboard() {
                   الحلقات.
                 </p>
               </div>
-            </div>
-          </div>
-        </section>
+</CompactPageHeader>
 
         {/* OVERVIEW STATS */}
         <section className="dashboard-section">

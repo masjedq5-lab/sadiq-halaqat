@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import CalendarInput from "../../components/CalendarInput";
 import {
@@ -773,25 +774,7 @@ export default function Records() {
 
   return (
     <div className="teacher-records-page" dir="rtl">
-      <section className="records-hero">
-        <div className="records-hero-copy">
-          <span className="records-kicker">
-            <Database size={14} />
-            إدارة بيانات الحلقة
-          </span>
-
-          <h1>السجلات</h1>
-
-          <p>
-            استعرض سجلات حلقاتك في مكان واحد، صفِّها حسب النوع والتاريخ،
-            ثم أرشف السجل للاحتفاظ به أو احذفه نهائيًا عند الحاجة.
-          </p>
-        </div>
-
-        <div className="records-hero-icon">
-          <Archive size={31} />
-        </div>
-      </section>
+      <CompactPageHeader title="السجلات" />
 
       <section className="records-storage-note">
         <ShieldAlert size={18} />

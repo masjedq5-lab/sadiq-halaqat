@@ -1,5 +1,6 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
-import { OrnamentScene } from '../components/ornaments/Ornament';
+
 import {
   useCallback,
   useEffect,
@@ -1246,41 +1247,8 @@ export default function Notifications() {
 
   return (
     <div className="notifications-page" dir="rtl">
-      <section className="notifications-hero">
-        <OrnamentScene primary="02-shams" />
-
-        <div className="notifications-hero-copy">
-          <div className="notifications-eyebrow">
-            <span>
-              <Sparkles size={14} />
-            </span>
-            مركز التواصل المؤسسي
-          </div>
-
-          <h1>الإشعارات والتواصل</h1>
-
-          <p>
-            صندوق موحّد للمشرف يجمع الإشعارات النظامية والرسائل المباشرة،
-            مع إرسال آمن للمعلمين والطلاب ومتابعة القراءة والاستجابة.
-          </p>
-
-          <div className="notifications-hero-tags">
-            <span>
-              <ShieldCheck size={14} />
-              نطاق إرسال محمي
-            </span>
-            <span>
-              <BellRing size={14} />
-              تحديث مباشر
-            </span>
-            <span>
-              <MessageCircleReply size={14} />
-              محادثات قابلة للرد
-            </span>
-          </div>
-        </div>
-
-        <div className="notifications-hero-actions">
+      <CompactPageHeader title="الإشعارات والتواصل" actions={<>
+<div className="notifications-hero-actions">
           <button
             type="button"
             className="notifications-button hero-ghost"
@@ -1304,7 +1272,22 @@ export default function Notifications() {
             إنشاء رسالة
           </button>
         </div>
-      </section>
+</>}>
+<div className="notifications-hero-tags">
+            <span>
+              <ShieldCheck size={14} />
+              نطاق إرسال محمي
+            </span>
+            <span>
+              <BellRing size={14} />
+              تحديث مباشر
+            </span>
+            <span>
+              <MessageCircleReply size={14} />
+              محادثات قابلة للرد
+            </span>
+          </div>
+</CompactPageHeader>
 
       <section className="notifications-metrics">
         <MetricCard

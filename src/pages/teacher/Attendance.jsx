@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import { calendarParts, formatDate } from "../../lib/calendar";
 import {displayDateFormatter} from "../../lib/calendar";
 import {getCalendar} from "../../lib/calendar";
@@ -10,31 +11,7 @@ import {
   useState,
 } from "react";
 
-import {
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
-  CalendarOff,
-  Trash2,
-  Check,
-  CheckCircle2,
-  CircleSlash2,
-  ClipboardCheck,
-  Clock3,
-  FileCheck2,
-  Filter,
-  Loader2,
-  RefreshCw,
-  Search,
-  Users,
-  UserRound,
-  X,
-  XCircle,
-  Building2,
-  BookOpen,
-  ShieldCheck,
-  Sparkles,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, CalendarOff, Trash2, Check, CheckCircle2, CircleSlash2, Clock3, FileCheck2, Filter, Loader2, RefreshCw, Search, Users, UserRound, X, XCircle, Building2, BookOpen, Sparkles } from "lucide-react";
 
 import { supabase } from "../../lib/supabase";
 import { useToast } from "../../components/Toast";
@@ -2158,52 +2135,8 @@ export default function Attendance() {
           HERO
       ================================================= */}
 
-      <section
-        className="attendance-hero"
-      >
-        <div
-          className="attendance-hero-content"
-        >
-          <div
-            className="attendance-hero-icon"
-          >
-            <ClipboardCheck
-              size={23}
-            />
-          </div>
-
-          <div>
-            <div
-              className="attendance-eyebrow"
-            >
-              <ShieldCheck
-                size={13}
-              />
-
-              بوابة المعلم
-            </div>
-
-            <h1
-              className="attendance-title"
-            >
-              الحضور والغياب
-            </h1>
-
-            <p
-              className="attendance-subtitle"
-            >
-              تسجيل حضور طلاب
-              حلقاتك ومتابعة
-              الالتزام اليومي
-              بسهولة ودقة.
-              {teacher?.full_name
-                ? ` أهلاً ${teacher.full_name}.`
-                : ""}
-            </p>
-          </div>
-        </div>
-
-        <div className="attendance-hero-actions">
+      <CompactPageHeader title="الحضور والغياب" actions={<>
+<div className="attendance-hero-actions">
           <button
             type="button"
             className="attendance-refresh holiday-button"
@@ -2226,7 +2159,7 @@ export default function Attendance() {
             <span className="refresh-text">تحديث البيانات</span>
           </button>
         </div>
-      </section>
+</>} />
 
       {/* =================================================
           DATE PANEL

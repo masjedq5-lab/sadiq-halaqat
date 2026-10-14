@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useToast } from "../components/Toast";
 
-import { UsersRound, UserRound, Search, Pencil, Trash2, ArrowRight, CheckCircle2, XCircle, Phone, BookOpen, GraduationCap, ShieldCheck, Link2, X, Save, RefreshCw, UserCheck, UserX, AlertCircle, Mail, Hash, Activity, AlertTriangle, UserPlus } from "lucide-react";
+import { UsersRound, UserRound, Search, Pencil, Trash2, ArrowRight, CheckCircle2, XCircle, Phone, BookOpen, GraduationCap, ShieldCheck, Link2, X, Save, RefreshCw, UserCheck, UserX, AlertCircle, Mail, Hash, UserPlus } from "lucide-react";
 
 export default function Teachers() {
   const navigate = useNavigate();
@@ -987,88 +987,11 @@ function editTeacher(teacher) {
         {/* SMART MANAGEMENT */}
         {/* ================================================= */}
 
-        <section className="teachers-smart-hero"
-          style={{
-            ...cardStyle,
-            marginBottom: "20px",
-            background:
-              "linear-gradient(135deg,#0A3C36 0%,#0F5148 72%,var(--app-color-12685b,#12685B) 100%)",
-            color: "#fff",
-            border: "1px solid rgba(200,168,75,.24)",
-            overflow: "hidden",
-            position: "relative",
-          }}
-        >
-          <div className="teachers-smart-grid"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(260px,1.2fr) minmax(300px,2fr)",
-              gap: "calc(18px * var(--app-density,1))",
-              alignItems: "center",
-            }}
-          >
-            <div>
-              <div
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: "calc(7px * var(--app-density,1))",
-                  color: "#F1D681",
-                  fontSize: "calc(11px * var(--app-font-scale,1))",
-                  fontWeight: "900",
-                  marginBottom: "7px",
-                }}
-              >
-                <Activity size={15} />
-                مركز الإدارة والمتابعة
-              </div>
-
-              <h2 style={{ margin: 0, fontSize: "calc(21px * var(--app-font-scale,1))", fontWeight: "900" }}>
-                نظرة ذكية على هيئة التعليم
-              </h2>
-
-              <p
-                style={{
-                  margin: "7px 0 0",
-                  color: "rgba(255,255,255,.68)",
-                  fontSize: "calc(12px * var(--app-font-scale,1))",
-                  lineHeight: "1.8",
-                }}
-              >
-                اكتشف النواقص الإدارية بسرعة وتابع ربط المعلمين بالحلقات
-                واكتمال وسائل التواصل من مكان واحد.
-              </p>
-            </div>
-
-            <div
-              className="teachers-smart-metrics"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit,minmax(145px,1fr))",
-                gap: "calc(9px * var(--app-density,1))",
-              }}
-            >
-              <SmartMetric
-                label="تغطية الحلقات"
-                value={`${coverageRate}%`}
-                note={`${assignedTeachers} معلم مرتبط`}
-                icon={<ShieldCheck size={17} />}
-              />
-              <SmartMetric
-                label="بدون حلقة"
-                value={unassignedTeachers}
-                note={unassignedTeachers ? "تحتاج متابعة" : "الوضع مكتمل"}
-                icon={<AlertTriangle size={17} />}
-              />
-              <SmartMetric
-                label="بيانات تواصل ناقصة"
-                value={missingContactTeachers}
-                note="لا جوال ولا بريد"
-                icon={<Mail size={17} />}
-              />
-            </div>
-          </div>
-        </section>
+        <div className="sadiq-inline-summary">
+<span>تغطية الحلقات: <strong>{coverageRate}%</strong> · {assignedTeachers} معلم مرتبط</span>
+<span>بدون حلقة: <strong>{unassignedTeachers}</strong> · {unassignedTeachers ? "تحتاج متابعة" : "الوضع مكتمل"}</span>
+<span>بيانات تواصل ناقصة: <strong>{missingContactTeachers}</strong></span>
+</div>
 
         {/* ================================================= */}
         {/* SEARCH */}

@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
 import {monthlySideLessonTotals,withSideLessonMetrics,formatSideLessonTotal,formatMonthlySideLessons} from "../lib/sideLesson";
 import { effectiveMonthlyPlans } from "../lib/effectiveLearning";
@@ -11,7 +12,7 @@ import {
   useState,
 } from "react";
 
-import { BadgeCheck, BookOpen, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, FileSpreadsheet, FileText, AlertTriangle, CheckCircle2, XCircle, History, Layers3, Loader2, MessageSquareText, Printer, RefreshCw, Save, Search, ShieldCheck, Sparkles, Target, UserRound, Users, X } from "lucide-react";
+import { BadgeCheck, BookOpen, CalendarDays, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, FileSpreadsheet, FileText, AlertTriangle, CheckCircle2, XCircle, History, Layers3, Loader2, MessageSquareText, Printer, RefreshCw, Save, Search, ShieldCheck, Sparkles, UserRound, Users, X } from "lucide-react";
 
 import {
   supabase,
@@ -3089,43 +3090,8 @@ export default function MonthlyAchievement() {
           HERO
       ================================================= */}
 
-      <section
-        className="monthly-hero"
-      >
-        <div
-          className="monthly-hero-main"
-        >
-          <div
-            className="monthly-hero-icon"
-          >
-            <Target
-              size={24}
-            />
-          </div>
-
-          <div>
-            <div
-              className="monthly-eyebrow"
-            >
-              <ShieldCheck
-                size={13}
-              />
-
-              مركز الإدارة
-              والمتابعة
-            </div>
-
-            <h1>
-              الإنجاز الشهري
-            </h1>
-
-            <p>
-              لوحة إدارية شهرية تربط الخطة بالتسميع والحضور والاعتماد، وتكشف الحالات التي تحتاج تدخلًا ومتابعة.
-            </p>
-          </div>
-        </div>
-
-        <div
+      <CompactPageHeader title="الإنجاز الشهري" actions={<>
+<div
           className="monthly-actions"
         >
           <button
@@ -3240,7 +3206,7 @@ export default function MonthlyAchievement() {
             </span>
           </button>
         </div>
-      </section>
+</>} />
 
       {/* =================================================
           UNSAVED

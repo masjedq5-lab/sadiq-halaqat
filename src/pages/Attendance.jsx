@@ -1,13 +1,14 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {calendarLocale} from "../lib/calendar";
 import CalendarInput from "../components/CalendarInput";
-import { OrnamentScene } from '../components/ornaments/Ornament';
+
 import {
   useEffect,
   useMemo,
   useState,
 } from "react";
 
-import { ArrowLeft, ArrowRight, CalendarDays, Check, Clock3, FileCheck2, Filter, Loader2, RefreshCw, Search, Users, UserRound, X, XCircle, CircleSlash2, ClipboardCheck, Activity, AlertTriangle, BookOpen, Building2, Eye, History, ListChecks, ShieldCheck, Target, UserCheck } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, Clock3, FileCheck2, Filter, Loader2, RefreshCw, Search, Users, UserRound, X, XCircle, CircleSlash2, Activity, AlertTriangle, BookOpen, Building2, Eye, History, ListChecks, Target, UserCheck } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
@@ -648,40 +649,8 @@ export default function Attendance() {
 
   return (
     <AdminAttendanceShell>
-      <section className="aa-hero">
-        <OrnamentScene primary="02-shams" />
-
-        <div className="aa-hero-main">
-          <div className="aa-hero-copy">
-            <div className="aa-eyebrow">
-              <ShieldCheck size={14} />
-              بوابة المشرف · الرقابة التشغيلية
-            </div>
-
-            <div className="aa-title-row">
-              <button
-                type="button"
-                className="aa-back"
-                onClick={() => navigate("/admin")}
-                aria-label="العودة إلى لوحة المشرف"
-              >
-                <ArrowRight size={19} />
-              </button>
-
-              <div className="aa-title-mark">
-                <ClipboardCheck size={24} strokeWidth={1.7} />
-              </div>
-
-              <div>
-                <h1>إدارة الحضور</h1>
-                <p>
-                  مركز إداري لمراقبة الالتزام، مراجعة السجلات، واكتشاف الحالات التي تحتاج متابعة.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="aa-hero-actions">
+      <CompactPageHeader title="إدارة الحضور" actions={<>
+<div className="aa-hero-actions">
             <button
               type="button"
               className="aa-refresh"
@@ -700,9 +669,16 @@ export default function Attendance() {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="aa-hero-footer">
+<button
+                type="button"
+                className="aa-back"
+                onClick={() => navigate("/admin")}
+                aria-label="العودة إلى لوحة المشرف"
+              >
+                <ArrowRight size={19} />
+              </button>
+</>}>
+<div className="aa-hero-footer">
           <div>
             <span>نسبة الالتزام</span>
             <strong>{globalStats.percentage}%</strong>
@@ -720,7 +696,7 @@ export default function Attendance() {
             <strong>{riskHalaqat}</strong>
           </div>
         </div>
-      </section>
+</CompactPageHeader>
 
       <section className="aa-toolbar">
         <div className="aa-toolbar-title">

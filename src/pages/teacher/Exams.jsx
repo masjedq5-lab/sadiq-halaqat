@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 // src/pages/teacher/Exams.jsx
 import {
   useEffect,
@@ -7,7 +8,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-import { AlertTriangle, Award, Check, CheckCircle2, ChevronLeft, ChevronRight, CircleGauge, Clock3, Eye, FileCheck2, GraduationCap, Loader2, Minus, Play, Plus, RefreshCw, Search, ShieldCheck, Trophy, UserRound, Users, X } from "lucide-react";
+import { AlertTriangle, Award, Check, CheckCircle2, ChevronLeft, ChevronRight, CircleGauge, Clock3, Eye, FileCheck2, GraduationCap, Loader2, Minus, Play, Plus, RefreshCw, Search, ShieldCheck, Trophy, Users, X } from "lucide-react";
 
 import { supabase } from "../../lib/supabase";
 import { useToast } from "../../components/Toast";
@@ -273,32 +274,7 @@ export default function TeacherExams() {
 
   return (
     <div className="tex-page" dir="rtl">
-      <section className="tex-hero">
-        <div>
-          <span className="tex-kicker">
-            <ShieldCheck size={14} />
-            مركز تنفيذ الاختبارات
-          </span>
-
-          <h1>اختباراتي</h1>
-
-          <p>
-            الطلاب المعيّنون لك فقط، سؤالًا سؤالًا،
-            مع حفظ تلقائي وحساب مباشر للنتيجة.
-          </p>
-
-          {teacher?.full_name && (
-            <div className="tex-teacher-chip">
-              <UserRound size={13} />
-              {teacher.full_name}
-            </div>
-          )}
-        </div>
-
-        <div className="tex-hero-mark">
-          <GraduationCap size={34} />
-        </div>
-      </section>
+      <CompactPageHeader title="اختباراتي" />
 
       <section className="teacher-exams-stats tex-stats">
         <Stat

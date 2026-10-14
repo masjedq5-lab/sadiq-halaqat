@@ -1,20 +1,8 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  BookOpen,
-  Building2,
-  CheckCircle2,
-  Clock3,
-  GraduationCap,
-  Loader2,
-  LogOut,
-  MapPin,
-  RefreshCw,
-  Search,
-  Send,
-  XCircle,
-} from "lucide-react";
+import { BookOpen, Building2, Clock3, Loader2, LogOut, MapPin, RefreshCw, Search, Send, XCircle } from "lucide-react";
 
 import { supabase } from "../../lib/supabase";
 import "../Register.css";
@@ -200,25 +188,8 @@ export default function StudentOnboarding() {
   return (
     <main className="register-pro-page">
       <div className="sjo-shell">
-        <section className="sjo-hero">
-          <div className="register-pro-success-icon">
-            <GraduationCap />
-          </div>
-
-          <div>
-            <span className="sjo-kicker">
-              <CheckCircle2 size={16} />
-              حساب الطالب جاهز
-            </span>
-            <h1>اختر المسجد والحلقة</h1>
-            <p>
-              أرسل طلب الالتحاق مرة واحدة. سيصل الطلب إلى
-              معلم الحلقة وإلى مشرف المسجد، وأول من يعتمد
-              الطلب يتم ربطك بالحلقة مباشرة.
-            </p>
-          </div>
-
-          <button
+        <CompactPageHeader title="اختر المسجد والحلقة" actions={<>
+<button
             type="button"
             className="sjo-signout"
             onClick={signOut}
@@ -226,7 +197,7 @@ export default function StudentOnboarding() {
             <LogOut size={17} />
             تسجيل الخروج
           </button>
-        </section>
+</>} />
 
         {pendingRequest && (
           <section className="sjo-pending">

@@ -151,7 +151,7 @@ export default function StudentProfile() {
     >
       {message && <div className="student-profile-message"><Check size={16} /> {message}</div>}
 
-      <section className="student-profile-hero">
+      <section className="sadiq-profile-summary">
         <div className="student-profile-avatar">{(profile?.full_name || "ط").trim().charAt(0)}</div>
         <div className="student-profile-main">
           <span>طالب في الصديق</span>

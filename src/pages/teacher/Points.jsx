@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import { dateKey } from "../../lib/calendar";
 import CalendarInput from "../../components/CalendarInput";
 import { useEffect, useMemo, useState } from "react";
@@ -501,22 +502,7 @@ export default function RewardsPage() {
 
   return (
     <div className="teacher-points-page">
-      <section className="tp-hero">
-        <div className="tp-hero-copy">
-          <span className="tp-hero-kicker">
-            <Sparkles size={14} />
-            نظام تحفيز شهري
-          </span>
-          <h1>المنح والخصومات</h1>
-          <p>
-            نقاط واضحة لكل شهر هجري، جلسات مجمعة، وتعديل سريع بدون تشتيت المعلم.
-          </p>
-        </div>
-
-        <div className="tp-hero-mark">
-          <Trophy size={34} />
-        </div>
-      </section>
+      <CompactPageHeader title="المنح والخصومات" />
 
       <section className="tp-monthbar">
         <div className="tp-monthbar-main">

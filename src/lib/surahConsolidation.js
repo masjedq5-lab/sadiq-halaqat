@@ -5,11 +5,12 @@
  * Dates received here are Gregorian ISO strings (the UI renders Hijri).
  */
 
-export function finishedSurahBoundary(endAyah, ayahCount, direction = "forward") {
+export function finishedSurahBoundary(endAyah, ayahCount) {
   const end = Number(endAyah);
   const count = Number(ayahCount);
   if (!Number.isInteger(end) || !Number.isInteger(count) || count < 1) return false;
-  return direction === "backward" ? end === 1 : end === count;
+  // Quran verses advance within each surah even when the surah order is reversed.
+  return end === count;
 }
 
 export function nextSurahConsolidation({

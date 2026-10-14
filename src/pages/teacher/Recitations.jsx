@@ -1928,8 +1928,16 @@ export default function Recitations() {
           lessonStart = { surah: policy.lesson_start_surah, ayah: Number(policy.lesson_start_ayah) };
         }
 
-        const revisionCycleBounds =
-          await getRevisionCycleBounds(plan);
+        // A problem in revision configuration must never hide a valid
+        // memorization lesson from the teacher (and vice versa).
+        let revisionCycleBounds = null;
+        let revisionLoadError = "";
+        try {
+          revisionCycleBounds = await getRevisionCycleBounds(plan);
+        } catch (revisionError) {
+          console.error("LOAD QURAN REVISION CYCLE:", revisionError);
+          revisionLoadError = "تعذر قراءة نطاق المراجعة التلقائي. راجع إعداداتها في الخطة الشهرية.";
+        }
 
         let reviewStart = {
           surah: plan.revision_from_surah,
@@ -2018,14 +2026,21 @@ export default function Recitations() {
         }
 
         if (!consolidation && interventionType !== "pause") {
-          generatedReview = await generateReviewRange({
-            plan,
-            startSurah: reviewStart.surah,
-            startAyah: reviewStart.ayah,
-            amount: revisionAmount,
-            unit: revisionUnit,
-            cycleBounds: revisionCycleBounds,
-          });
+          try {
+            if (!revisionLoadError) {
+              generatedReview = await generateReviewRange({
+                plan,
+                startSurah: reviewStart.surah,
+                startAyah: reviewStart.ayah,
+                amount: revisionAmount,
+                unit: revisionUnit,
+                cycleBounds: revisionCycleBounds,
+              });
+            }
+          } catch (reviewError) {
+            console.error("GENERATE QURAN REVIEW:", reviewError);
+            revisionLoadError = "تعذر توليد المراجعة آليًا. تحقق من حدود المراجعة واتجاهها؛ يظل تسجيل الحفظ متاحًا.";
+          }
         }
 
         if (!active) return;
@@ -2034,6 +2049,7 @@ export default function Recitations() {
           plan: { ...plan, memorizationAmount, revisionAmount },
           generatedLesson, generatedReview, lessonSuppressed, interventionType,
         });
+        if (revisionLoadError) planNotices.review = revisionLoadError;
         setPlanSuggestion({
           ...plan,
           planNotices,

@@ -2067,6 +2067,16 @@ export default function Recitations() {
           }
 
           if (next.recording_mode === "amount") {
+            // A delayed plan load may change an intervention; never retain
+            // quantities for tracks that the student is not allowed to take.
+            if (lessonSuppressed) {
+              next.lesson_amount_value = "";
+              next.lesson_evaluation = "";
+            }
+            if (interventionType === "pause") {
+              next.review_amount_value = "";
+              next.review_evaluation = "";
+            }
             const defaults = plannedRecitationAmounts({
               memorizationAmount, memorizationUnit,
               revisionAmount, revisionUnit,
@@ -6883,9 +6893,7 @@ function RecordCard({
                 : "type-badge noorania"
             }
           >
-            {quran
-              ? "قرآن"
-              : "نورانية"}
+            {quran ? (record.recording_mode === "amount" ? "بالعدد" : "قرآن") : "نورانية"}
           </span>
         </div>
       </div>
@@ -6974,7 +6982,7 @@ function RecordCard({
 
               {(record.lesson_faces_manual ?? record.lesson_faces) != null && (
                 <FaceBadge
-                  label="محسوب من المصحف"
+                  label={record.recording_mode === "amount" ? "من المقدار المسجل" : "محسوب من المصحف"}
                   value={record.lesson_faces_manual ?? record.lesson_faces}
                 />
               )}
@@ -7010,12 +7018,14 @@ function RecordCard({
                     record.review_from_ayah,
                     record.review_to_surah,
                     record.review_to_ayah
-                  ) || "—"}
+                  ) || (record.recording_mode === "amount" &&
+                    Number(record.review_amount_value ?? record.review_faces) > 0
+                    ? formatStoredReviewAmount(record) : "—")}
                 </strong>
 
                 {record.review_faces != null && (
                   <FaceBadge
-                    label="محسوب من المصحف"
+                    label={record.recording_mode === "amount" ? "من المقدار المسجل" : "محسوب من المصحف"}
                     value={record.review_faces}
                   />
                 )}
@@ -8327,6 +8337,16 @@ function getNextScheduledRecitationDate(
   return getLocalDate(
     cursor
   );
+}
+
+function formatStoredReviewAmount(record) {
+  const amount = Number(record?.review_amount_value ?? record?.review_faces ?? 0);
+  const unit = record?.review_amount_unit || "faces";
+  if (!(amount > 0)) return "";
+  if (unit === "lines") {
+    return `${amount} ${amount === 1 ? "سطر" : amount === 2 ? "سطران" : "أسطر"}`;
+  }
+  return `${formatFaces(amount)} ${amount === 1 ? "صفحة" : "صفحات"}`;
 }
 
 function formatStoredLessonAmount(record) {

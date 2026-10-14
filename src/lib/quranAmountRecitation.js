@@ -62,7 +62,7 @@ export function validateAmountRecitation(form, { lessonDisabled = false, reviewD
     const valid = Number.isFinite(amount) && amount > 0 && amount <= 10000 &&
       (track.unit === "faces" || (track.unit === "lines" && Number.isInteger(amount)));
     if (!valid) {
-      throw new Error(`أدخل مقدارًا صحيحًا لل${track.name} (الأسطر عدد صحيح، والصفحات يمكن أن تكون كسرية).`);
+      throw new Error(`أدخل مقدارًا صحيحًا ${track.name === "الدرس" ? "للدرس" : "للمراجعة"} (الأسطر عدد صحيح، والصفحات يمكن أن تكون كسرية).`);
     }
     const faces = amountToFaces(amount, track.unit);
     if (faces == null || faces <= 0 || faces > 10000) {

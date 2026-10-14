@@ -1472,11 +1472,15 @@ export default function Recitations() {
       ? start.surahNo > end.surahNo : start.surahNo < end.surahNo;
     if (!alongRoute) return fallback;
 
-    // Never put an ayah of the next surah in the CURRENT day's lesson.
+    // Both Quran generators progress forward through the AYAHS of each
+    // surah. "backward" reverses the order of SURAHS only. Ending a reverse
+    // lesson at ayah 1 wrongly produces QURAN_REVERSE_LIMIT_NOT_AFTER_ROUTE_START
+    // and silently hides valid plans (e.g. At-Tahrim 9 -> 10).
+    // Stop at the LAST ayah for either direction; consolidate this surah
+    // before continuing to the next surah.
     return {
       surah: start.surah,
-      ayah: normalizeQuranPlanDirection(direction) === "backward"
-        ? 1 : start.ayahCount,
+      ayah: start.ayahCount,
     };
   }
 

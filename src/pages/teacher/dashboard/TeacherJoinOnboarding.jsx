@@ -1,23 +1,8 @@
+import CompactPageHeader from "../../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../../lib/calendar";
-import { OrnamentScene } from '../../../components/ornaments/Ornament';
+
 import { useEffect, useMemo, useState } from "react";
-import {
-  ArrowLeft,
-  BookOpen,
-  Building2,
-  CheckCircle2,
-  Clock3,
-  Loader2,
-  MapPin,
-  RefreshCw,
-  Search,
-  Send,
-  ShieldCheck,
-  Sparkles,
-  Users,
-  X,
-  XCircle,
-} from "lucide-react";
+import { ArrowLeft, BookOpen, Building2, CheckCircle2, Clock3, Loader2, MapPin, RefreshCw, Search, Send, ShieldCheck, Users, X, XCircle } from "lucide-react";
 
 import { supabase } from "../../../lib/supabase";
 import { showToast } from "../../../components/Toast";
@@ -158,32 +143,13 @@ export default function TeacherJoinOnboarding({
 
   return (
     <div className="teacher-dashboard td-onboarding">
-      <section className="td-onboarding-hero">
-        <OrnamentScene primary="01-noor" />
-
-        <div className="td-onboarding-copy">
-          <div className="td-hero-kicker">
-            <Sparkles size={16} />
-            إعداد حساب المعلم
-          </div>
-
-          <h1>
-            أهلاً {teacher?.full_name || "بك"}
-            <span>اختر المسجد والحلقة التي ترغب بالانضمام إليها.</span>
-          </h1>
-
-          <p>
-            الطلب يصل إلى مشرف المسجد، وعند الموافقة يحدد دورك كمعلم رئيسي أو مساعد.
-            بعدها تتحول الصفحة تلقائيًا إلى لوحة المعلم الكاملة.
-          </p>
-        </div>
-
-        <div className="td-onboarding-steps">
+      <CompactPageHeader title={<>أهلاً {teacher?.full_name || "بك"}</>}>
+<div className="td-onboarding-steps">
           <Step number="1" title="اختر الحلقة" done={Boolean(pendingRequest)} />
           <Step number="2" title="مراجعة المشرف" active={Boolean(pendingRequest)} />
           <Step number="3" title="بدء العمل" />
         </div>
-      </section>
+</CompactPageHeader>
 
       {pendingRequest && (
         <section className="td-pending-card">

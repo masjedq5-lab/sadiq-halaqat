@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
 import CalendarInput from "../components/CalendarInput";
 import StudentAccessCard from "../components/security/StudentAccessCard";
@@ -1216,28 +1217,8 @@ export default function Students() {
           PAGE HEADER
       ========================================= */}
 
-      <section className="students-page-hero">
-        <div className="students-page-hero-main">
-          <div className="students-page-hero-icon">
-            <Users size={22} />
-          </div>
-
-          <div>
-            <div className="students-page-eyebrow">
-              <Sparkles size={11} />
-              إدارة الطلاب
-            </div>
-
-            <h1>الطلاب</h1>
-
-            <p>
-              إدارة ملفات الطلاب وربطهم بالحلقات ومتابعة
-              بيانات ولي الأمر والحضور والتسميع والنقاط.
-            </p>
-          </div>
-        </div>
-
-        <button
+      <CompactPageHeader title="الطلاب" actions={<>
+<button
           type="button"
           className="students-add-button"
           onClick={openCreate}
@@ -1249,7 +1230,7 @@ export default function Students() {
           <Plus size={15} />
           إضافة طالب
         </button>
-      </section>
+</>} />
 
       {/* =========================================
           STATS

@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 // src/pages/teacher/MonthlyPlan.jsx
 
@@ -12,7 +13,7 @@ import StudentLessonActivity from "../../components/StudentLessonActivity";
 import { effectiveMonthlyPlans, learningDate, saveLearningPolicy } from "../../lib/effectiveLearning";
 import { manualScopeError, parseScopeAyah, validateManualScopeAgainstMushaf } from "../../lib/memorizedScopeValidation";
 
-import { BadgeCheck, BookOpen, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Copy, Layers3, Loader2, MessageSquareText, RefreshCw, Save, Search, Send, ShieldCheck, Sparkles, Target, Undo2, UserRound, Users, X } from "lucide-react";
+import { BadgeCheck, BookOpen, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Copy, Layers3, Loader2, MessageSquareText, RefreshCw, Save, Search, Send, ShieldCheck, Sparkles, Undo2, UserRound, Users, X } from "lucide-react";
 
 import {
   supabase,
@@ -5584,42 +5585,8 @@ export default function MonthlyPlan() {
           HERO
       ================================================= */}
 
-      <section
-        className="plan-hero"
-      >
-        <div
-          className="plan-hero-main"
-        >
-          <div
-            className="plan-hero-icon"
-          >
-            <Target
-              size={24}
-            />
-          </div>
-
-          <div>
-            <div
-              className="plan-eyebrow"
-            >
-              <ShieldCheck
-                size={13}
-              />
-
-              التخطيط التعليمي
-            </div>
-
-            <h1>
-              الخطة الشهرية
-            </h1>
-
-            <p>
-              حدّد نقطة البداية والمقدار اليومي والاتجاه مرة واحدة؛ والصديق يحسب نهاية الحفظ والمراجعة تلقائيًا حسب الجلسات الفعلية بعد خصم الإجازات.
-            </p>
-          </div>
-        </div>
-
-        <div
+      <CompactPageHeader title="الخطة الشهرية" actions={<>
+<div
           className="plan-hero-actions"
         >
           {teacherPreferences.plan_copy_previous_suggestion !== false && (
@@ -5735,8 +5702,8 @@ export default function MonthlyPlan() {
             </button>
           )}
         </div>
-
-        <div
+</>}>
+<div
           className={`plan-autosave-note ${autoSaving ? "saving" : ""}`}
           role="status"
           aria-live="polite"
@@ -5754,7 +5721,7 @@ export default function MonthlyPlan() {
           </span>
           <span className="plan-autosave-line" aria-hidden="true" />
         </div>
-      </section>
+</CompactPageHeader>
 
       {/* =================================================
           UNSAVED

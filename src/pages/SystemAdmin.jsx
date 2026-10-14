@@ -1,5 +1,6 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
-import { OrnamentScene } from '../components/ornaments/Ornament';
+
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Activity, Archive, BellRing, BookOpen, Building2, Check, CheckCircle2, ChevronLeft, CircleOff, ClipboardList, Copy, GraduationCap, KeyRound, LayoutDashboard, Link2, Loader2, LogOut, Menu, Fingerprint, Laptop, Trash2, MessageCircle, Phone, Plus, RefreshCw, Search, Settings, ShieldCheck, Sparkles, UserCheck, UserCog, UserRoundCheck, Users, X, XCircle } from "lucide-react";
@@ -603,22 +604,13 @@ function DashboardView({ dashboard, mosques, supervisors, invites, alerts, audit
 
   return (
     <div className="sa-view-stack">
-      <section className="sa-hero">
-        <OrnamentScene primary="03-falak" pattern />
-        <div className="sa-hero-copy">
-          <span className="sa-hero-kicker"><ShieldCheck /> مركز القيادة المركزي</span>
-          <h2>مركز قيادة واحد للمساجد والمشرفين.</h2>
-          <p>
-            راقب حالة المنظومة، فعّل أو عطّل المساجد، اربط عدة مشرفين بعدة مساجد،
-            وأدر دعوات المشرفين والعمليات الحساسة من مكان واحد واضح.
-          </p>
-          <div className="sa-hero-actions">
+      <CompactPageHeader title="لوحة مدير النظام" level={2} actions={<>
+<div className="sa-hero-actions">
             <button type="button" className="sa-btn sa-btn-gold" onClick={() => goTo("mosques")}><Building2 /> إدارة المساجد</button>
             <button type="button" className="sa-btn sa-btn-ghost-light" onClick={() => goTo("supervisors")}><Link2 /> إدارة الربط</button>
           </div>
-        </div>
-
-        <div className="sa-hero-command">
+</>}>
+<div className="sa-hero-command">
           <div className="sa-command-top">
             <span>حالة المنظومة</span>
             <strong className="sa-system-online"><CheckCircle2 /> {systemState}</strong>
@@ -633,7 +625,7 @@ function DashboardView({ dashboard, mosques, supervisors, invites, alerts, audit
             <div><strong>{activeInvites}</strong><span>دعوات صالحة</span></div>
           </div>
         </div>
-      </section>
+</CompactPageHeader>
 
       <section className="sa-kpi-grid">
         {kpis.map((item) => <KpiCard key={item.label} {...item} />)}
@@ -2055,11 +2047,7 @@ function SettingsView() {
 
 function SectionHero({ eyebrow, title, description, icon: Icon, action }) {
   return (
-    <section className="sa-section-hero">
-      <div className="sa-section-hero-icon"><Icon /></div>
-      <div className="sa-section-hero-copy"><span>{eyebrow}</span><h2>{title}</h2><p>{description}</p></div>
-      {action && <div className="sa-section-hero-action">{action}</div>}
-    </section>
+    <CompactPageHeader title={title} level={2} actions={action} />
   );
 }
 

@@ -1,7 +1,8 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import { formatDate, dateKey } from "../../lib/calendar";
 import CalendarInput from "../../components/CalendarInput";
 import {formatSideLessonTotal} from "../../lib/sideLesson";
-import { OrnamentScene } from '../../components/ornaments/Ornament';
+
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   Activity,
@@ -625,24 +626,12 @@ function ReportsHero({ scope, mode, onRefresh, loading }) {
   const uniqueTeachers = new Set(scope.teacherLinks.map((row) => Number(row.teacher_id))).size;
 
   return (
-    <section className="reports-hero">
-      <OrnamentScene primary="01-noor" />
-      <div className="reports-hero-copy">
-        <div className="reports-kicker">
-          <Sparkles size={15} />
-          مركز تقارير ذكي
-        </div>
-        <h1>التقرير الذي تحتاجه، بأقل عدد من النقرات.</h1>
-        <p>
-          تقارير واضحة للمعلم والمشرف وصاحب المسجد، بتصدير Excel وPDF وطباعة مصممة خصيصًا للعربية.
-        </p>
-        <div className="reports-hero-meta">
+    <CompactPageHeader title="التقارير">
+<div className="reports-hero-meta">
           <span><UserRound size={14} /> {scope.profile.full_name}</span>
           <span><ShieldCheck size={14} /> {mode === "supervisor" ? "مشرف" : mode === "teacher" ? "معلم" : "إدارة النظام"}</span>
         </div>
-      </div>
-
-      <div className="reports-hero-stats">
+<div className="reports-hero-stats">
         {mode === "supervisor" && <HeroStat label="مساجدي" value={scope.mosques.length} icon={Building2} />}
         <HeroStat label="الحلقات" value={scope.halaqat.length} icon={Layers3} />
         <HeroStat label="الطلاب" value={uniqueStudents} icon={Users} />
@@ -652,7 +641,7 @@ function ReportsHero({ scope, mode, onRefresh, loading }) {
           تحديث
         </button>
       </div>
-    </section>
+</CompactPageHeader>
   );
 }
 

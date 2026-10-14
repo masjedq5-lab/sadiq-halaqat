@@ -1,15 +1,7 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
-import {
-  CheckCircle2,
-  Clock3,
-  Loader2,
-  RefreshCw,
-  Search,
-  UserRoundCheck,
-  Users,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, Clock3, Loader2, RefreshCw, Search, Users, XCircle } from "lucide-react";
 
 import { supabase } from "../../lib/supabase";
 import { showToast } from "../../components/Toast";
@@ -154,24 +146,12 @@ export default function TeacherJoinRequests() {
 
   return (
     <div className="tjr-page" dir="rtl">
-      <section className="tjr-hero">
-        <div>
-          <span>
-            <UserRoundCheck size={16} />
-            إدارة طلاب الحلقة
-          </span>
-          <h1>طلبات الالتحاق</h1>
-          <p>
-            تظهر هنا طلبات الطلاب للحلقات المرتبطة بك.
-            قبولك للطلب يربط الطالب مباشرة بالحلقة.
-          </p>
-        </div>
-
-        <button type="button" onClick={load} disabled={loading}>
+      <CompactPageHeader title="طلبات الالتحاق" actions={<>
+<button type="button" onClick={load} disabled={loading}>
           <RefreshCw size={17} className={loading ? "tjr-spin" : ""} />
           تحديث
         </button>
-      </section>
+</>} />
 
       <div className="tjr-summary">
         <div>

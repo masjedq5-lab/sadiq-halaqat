@@ -1,15 +1,13 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import CalendarInput from "../components/CalendarInput";
 // src/pages/Exams.jsx
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { AlertTriangle, Award, BookOpenCheck, CalendarDays, Check, CheckCircle2, CircleGauge, Edit3, Eye, FileCheck2, GraduationCap, Landmark, ListChecks, Loader2, Plus, Search, Send, ShieldCheck, Sparkles, Trash2, UserPlus, Users, X } from "lucide-react";
+import { AlertTriangle, Award, BookOpenCheck, CalendarDays, Check, CheckCircle2, CircleGauge, Edit3, Eye, FileCheck2, GraduationCap, Landmark, ListChecks, Loader2, Plus, Search, Send, Sparkles, Trash2, UserPlus, Users, X } from "lucide-react";
 
 import { supabase } from "../lib/supabase";
 import { useToast } from "../components/Toast";
-import {
-  EXAM_STATUS_META, HIJRI_MONTHS, deriveExamStatus, formatHijri,
-  getHijriMonthDays, getHijriParts, gregorianFromHijri, hijriInputFromGregorian,
-} from "./examV2Utils";
+import { EXAM_STATUS_META, HIJRI_MONTHS, deriveExamStatus, formatHijri, getHijriParts, gregorianFromHijri, hijriInputFromGregorian } from "./examV2Utils";
 import "./ExamsV2.css";
 
 const STEPS = ["البيانات","النطاق","الفريق والطلاب","المدة","المراجعة"];
@@ -164,23 +162,9 @@ export default function Exams(){
 
   return(
     <div className="exv2-page">
-      <section className="exv2-hero">
-        <div>
-          <span className="exv2-kicker"><ShieldCheck size={14}/>منظومة الاختبارات </span>
-          <h1>الاختبارات</h1>
-          <p>إنشاء احترافي، نطاق لكل طالب، أسئلة يحددها المشرف، توزيع على المختبرين، واعتماد ومتابعة من مكان واحد.</p>
-
-          {me?.role==="supervisor"&&(
-            <div className="exv2-scope-badge">
-              <ShieldCheck size={13}/>
-              <span>
-                نطاقك الحالي: {mosques.length} {mosques.length===1?"مسجد":"مساجد"}
-              </span>
-            </div>
-          )}
-        </div>
-        <button type="button" className="exv2-primary" onClick={()=>setShowCreate(true)}><Plus size={16}/>إنشاء اختبار جديد</button>
-      </section>
+      <CompactPageHeader title="الاختبارات" actions={<>
+<button type="button" className="exv2-primary" onClick={()=>setShowCreate(true)}><Plus size={16}/>إنشاء اختبار جديد</button>
+</>} />
 
       <section className="exv2-stats">
         <Stat icon={FileCheck2} label="الاختبارات" value={stats.total} note="جميع الاختبارات"/>

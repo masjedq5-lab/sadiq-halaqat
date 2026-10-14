@@ -1,4 +1,5 @@
-import { OrnamentScene } from '../components/ornaments/Ornament';
+import CompactPageHeader from "../components/CompactPageHeader";
+
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +9,7 @@ import {
   HALAQA_PERIODS,
 } from "../data/halaqaPeriods";
 
-import { BookOpen, Building2, Users, Plus, Search, Pencil, Trash2, Power, GraduationCap, ArrowRight, X, CheckCircle2, CircleOff, RefreshCw, Loader2, UsersRound, ShieldCheck, AlertTriangle, SlidersHorizontal, Activity, Target, ChevronLeft, Clock3 } from "lucide-react";
+import { BookOpen, Building2, Users, Plus, Search, Pencil, Trash2, Power, GraduationCap, ArrowRight, X, CheckCircle2, CircleOff, RefreshCw, Loader2, UsersRound, AlertTriangle, SlidersHorizontal, Activity, Target, ChevronLeft, Clock3 } from "lucide-react";
 
 export default function Halaqat() {
   const navigate = useNavigate();
@@ -737,39 +738,8 @@ function getTeacherCount(halaqa) {
   return (
     <div className="hq-page" dir="rtl">
       <main className="hq-shell">
-        <section className="hq-hero">
-          <OrnamentScene primary="02-shams" pattern />
-          <div className="hq-hero-main">
-            <div>
-              <div className="hq-kicker">
-                <ShieldCheck size={15} />
-                بوابة المشرف · مركز إدارة الحلقات
-              </div>
-
-              <div className="hq-title-line">
-                <button
-                  type="button"
-                  className="hq-back"
-                  onClick={() => navigate("/admin")}
-                  aria-label="العودة"
-                >
-                  <ArrowRight size={20} />
-                </button>
-
-                <div className="hq-title-icon">
-                  <BookOpen size={26} />
-                </div>
-
-                <div>
-                  <h1>إدارة الحلقات</h1>
-                  <p>
-                    لوحة تشغيل موحدة لمتابعة الحلقات والسعة والطلاب والتكليف التعليمي.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="hq-hero-actions">
+        <CompactPageHeader title="إدارة الحلقات" actions={<>
+<div className="hq-hero-actions">
               <button
                 type="button"
                 className="hq-refresh"
@@ -792,9 +762,16 @@ function getTeacherCount(halaqa) {
                 </span>
               </button>
             </div>
-          </div>
-
-          <div className="hq-hero-strip">
+<button
+                  type="button"
+                  className="hq-back"
+                  onClick={() => navigate("/admin")}
+                  aria-label="العودة"
+                >
+                  <ArrowRight size={20} />
+                </button>
+</>}>
+<div className="hq-hero-strip">
             <div>
               <span>تغطية السعة</span>
               <strong>{occupancyRate}%</strong>
@@ -811,7 +788,7 @@ function getTeacherCount(halaqa) {
               <small>إشغال 85٪ فأكثر</small>
             </div>
           </div>
-        </section>
+</CompactPageHeader>
 
         <section className="hq-stats">
           <StatCard icon={<BookOpen size={18} />} title="إجمالي الحلقات" value={halaqat.length} note={`${activeCount} نشطة`} />

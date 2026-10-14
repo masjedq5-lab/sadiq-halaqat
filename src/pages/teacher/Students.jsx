@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import { displayDateFormatter } from "../../lib/calendar";
 import CalendarInput from "../../components/CalendarInput";
 import StudentAccessCard from "../../components/security/StudentAccessCard";
@@ -888,22 +889,8 @@ export default function Students() {
 
   return (
     <div className="students-pro" dir="rtl">
-      <section className="students-hero">
-        <div className="students-hero-copy">
-          <div className="students-kicker">
-            <Sparkles size={16} />
-            إدارة الطلاب
-          </div>
-
-          <h1>طلاب حلقاتي</h1>
-
-          <p>
-            صفحة سريعة وخفيفة لإدارة الطلاب، مع بطاقة مختصرة لكل طالب
-            وملف كامل عند الضغط على «عرض».
-          </p>
-        </div>
-
-        <div className="students-hero-actions">
+      <CompactPageHeader title="طلاب حلقاتي" actions={<>
+<div className="students-hero-actions">
           <button
             type="button"
             className="students-icon-button"
@@ -927,7 +914,7 @@ export default function Students() {
             إضافة طالب
           </button>
         </div>
-      </section>
+</>} />
 
       <section className="students-stats">
         <StatCard

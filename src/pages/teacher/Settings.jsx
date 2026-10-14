@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import CalendarSettings from "../../components/CalendarSettings";
 // src/pages/teacher/SettingsPage.jsx
 
@@ -599,28 +600,8 @@ export default function SettingsPage() {
 
   return (
     <div className="teacher-settings-page" dir="rtl">
-      <section className="settings-hero">
-        <div className="settings-hero-main">
-          <div className="settings-hero-icon">
-            <Settings size={23} />
-          </div>
-
-          <div>
-            <div className="settings-eyebrow">
-              <Sparkles size={13} />
-              مركز إعداداتي
-            </div>
-
-            <h1>الإعدادات</h1>
-
-            <p>
-              اضبط طريقة عمل الصديق بما يناسب أسلوبك في إدارة الحلقة
-              ومتابعة الطلاب.
-            </p>
-          </div>
-        </div>
-
-        <div className="settings-user-chip">
+      <CompactPageHeader title="الإعدادات">
+<div className="settings-user-chip">
           <UserRound size={17} />
 
           <div>
@@ -635,7 +616,7 @@ export default function SettingsPage() {
             </span>
           </div>
         </div>
-      </section>
+</CompactPageHeader>
 
       <section className="settings-overview-grid">
         <OverviewCard

@@ -22,12 +22,7 @@ import StudentPage from "../../components/student/StudentPage";
 import ExamCertificate from "../../components/student/ExamCertificate";
 import { useStudentPortal } from "../../context/StudentPortalContext";
 import { supabase } from "../../lib/supabase";
-import {
-  examMessage,
-  formatGregorianDate,
-  formatHijriDate,
-  formatNumber,
-} from "../../lib/studentPortalUtils";
+import { examMessage, formatHijriDate, formatNumber } from "../../lib/studentPortalUtils";
 
 import "./StudentPortal.css";
 import "./StudentExamsV2.css";
@@ -191,18 +186,7 @@ export default function StudentExams() {
       description="اختباراتك ونتائجك وشهادات إنجازك في مكان واحد، بصورة رسمية وواضحة تليق برحلتك مع القرآن."
       icon={GraduationCap}
     >
-      <section className="sex-hero-strip">
-        <div className="sex-hero-seal">
-          <Trophy size={26} />
-        </div>
-        <div>
-          <span>سجل إنجازك القرآني</span>
-          <strong>
-            كل نتيجة معتمدة تصبح محطة موثقة في رحلتك، والشهادة تظهر لك
-            تلقائيًا عند الاجتياز.
-          </strong>
-        </div>
-      </section>
+
 
       <section className="student-metrics sex-metrics">
         <Metric

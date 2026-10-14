@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import {
   useEffect,
@@ -2094,28 +2095,8 @@ export default function StudentCare() {
     <div className="student-care-page" dir="rtl">
       <StudentCareStyles />
 
-      <section className="care-hero">
-        <div className="care-hero-main">
-          <div className="care-hero-icon">
-            <HeartHandshake size={25} />
-          </div>
-
-          <div>
-            <div className="care-eyebrow">
-              <ShieldCheck size={13} />
-              المتابعة الاستباقية
-            </div>
-
-            <h1>العناية بالطلاب</h1>
-
-            <p>
-              مركز ذكي يجمع الحضور والتسميع والخطة والإنجاز،
-              ويحول البيانات إلى إجراءات متابعة عملية قبل أن يتفاقم التعثر.
-            </p>
-          </div>
-        </div>
-
-        <button
+      <CompactPageHeader title="العناية بالطلاب" actions={<>
+<button
           type="button"
           className="refresh-care-btn"
           disabled={refreshing}
@@ -2127,7 +2108,7 @@ export default function StudentCare() {
           />
           <span>تحديث البيانات</span>
         </button>
-      </section>
+</>} />
 
       <section className="care-stats">
         <CareStat

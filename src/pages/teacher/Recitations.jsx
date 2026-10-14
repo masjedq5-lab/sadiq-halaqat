@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {displayDateFormatter} from "../../lib/calendar";
 import {monthRange, dateKey, weekRange} from "../../lib/calendar";
 import CalendarInput from "../../components/CalendarInput";
@@ -15,7 +16,7 @@ import {
   useState,
 } from "react";
 
-import { BookOpen, CalendarDays, CheckCircle2, CircleAlert, ChevronDown, ChevronLeft, Clock3, Edit3, FileText, GraduationCap, Layers3, Loader2, MessageSquareText, Plus, Play, RefreshCw, Search, Sparkles, Target, Trash2, Trophy, UserX, X, BookMarked, Hash, Save, LibraryBig, History, ShieldCheck, Building2 } from "lucide-react";
+import { BookOpen, CalendarDays, CheckCircle2, ChevronDown, ChevronLeft, Clock3, Edit3, FileText, GraduationCap, Layers3, Loader2, MessageSquareText, Play, RefreshCw, Search, Sparkles, Target, Trash2, Trophy, UserX, X, BookMarked, Hash, Save, LibraryBig, History, ShieldCheck, Building2, AlertTriangle } from "lucide-react";
 
 import {
   supabase,
@@ -5484,43 +5485,8 @@ export default function Recitations() {
           HERO
       ================================================= */}
 
-      <section
-        className="recitations-hero"
-      >
-        <div
-          className="hero-main"
-        >
-          <div
-            className="hero-icon"
-          >
-            <BookOpen
-              size={24}
-            />
-          </div>
-
-          <div>
-            <div
-              className="hero-eyebrow"
-            >
-              <ShieldCheck
-                size={13}
-              />
-
-              بوابة المعلم
-            </div>
-
-            <h1>
-              التسميع
-            </h1>
-
-            <p>
-              تسجيل سريع وواضح للقرآن والقاعدة النورانية،
-              بدون إدخال «من سورة / من آية / إلى سورة / إلى آية» في الجلسة اليومية.
-            </p>
-          </div>
-        </div>
-
-        <div
+      <CompactPageHeader title="التسميع" actions={<>
+<div
           className="hero-actions"
         >
           <button
@@ -5591,7 +5557,7 @@ export default function Recitations() {
             </span>
           </button>
         </div>
-      </section>
+</>} />
 
       {/* =================================================
           INFO

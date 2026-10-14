@@ -1,3 +1,4 @@
+import CompactPageHeader from "../../components/CompactPageHeader";
 import {
   useEffect,
   useMemo,
@@ -2373,44 +2374,8 @@ export default function Halaqat() {
           رأس الصفحة
       ================================================= */}
 
-      <section
-        className="halaqat-hero"
-      >
-        <div
-          className="halaqat-hero-inner"
-        >
-          <div
-            className="halaqat-title-wrap"
-          >
-            <div
-              className="halaqat-eyebrow"
-            >
-              <BookOpen
-                size={16}
-              />
-
-              بوابة المعلم
-            </div>
-
-            <h1
-              className="halaqat-title"
-            >
-              حلقاتي
-            </h1>
-
-            <p
-              className="halaqat-subtitle"
-            >
-              إدارة ومتابعة الحلقات
-              المرتبطة بك ومؤشرات
-              الطلاب اليومية.
-              {teacher?.full_name
-                ? ` أهلاً ${teacher.full_name}.`
-                : ""}
-            </p>
-          </div>
-
-          <button
+      <CompactPageHeader title="حلقاتي" actions={<>
+<button
             type="button"
             className="refresh-button"
             onClick={() =>
@@ -2437,8 +2402,7 @@ export default function Halaqat() {
               تحديث البيانات
             </span>
           </button>
-        </div>
-      </section>
+</>} />
 
       {/* =================================================
           الإحصائيات

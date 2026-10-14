@@ -2,7 +2,7 @@ export default function DashboardSkeleton() {
   return (
     <div className="teacher-dashboard td-skeleton" aria-busy="true">
       <div className="td-skeleton-line td-skeleton-title" />
-      <div className="td-skeleton-hero" />
+      <div className="td-skeleton-heading" />
 
       <div className="td-skeleton-grid">
         {Array.from({ length: 6 }).map((_, index) => (

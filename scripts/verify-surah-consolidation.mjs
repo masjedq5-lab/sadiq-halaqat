@@ -14,7 +14,8 @@ const onDate = (history = [], preferredDays = 1, selectedDate = "2026-10-12") =>
   nextSurahConsolidation({ lesson, ayahCount: 4, selectedDate, history, preferredDays });
 
 assert(finishedSurahBoundary(4, 4, "forward"));
-assert(finishedSurahBoundary(1, 4, "backward"));
+assert(finishedSurahBoundary(4, 4, "backward"));
+assert(!finishedSurahBoundary(1, 4, "backward"));
 assert(!finishedSurahBoundary(3, 4, "forward"));
 assert.equal(nextSurahConsolidation({ lesson, ayahCount: 4, selectedDate: "2026-10-10" }), null,
   "The teacher may record a second recitation on the lesson completion date");
@@ -44,10 +45,16 @@ assert.equal(onDate([historyRow(1, 2), historyRow(2, 2, "إعادة")]).step, 2,
 assert.equal(onDate([historyRow(1, 2, "ممتاز", 2)], 1, "2026-10-11").step, 1,
   "Same-day history is ignored until the following date");
 assert.equal(nextSurahConsolidation({lesson: {...lesson, to_ayah: 1},
+  direction: "backward", ayahCount: 4, selectedDate:"2026-10-12"}), null,
+  "Backward routes change surah ORDER, not verse order");
+assert.equal(nextSurahConsolidation({lesson,
   direction: "backward", ayahCount: 4, selectedDate:"2026-10-12"}).endAyah, 4);
+
 
 const source = await fs.readFile("src/pages/teacher/Recitations.jsx", "utf8");
 assert(source.includes("!justCompletedSurah"), "Do not prequeue a new surah on completion day");
+assert(source.includes("ayah: start.ayahCount"), "Reverse-surah boundary must stop at the final ayah");
+assert(!source.includes("direction) === \"backward\"\\n        ? 1 : start.ayahCount"), "Regression: never bound backward verse at 1");
 assert(source.includes("surah_consolidation_origin_id: consolidation?.originId"), "Persist review state");
 assert(source.includes('recitationRecord.surah_consolidation_origin_id'), "No automatic review cursor advance during consolidation");
 assert(source.includes("surahConsolidationPreference"), "Teacher can choose a 1- or 2-day path");

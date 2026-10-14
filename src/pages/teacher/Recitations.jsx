@@ -3109,9 +3109,16 @@ export default function Recitations() {
     });
 
     const sideAmount = storedSideLesson(record, "quran");
+    // Historic quantity-only sessions predate the explicit recording_mode
+    // column; recognize them without converting side-only records.
+    const legacyAmountOnly = !record.from_surah && !record.to_surah &&
+      !record.review_surah && !record.review_to_surah &&
+      (Number(record.lesson_amount_value || 0) > 0 ||
+        Number(record.review_faces || 0) > 0);
+    const amountRecord = record.recording_mode === "amount" || legacyAmountOnly;
     setQuranForm({
-      recording_mode: record.recording_mode === "amount" ? "amount" : "positions",
-      review_amount_value: record.recording_mode === "amount"
+      recording_mode: amountRecord ? "amount" : "positions",
+      review_amount_value: amountRecord
         ? valueToString(record.review_amount_value ?? record.review_faces)
         : "",
       review_amount_unit: record.review_amount_unit === "lines" ? "lines" : "faces",

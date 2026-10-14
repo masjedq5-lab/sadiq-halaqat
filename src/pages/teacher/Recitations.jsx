@@ -2259,10 +2259,8 @@ export default function Recitations() {
   const quranPoints =
     useMemo(() => {
       return (
-        calculatePoints(
-          quranForm
-            .lesson_evaluation
-        ) +
+        (quranForm.recording_mode !== "amount" || Number(quranForm.lesson_amount_value || 0) > 0
+          ? calculatePoints(quranForm.lesson_evaluation) : 0) +
         calculatePoints(
           quranForm
             .next_evaluation
@@ -2271,10 +2269,8 @@ export default function Recitations() {
           quranForm
             .next2_evaluation
         ) +
-        calculatePoints(
-          quranForm
-            .review_evaluation
-        )
+        (quranForm.recording_mode !== "amount" || Number(quranForm.review_amount_value || 0) > 0
+          ? calculatePoints(quranForm.review_evaluation) : 0)
       );
     }, [quranForm]);
 
@@ -2392,6 +2388,21 @@ export default function Recitations() {
       }
       return { ...current, recording_mode: "positions",
         lesson_evaluation: "", review_evaluation: "" };
+    });
+  }
+
+  function changeQuranAmountUnit(track, unit) {
+    if (!["lines", "faces"].includes(unit)) return;
+    const key = track === "review" ? "review_amount_value" : "lesson_amount_value";
+    const unitKey = track === "review" ? "review_amount_unit" : "lesson_amount_unit";
+    setQuranForm(current => {
+      if (current[unitKey] === unit) return current;
+      const raw = current[key];
+      const faces = raw === "" ? null : amountToFaces(raw, current[unitKey]);
+      const converted = faces == null ? "" : unit === "lines"
+        ? (Number.isInteger(faces * 15) ? String(Math.round(faces * 15)) : "")
+        : String(Math.round(faces * 10000) / 10000);
+      return { ...current, [key]: converted, [unitKey]: unit };
     });
   }
 
@@ -6229,6 +6240,75 @@ export default function Recitations() {
                     </div>
                   )}
 
+                  <div className="quran-recording-mode" role="group" aria-label="طريقة تسجيل التسميع">
+                    <div className="quran-recording-mode-label"><BookMarked size={17}/><strong>طريقة تسجيل التسميع</strong></div>
+                    <div className="quran-recording-mode-options">
+                      <button type="button" aria-pressed={quranForm.recording_mode === "positions"}
+                        className={quranForm.recording_mode === "positions" ? "selected" : ""}
+                        disabled={Boolean(editing)} onClick={() => switchQuranRecordingMode("positions")}>
+                        <BookOpen size={16} /><span>بالسور والمواضع</span>
+                      </button>
+                      <button type="button" aria-pressed={quranForm.recording_mode === "amount"}
+                        className={quranForm.recording_mode === "amount" ? "selected" : ""}
+                        disabled={Boolean(editing || planSuggestion?.consolidation)}
+                        title={planSuggestion?.consolidation ? "يجب إنهاء تثبيت السورة بالمواضع" : undefined}
+                        onClick={() => switchQuranRecordingMode("amount")}>
+                        <Hash size={16} /><span>بالأسطر والصفحات</span>
+                      </button>
+                    </div>
+                    <small>{quranForm.recording_mode === "amount"
+                      ? "تسميع سريع بالمقدار؛ يُحتسب في الإنجاز الشهري دون تغيير مسار السور والآيات."
+                      : "تسميع بالمواضع؛ يتابع تقدم الحفظ والمراجعة تلقائيًا."}
+                      {editing ? " • طريقة السجل ثابتة عند التعديل." : ""}
+                    </small>
+                  </div>
+
+                  {quranForm.recording_mode === "amount" && (
+                    <div className="quran-amount-mode">
+                      <div className="quran-amount-info" role="status">
+                        <Sparkles size={17} />
+                        <div>
+                          <strong>{planSuggestion && !editing
+                            ? "المقادير من خطة الطالب الشهرية"
+                            : "تسميع بالمقدار بدون سور أو آيات"}</strong>
+                          <span>المقدار قابل للتعديل حسب ما سمعه الطالب فعلًا، ثم اختر التقييم.</span>
+                        </div>
+                      </div>
+                      <QuranAmountTrack
+                        icon={<BookOpen size={18} />}
+                        title="الدرس (الحفظ)"
+                        value={quranForm.lesson_amount_value}
+                        unit={quranForm.lesson_amount_unit}
+                        evaluation={quranForm.lesson_evaluation}
+                        disabled={!editing && Boolean(planSuggestion?.lessonSuppressed)}
+                        disabledReason="الحفظ موقوف لهذا الطالب حاليًا."
+                        onValue={(value) => setQuran("lesson_amount_value", value)}
+                        onUnit={(unit) => changeQuranAmountUnit("lesson", unit)}
+                        onEvaluation={(value) => setQuran("lesson_evaluation", value)}
+                        suggested={Boolean(planSuggestion && !editing)}
+                      />
+                      <QuranAmountTrack
+                        icon={<RefreshCw size={18} />}
+                        title="المراجعة"
+                        value={quranForm.review_amount_value}
+                        unit={quranForm.review_amount_unit}
+                        evaluation={quranForm.review_evaluation}
+                        disabled={!editing && planSuggestion?.interventionType === "pause"}
+                        disabledReason="المراجعة موقوفة مؤقتًا لهذا الطالب."
+                        onValue={(value) => setQuran("review_amount_value", value)}
+                        onUnit={(unit) => changeQuranAmountUnit("review", unit)}
+                        onEvaluation={(value) => setQuran("review_evaluation", value)}
+                        suggested={Boolean(planSuggestion && !editing)}
+                      />
+                      <p className="quran-amount-note">
+                        تُحسب المقادير المقبولة في الإنجاز الشهري، أما «إعادة» فلا تُحتسب.
+                        لا تُضف المقدار نفسه في الإنجاز اليدوي مرة أخرى.
+                      </p>
+                    </div>
+                  )}
+
+                  {quranForm.recording_mode === "positions" && (
+                    <>
                   {!editing && planSuggestion?.consolidation && (
                     <div className="surah-consolidation-card" role="status">
                       <div className="surah-consolidation-heading">
@@ -6373,6 +6453,8 @@ export default function Recitations() {
                       </>
                     )}
                   </FormSection>
+                    </>
+                  )}
 
                   <FormSection icon={<Target size={17}/>} title="جنب الدرس">
     <SideLessonFields faces={quranForm.side_lesson_faces} lines={quranForm.side_lesson_lines} evaluation={quranForm.next_evaluation}
@@ -6383,6 +6465,7 @@ export default function Recitations() {
 
 
 
+                  {quranForm.recording_mode === "positions" && (
                   <FormSection
                     icon={<RefreshCw size={17} />}
                     title={planSuggestion?.consolidation ? "تثبيت السورة" : "المراجعة"}
@@ -6496,6 +6579,7 @@ export default function Recitations() {
                       </>
                     )}
                   </FormSection>
+                  )}
                 </>
               )}
 

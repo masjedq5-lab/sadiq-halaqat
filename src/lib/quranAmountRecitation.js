@@ -13,13 +13,30 @@ export function amountToFaces(value, unit) {
 export function plannedRecitationAmounts(plan) {
   const lessonDisabled = Boolean(plan?.lessonSuppressed || plan?.consolidation);
   const reviewDisabled = Boolean(plan?.interventionType === "pause");
-  const lesson = Number(plan?.memorizationAmount || 0);
-  const review = Number(plan?.revisionAmount || 0);
+  // A teacher choosing the quantity path expects exactly the numbers
+  // written in the monthly plan. Interventions override them when active.
+  const hasIntervention = Boolean(plan?.activeIntervention);
+  const plannedLesson = plan?.memorization_daily_amount;
+  const plannedReview = plan?.revision_daily_amount;
+  const lessonSource = !hasIntervention && plannedLesson !== null &&
+    plannedLesson !== undefined && plannedLesson !== ""
+    ? plannedLesson : plan?.memorizationAmount;
+  const reviewSource = !hasIntervention && plannedReview !== null &&
+    plannedReview !== undefined && plannedReview !== ""
+    ? plannedReview : plan?.revisionAmount;
+  const lesson = Number(lessonSource || 0);
+  const review = Number(reviewSource || 0);
+  const lessonUnit = !hasIntervention && plannedLesson !== null &&
+    plannedLesson !== undefined && plannedLesson !== ""
+    ? plan.memorization_daily_unit : plan?.memorizationUnit;
+  const reviewUnit = !hasIntervention && plannedReview !== null &&
+    plannedReview !== undefined && plannedReview !== ""
+    ? plan.revision_daily_unit : plan?.revisionUnit;
   return {
     lesson_amount_value: !lessonDisabled && Number.isFinite(lesson) && lesson > 0 ? String(lesson) : "",
-    lesson_amount_unit: plan?.memorizationUnit === "faces" ? "faces" : "lines",
+    lesson_amount_unit: lessonUnit === "faces" ? "faces" : "lines",
     review_amount_value: !reviewDisabled && Number.isFinite(review) && review > 0 ? String(review) : "",
-    review_amount_unit: plan?.revisionUnit === "lines" ? "lines" : "faces",
+    review_amount_unit: reviewUnit === "lines" ? "lines" : "faces",
   };
 }
 

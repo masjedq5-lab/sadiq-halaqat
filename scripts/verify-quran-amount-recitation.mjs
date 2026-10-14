@@ -16,6 +16,16 @@ assert.deepEqual(defaults, {
   lesson_amount_value: "3", lesson_amount_unit: "lines",
   review_amount_value: "5", review_amount_unit: "faces",
 });
+const exactMonthly = plannedRecitationAmounts({
+  ...plan, memorizationAmount: 8, memorizationUnit: "faces",
+  revisionAmount: 10, revisionUnit: "lines",
+  memorization_daily_amount: 3, memorization_daily_unit: "lines",
+  revision_daily_amount: 5, revision_daily_unit: "faces",
+});
+assert.equal(exactMonthly.lesson_amount_value, "3");
+assert.equal(exactMonthly.review_amount_value, "5");
+assert.equal(exactMonthly.lesson_amount_unit, "lines");
+assert.equal(exactMonthly.review_amount_unit, "faces");
 let form = {
   ...defaults, lesson_evaluation: "ممتاز", review_evaluation: "جيد جداً",
 };

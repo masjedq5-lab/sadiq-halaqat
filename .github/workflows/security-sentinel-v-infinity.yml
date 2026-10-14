@@ -64,6 +64,9 @@ jobs:
       - name: Memorized-scope input and Mushaf validation regression tests
         run: npm run test:memorized-scope
 
+      - name: Quran amount-only recitation and monthly progress tests
+        run: npm run test:quran-amount
+
       - name: Absent student recitation regression tests
         run: npm run test:attendance
 

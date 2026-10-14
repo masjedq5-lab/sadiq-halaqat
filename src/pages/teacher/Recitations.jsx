@@ -26,6 +26,7 @@ import {
   evaluations,
 } from "../../data/surahList";
 import { finishedSurahBoundary, nextSurahConsolidation } from "../../lib/surahConsolidation";
+import { amountToFaces, plannedRecitationAmounts, validateAmountRecitation } from "../../lib/quranAmountRecitation";
 
 import {
   useToast,
@@ -100,6 +101,7 @@ function createQuranForm(defaultAmountType = "") {
     legacyLessonAmount(defaultAmountType);
 
   return {
+    recording_mode: "positions",
     from_surah: "",
     from_ayah: "",
     to_surah: "",
@@ -131,6 +133,8 @@ function createQuranForm(defaultAmountType = "") {
     review_to_ayah: "",
     review_evaluation: "",
     review_faces: "",
+    review_amount_value: "",
+    review_amount_unit: "faces",
   };
 }
 
@@ -2062,13 +2066,30 @@ export default function Recitations() {
             next.review_faces = "";
           }
 
+          if (next.recording_mode === "amount") {
+            const defaults = plannedRecitationAmounts({
+              memorizationAmount, memorizationUnit,
+              revisionAmount, revisionUnit,
+              lessonSuppressed, interventionType, consolidation,
+            });
+            if (next.lesson_amount_value === "") {
+              next.lesson_amount_value = defaults.lesson_amount_value;
+              next.lesson_amount_unit = defaults.lesson_amount_unit;
+            }
+            if (next.review_amount_value === "") {
+              next.review_amount_value = defaults.review_amount_value;
+              next.review_amount_unit = defaults.review_amount_unit;
+            }
+          }
+
           if (generatedLesson) {
             next.from_surah = generatedLesson.start_surah_name;
             next.from_ayah = String(generatedLesson.start_ayah);
             next.to_surah = generatedLesson.end_surah_name;
             next.to_ayah = String(generatedLesson.end_ayah);
-            next.lesson_amount_value = "";
-            next.lesson_amount_unit = memorizationUnit;
+            if (next.recording_mode !== "amount") next.lesson_amount_value = "";
+            next.lesson_amount_unit = next.recording_mode === "amount"
+              ? next.lesson_amount_unit : memorizationUnit;
             next.lesson_amount_type = "";
           }
 
@@ -2354,7 +2375,25 @@ export default function Recitations() {
     );
   }
 
-
+  function switchQuranRecordingMode(mode) {
+    if (editing || (mode !== "amount" && mode !== "positions")) return;
+    if (mode === "amount" && planSuggestion?.consolidation) {
+      showToast("أكمل تثبيت السورة بالمواضع؛ حتى لا يتجاوز النظام مراجعتها الختامية.", "info");
+      return;
+    }
+    setQuranForm((current) => {
+      if (current.recording_mode === mode) return current;
+      if (mode === "amount") {
+        const defaults = plannedRecitationAmounts(planSuggestion);
+        return {
+          ...current, ...defaults, recording_mode: "amount",
+          lesson_evaluation: "", review_evaluation: "",
+        };
+      }
+      return { ...current, recording_mode: "positions",
+        lesson_evaluation: "", review_evaluation: "" };
+    });
+  }
 
   function setTrackCompletion(
     track,
@@ -3041,6 +3080,11 @@ export default function Recitations() {
 
     const sideAmount = storedSideLesson(record, "quran");
     setQuranForm({
+      recording_mode: record.recording_mode === "amount" ? "amount" : "positions",
+      review_amount_value: record.recording_mode === "amount"
+        ? valueToString(record.review_amount_value ?? record.review_faces)
+        : "",
+      review_amount_unit: record.review_amount_unit === "lines" ? "lines" : "faces",
       side_lesson_faces: sideAmount.faces || "",
       side_lesson_lines: sideAmount.lines || "",
       side_amount_changed: false,
@@ -4453,6 +4497,10 @@ export default function Recitations() {
   ===================================================== */
 
   async function saveQuran() {
+    if (quranForm.recording_mode === "amount") {
+      await saveQuranByAmount();
+      return;
+    }
     const original = editing?.type === "quran" ? quranRecords.find(row => Number(row.id) === Number(editing.id)) : null;
     const preserveSide = original && !quranForm.side_amount_changed && !storedSideLesson(original).manual;
     const lessonComplete = hasCompleteQuranRange(quranForm.from_surah,quranForm.from_ayah,quranForm.to_surah,quranForm.to_ayah);
@@ -4507,6 +4555,7 @@ export default function Recitations() {
         from_surah:textOrNull(quranForm.from_surah),from_ayah:numberOrNull(quranForm.from_ayah),to_surah:textOrNull(quranForm.to_surah),to_ayah:numberOrNull(quranForm.to_ayah),
         lesson_evaluation:textOrNull(quranForm.lesson_evaluation),lesson_amount_type:lessonComplete?null:textOrNull(quranForm.lesson_amount_type),
         lesson_amount_value:lessonComplete?null:numberOrNull(quranForm.lesson_amount_value),lesson_amount_unit:lessonComplete?null:textOrNull(quranForm.lesson_amount_unit),
+        recording_mode:"positions",review_amount_value:null,review_amount_unit:null,
         lesson_faces_manual:lessonComplete?null:(Number(quranForm.lesson_amount_value||0)>0?(quranForm.lesson_amount_unit==="lines"?Number(quranForm.lesson_amount_value)/15:Number(quranForm.lesson_amount_value)):null),
         ...sideLessonPayload({original,changed:quranForm.side_amount_changed,faces:quranForm.side_lesson_faces,lines:quranForm.side_lesson_lines,evaluation:quranForm.next_evaluation}),
         review_surah:textOrNull(quranForm.review_surah),review_from_ayah:numberOrNull(quranForm.review_from_ayah),review_to_surah:textOrNull(quranForm.review_to_surah),review_to_ayah:numberOrNull(quranForm.review_to_ayah),
@@ -4519,6 +4568,78 @@ export default function Recitations() {
       await saveToTable({table:"recitations",type:"quran",payload,points:quranPoints,reason:"تسميع القرآن",afterPersist:syncQuranEngineAfterSave});
     } catch (error) { showToast(error.message || "تعذر حفظ التسميع","error"); }
     finally { setSaving(false); }
+  }
+
+  async function saveQuranByAmount() {
+    const original = editing?.type === "quran"
+      ? quranRecords.find(row => Number(row.id) === Number(editing.id))
+      : null;
+    try {
+      if (!editing && planSuggestion?.consolidation) {
+        throw new Error("يجب تثبيت السورة الحالية بالمواضع قبل تسجيل درس جديد.");
+      }
+      const lessonDisabled = !editing && Boolean(planSuggestion?.lessonSuppressed);
+      const reviewDisabled = !editing && planSuggestion?.interventionType === "pause";
+      const measured = validateAmountRecitation(quranForm, {lessonDisabled, reviewDisabled});
+      const preserveSide = original && !quranForm.side_amount_changed &&
+        !storedSideLesson(original).manual;
+      const side = preserveSide ? storedSideLesson(original)
+        : validateSideLesson(quranForm.side_lesson_faces,
+            quranForm.side_lesson_lines, quranForm.next_evaluation);
+      if (!measured.hasLesson && !measured.hasReview && !side.totalLines) {
+        throw new Error("حدد مقدار الدرس أو المراجعة، أو سجّل جنب الدرس أولًا.");
+      }
+
+      const points = (measured.hasLesson ? calculatePoints(quranForm.lesson_evaluation) : 0)
+        + (measured.hasReview ? calculatePoints(quranForm.review_evaluation) : 0)
+        + (side.totalLines > 0 ? calculatePoints(quranForm.next_evaluation) : 0);
+
+      setSaving(true);
+      const payload = {
+        recording_mode: "amount",
+        student_id: Number(commonForm.student_id),
+        halaqa_id: Number(commonForm.halaqa_id),
+        teacher_id: teacher.id,
+        recitation_date: commonForm.recitation_date,
+        from_surah: null, from_ayah: null, to_surah: null, to_ayah: null,
+        lesson_evaluation: measured.hasLesson ? quranForm.lesson_evaluation : null,
+        lesson_amount_type: null,
+        lesson_amount_value: measured.hasLesson ? Number(quranForm.lesson_amount_value) : null,
+        lesson_amount_unit: measured.hasLesson ? quranForm.lesson_amount_unit : null,
+        lesson_faces: null,
+        lesson_faces_manual: measured.hasLesson ? measured.lessonFaces : null,
+        next_surah: null, next_from_ayah: null, next_to_surah: null, next_to_ayah: null,
+        next2_surah: null, next2_from_ayah: null, next2_to_surah: null, next2_to_ayah: null,
+        next2_evaluation: null,
+        ...sideLessonPayload({
+          original, changed: quranForm.side_amount_changed,
+          faces: quranForm.side_lesson_faces, lines: quranForm.side_lesson_lines,
+          evaluation: quranForm.next_evaluation,
+        }),
+        review_surah: null, review_from_ayah: null,
+        review_to_surah: null, review_to_ayah: null,
+        review_evaluation: measured.hasReview ? quranForm.review_evaluation : null,
+        review_amount_value: measured.hasReview ? Number(quranForm.review_amount_value) : null,
+        review_amount_unit: measured.hasReview ? quranForm.review_amount_unit : null,
+        review_faces: measured.hasReview ? measured.reviewFaces : null,
+        surah_consolidation_origin_id: null,
+        surah_consolidation_surah: null,
+        surah_consolidation_step: null,
+        surah_consolidation_total: null,
+        notes: textOrNull(commonForm.notes),
+        points,
+      };
+      // Intentionally no quran assignment/cursor sync: quantities contribute
+      // to monthly achievement without claiming a last memorized verse.
+      await saveToTable({
+        table: "recitations", type: "quran", payload, points,
+        reason: "تسميع القرآن بالمقدار", afterPersist: null,
+      });
+    } catch (error) {
+      showToast(error?.message || "تعذر حفظ تسميع المقدار", "error");
+    } finally {
+      setSaving(false);
+    }
   }
 
   /* =====================================================

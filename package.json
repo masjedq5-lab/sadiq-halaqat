@@ -25,6 +25,7 @@
     "test:surah-consolidation": "node scripts/verify-surah-consolidation.mjs",
     "test:memorized-scope": "node scripts/verify-memorized-scope.mjs",
     "test:quran-amount": "node scripts/verify-quran-amount-recitation.mjs",
+    "test:quran-plan-readiness": "node scripts/verify-quran-plan-readiness.mjs",
     "test:performance": "vite build --manifest && node scripts/verify-performance.mjs",
     "test:calendar": "node scripts/verify-calendar.mjs",
     "test:attendance": "node scripts/verify-recitation-attendance.mjs"

@@ -582,19 +582,6 @@ function DashboardView({ dashboard, mosques, supervisors, invites, alerts, audit
     },
   ];
 
-  const activeInvites = invites.filter((invite) => invite.invite_status === "active").length;
-
-  const operationalMosques = mosques.filter(
-    (mosque) => mosque.mosque_status !== "archived"
-  );
-  const supervisedMosques = operationalMosques.filter(
-    (mosque) => number(mosque.supervisors_count) > 0
-  );
-  const supervisionCoverage =
-    operationalMosques.length > 0
-      ? Math.round((supervisedMosques.length / operationalMosques.length) * 100)
-      : 100;
-
   const systemState =
     alerts.some((alert) => alert.severity === "danger")
       ? "يحتاج متابعة"
@@ -615,15 +602,8 @@ function DashboardView({ dashboard, mosques, supervisors, invites, alerts, audit
             <span>حالة المنظومة</span>
             <strong className="sa-system-online"><CheckCircle2 /> {systemState}</strong>
           </div>
-          <div className="sa-command-score">
-            <strong>{supervisionCoverage}%</strong>
-            <span>تغطية الإشراف على المساجد غير المؤرشفة</span>
-          </div>
-          <div className="sa-command-grid">
-            <div><strong>{number(dashboard?.mosques_without_supervisor)}</strong><span>مساجد بلا مشرف</span></div>
-            <div><strong>{number(dashboard?.supervisors_without_mosque)}</strong><span>مشرفون بلا مسجد</span></div>
-            <div><strong>{activeInvites}</strong><span>دعوات صالحة</span></div>
-          </div>
+
+
         </div>
 </CompactPageHeader>
 

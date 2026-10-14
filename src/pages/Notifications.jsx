@@ -1272,22 +1272,7 @@ export default function Notifications() {
             إنشاء رسالة
           </button>
         </div>
-</>}>
-<div className="notifications-hero-tags">
-            <span>
-              <ShieldCheck size={14} />
-              نطاق إرسال محمي
-            </span>
-            <span>
-              <BellRing size={14} />
-              تحديث مباشر
-            </span>
-            <span>
-              <MessageCircleReply size={14} />
-              محادثات قابلة للرد
-            </span>
-          </div>
-</CompactPageHeader>
+</>} />
 
       <section className="notifications-metrics">
         <MetricCard

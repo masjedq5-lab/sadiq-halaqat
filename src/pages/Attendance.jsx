@@ -677,26 +677,7 @@ export default function Attendance() {
               >
                 <ArrowRight size={19} />
               </button>
-</>}>
-<div className="aa-hero-footer">
-          <div>
-            <span>نسبة الالتزام</span>
-            <strong>{globalStats.percentage}%</strong>
-          </div>
-          <div>
-            <span>الحلقات المكتملة</span>
-            <strong>{fullyRecordedHalaqat}</strong>
-          </div>
-          <div>
-            <span>تسجيل غير مكتمل</span>
-            <strong>{incompleteHalaqat}</strong>
-          </div>
-          <div>
-            <span>تحتاج متابعة</span>
-            <strong>{riskHalaqat}</strong>
-          </div>
-        </div>
-</CompactPageHeader>
+</>} />
 
       <section className="aa-toolbar">
         <div className="aa-toolbar-title">

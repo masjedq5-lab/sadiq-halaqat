@@ -752,25 +752,9 @@ export default function SettingsPage() {
 
   return (
     <div className="teacher-settings-page" dir="rtl">
-      <CompactPageHeader title="الإعدادات">
-<div className="settings-user-chip">
-          <UserRound size={17} />
+      <CompactPageHeader title="الإعدادات" />
 
-          <div>
-            <strong>
-              {profile?.display_name ||
-                profile?.full_name ||
-                "المعلم"}
-            </strong>
-
-            <span>
-              رقم المستخدم: {profile?.user_number || "—"}
-            </span>
-          </div>
-        </div>
-</CompactPageHeader>
-
-      <section className="settings-overview-grid">
+      <details className="sadiq-summary-details"><summary>حالة الإعدادات وبيئة العمل</summary><section className="settings-overview-grid">
         <OverviewCard
           icon={Gauge}
           title="جاهزية بيئة العمل"
@@ -857,7 +841,7 @@ export default function SettingsPage() {
             />
           </div>
         </OverviewCard>
-      </section>
+      </section></details>
 
       <div className="settings-workspace">
         <aside className="settings-nav">

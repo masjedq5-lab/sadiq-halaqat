@@ -1,20 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  BellRing,
-  BookOpen,
-  CalendarCheck,
-  CalendarRange,
-  CheckCircle2,
-  ChevronLeft,
-  CircleGauge,
-  Flame,
-  Route,
-  Sparkles,
-  Star,
-  Target,
-  Trophy,
-  UserRoundSearch,
-} from "lucide-react";
+import { BellRing, BookOpen, CalendarCheck, CalendarRange, CheckCircle2, ChevronLeft, CircleGauge, Flame, Route, Sparkles, Trophy, UserRoundSearch } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import StudentPage from "../../components/student/StudentPage";
@@ -47,7 +32,7 @@ function dayKeyInRiyadh() {
 }
 
 export default function StudentDashboard() {
-  const { profile, halaqa, mosque, mainTeacher } = useStudentPortal();
+  const { profile, halaqa } = useStudentPortal();
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({
     plan: null,
@@ -59,7 +44,7 @@ export default function StudentDashboard() {
     revDone: 0,
   });
 
-  
+
 
   async function load() {
     if (!profile?.id) return;
@@ -254,61 +239,19 @@ export default function StudentDashboard() {
       title={`أهلًا ${profile?.full_name?.split(" ")?.[0] || "بك"}`}
       description="كل ما يهم رحلتك اليوم: خطتك، إنجازك، حضورك، نقاطك وما يحتاج انتباهك."
       icon={CircleGauge}
+
+      className="student-dashboard"
+      context={<>
+        <span><BookOpen size={14} />{halaqa?.name || "لم تحدد الحلقة"}</span>
+        <span>{todayIsRecitation ? "اليوم من أيام تسميعك" : "استعد للجلسة القادمة"}</span>
+      </>}
+      action={<Link to="/student/halaqa">تفاصيل حلقتي <ChevronLeft size={15} /></Link>}
     >
       {loading ? (
         <div className="student-loading">جارٍ تجهيز لوحتك الذكية…</div>
       ) : (
         <>
-          <section className="student-dashboard-spotlight">
-            <div className="student-dashboard-ring" style={{ "--value": `${summary.overall}%` }}>
-              <div>
-                <strong>{summary.overall}%</strong>
-                <span>إنجاز الشهر</span>
-              </div>
-            </div>
-
-            <div className="student-dashboard-spotlight-copy">
-              <span>{todayIsRecitation ? "اليوم من أيام تسميعك" : "استعد للجلسة القادمة"}</span>
-              <h2>{motivation.title}</h2>
-              <p>{motivation.body}</p>
-
-              <div className="student-dashboard-tags">
-                <span><BookOpen size={14} /> {halaqa?.name || "لم تحدد الحلقة"}</span>
-                <span><Star size={14} /> {Number(profile?.total_points || 0)} نقطة</span>
-                <span><BellRing size={14} /> {data.unread} غير مقروء</span>
-              </div>
-            </div>
-
-            <div className="student-dashboard-mosque">
-              <span>حلقتي الآن</span>
-              <strong>{mosque?.name || "—"}</strong>
-              <small>{mainTeacher?.full_name || "المعلم غير محدد"}</small>
-              <Link to="/student/halaqa">التفاصيل <ChevronLeft size={15} /></Link>
-            </div>
-          </section>
-
-          <section className="student-metrics">
-            <Metric icon={Target} label="إنجاز الخطة" value={`${summary.overall}%`} note="الحفظ والمراجعة" />
-            <Metric icon={CalendarCheck} label="الحضور" value={`${summary.attendanceRate}%`} note={`${summary.absent} غياب/عذر هذا الشهر`} />
-            <Metric icon={UserRoundSearch} label="التسميع" value={data.recitations.length} note="جلسة هذا الشهر" />
-            <Metric icon={Trophy} label="نقاطي" value={Number(profile?.total_points || 0)} note="واصل جمع النقاط" />
-          </section>
-
           <section className="student-grid student-grid-2">
-            <article className="student-panel">
-              <div className="student-panel-head">
-                <div className="student-panel-title">
-                  <div className="student-panel-title-icon"><Route size={19} /></div>
-                  <div><span>رحلتي</span><h3>تقدم هذا الشهر</h3></div>
-                </div>
-                <Link className="student-inline-link" to="/student/monthly-achievement">عرض الرحلة</Link>
-              </div>
-
-              <DashboardProgress title="الحفظ" done={data.memDone} target={summary.memTarget} percent={summary.memPercent} />
-              <div style={{ height: 9 }} />
-              <DashboardProgress title="المراجعة" done={data.revDone} target={summary.revTarget} percent={summary.revPercent} />
-            </article>
-
             <article className="student-panel">
               <div className="student-panel-head">
                 <div className="student-panel-title">
@@ -324,13 +267,34 @@ export default function StudentDashboard() {
                 <QuickLink to="/student/notifications" icon={BellRing} title="الإشعارات" note={`${data.unread} جديدة`} />
               </div>
             </article>
+            <article className="student-panel">
+              <div className="student-panel-head">
+                <div className="student-panel-title">
+                  <div className="student-panel-title-icon"><Route size={19} /></div>
+                  <div><span>رحلتي</span><h3>تقدم هذا الشهر</h3></div>
+                </div>
+                <Link className="student-inline-link" to="/student/monthly-achievement">عرض الرحلة</Link>
+              </div>
+
+              <DashboardProgress title="الحفظ" done={data.memDone} target={summary.memTarget} percent={summary.memPercent} />
+              <div style={{ height: 9 }} />
+              <DashboardProgress title="المراجعة" done={data.revDone} target={summary.revTarget} percent={summary.revPercent} />
+            </article>
           </section>
+
+          <section className="student-metrics">
+            <Metric icon={CalendarCheck} label="الحضور" value={`${summary.attendanceRate}%`} note={`${summary.absent} غياب/عذر هذا الشهر`} />
+            <Metric icon={UserRoundSearch} label="التسميع" value={data.recitations.length} note="جلسة هذا الشهر" />
+            <Metric icon={Trophy} label="نقاطي" value={Number(profile?.total_points || 0)} note="واصل جمع النقاط" />
+          </section>
+
+
 
           <section className="student-dashboard-message">
             <div className="student-dashboard-message-icon"><Sparkles size={20} /></div>
             <div>
               <span>رسالة الصديق لك</span>
-              <strong>{todayIsRecitation ? "اجعل جلسة اليوم أفضل من أمس." : "استثمر وقتك قبل جلسة التسميع القادمة."}</strong>
+              <strong>{motivation.title}</strong>
             </div>
             <CheckCircle2 size={21} />
           </section>

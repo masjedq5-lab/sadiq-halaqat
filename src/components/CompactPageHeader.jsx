@@ -1,6 +1,7 @@
 import { CalendarDays } from 'lucide-react';
 import { dateKey, formatDate } from '../lib/calendar';
 import './CompactPageHeader.css';
+import './PortalWorkspace.css';
 
 export function PageHeaderDate({ label }) {
   const today = dateKey();
@@ -13,14 +14,14 @@ export function PageHeaderDate({ label }) {
 
 export default function CompactPageHeader({ title, actions, children, dateLabel, level = 1, showDate = true }) {
   const Heading = level === 2 ? 'h2' : 'h1';
-  return <>
+  return <section className="sadiq-page-intro">
     <header className="sadiq-page-heading">
       <div className="sadiq-heading-line">
         {title && <Heading className="sadiq-heading-title">{title}</Heading>}
         {showDate && <PageHeaderDate label={dateLabel} />}
-        {actions && <div className="sadiq-heading-actions">{actions}</div>}
       </div>
+      {children && <div className="sadiq-heading-context">{children}</div>}
     </header>
-    {children && <div className="sadiq-heading-context">{children}</div>}
-  </>;
+    {actions && <div className="sadiq-heading-actions">{actions}</div>}
+  </section>;
 }

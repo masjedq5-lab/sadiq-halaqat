@@ -21,6 +21,7 @@ import TeacherJoinOnboarding from "./dashboard/TeacherJoinOnboarding";
 
 import { showToast } from "../../components/Toast";
 import "./dashboard/TeacherDashboard.css";
+import "./dashboard/TeacherWorkspace.css";
 
 export default function Dashboard() {
   const { teacher: layoutTeacher, assignmentsPromise } = useOutletContext() || {};
@@ -178,7 +179,6 @@ export default function Dashboard() {
         activeHalaqaId={activeHalaqaId}
         onHalaqaChange={setActiveHalaqaId}
         assignment={activeAssignment}
-        stats={stats}
         actions={
           <>
           <Link
@@ -203,9 +203,9 @@ export default function Dashboard() {
         }
       />
 
-      <TeacherStats stats={stats} />
-
       <QuickActions halaqaId={activeHalaqaId} />
+
+      <TeacherStats stats={stats} />
 
       <TeacherAlerts alerts={alerts} />
 

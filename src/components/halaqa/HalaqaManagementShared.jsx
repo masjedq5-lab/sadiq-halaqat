@@ -57,7 +57,7 @@ export function HalaqaFrame({ id, data, tab, loading, reload, children }) {
 </>}>
 <span className={`hm-hero-status ${h.status === "active" ? "is-active" : ""}`}><i /> {status}</span>
 <span className="hm-eyebrow"><Building2 size={15} /> {h.mosque_name || "إدارة الحلقة"}</span>
-<div className="hm-hero-count"><span>{tab === "teachers" ? "معلمو الحلقة" : "طلاب الحلقة"}</span><strong>{number(tab === "teachers" ? data.teachers.length : data.students.length)}</strong></div>
+
 </CompactPageHeader>
       <div className="hm-nav-row">
         <nav className="hm-tabs" aria-label="إدارة الحلقة">

@@ -4,7 +4,7 @@ export default function DashboardSkeleton() {
       <div className="td-skeleton-heading" />
 
       <div className="td-skeleton-grid">
-        {Array.from({ length: 6 }).map((_, index) => (
+        {Array.from({ length: 3 }).map((_, index) => (
           <div className="td-skeleton-card" key={index} />
         ))}
       </div>

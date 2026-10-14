@@ -244,7 +244,7 @@ export default function AdminDashboard() {
       total: 0,
     });
 
-  
+
 
   async function loadDashboard() {
     try {
@@ -527,113 +527,35 @@ export default function AdminDashboard() {
 
   return (
     <AppPage>
-      <div
-        className="supervisor-dashboard"
-        dir="rtl"
-      >
-        {/* HERO */}
-        <CompactPageHeader title="لوحة التحكم" dateLabel={todayHijri}>
-<div className="supervisor-vital-card">
-                <div className="supervisor-vital-head">
-                  <span>
-                    المؤشر الحيوي
-                  </span>
-                  <strong>
-                    {loading
-                      ? "..."
-                      : `${dashboardVitalIndex}%`}
-                  </strong>
-                </div>
-
-                <div className="supervisor-vital-bar">
-                  <div
-                    className="supervisor-vital-fill"
-                    style={{
-                      width: `${dashboardVitalIndex}%`,
-                    }}
-                  />
-                </div>
-
-                <p>
-                  يعكس مستوى النشاط العام
-                  بناءً على الحضور والتسميع
-                  والإنجاز الشهري وحيوية
-                  الحلقات.
-                </p>
-              </div>
-</CompactPageHeader>
-
-        {/* OVERVIEW STATS */}
-        <section className="dashboard-section">
+      <div className="supervisor-dashboard" dir="rtl">
+<CompactPageHeader title="لوحة التحكم" dateLabel={todayHijri} />
+<section className="dashboard-section">
           <div className="dashboard-section-head">
             <div>
-              <h2>
-                الإحصائيات الرئيسية
-              </h2>
+              <h2>الوصول السريع</h2>
               <p>
-                نظرة سريعة على أهم مؤشرات
-                النظام
+                أهم الصفحات المستخدمة يوميًا
               </p>
             </div>
           </div>
 
-          <div className="dashboard-grid metrics-4">
-            <MetricCard
-              title="الطلاب"
-              value={
-                loading
-                  ? "..."
-                  : overview.students
-              }
-              icon={Users}
-              color="#2563EB"
-              subtitle="إجمالي الطلاب"
-              note="قاعدة المستفيدين من الحلقات"
-            />
-
-            <MetricCard
-              title="المعلمون"
-              value={
-                loading
-                  ? "..."
-                  : overview.teachers
-              }
-              icon={GraduationCap}
-              color="#0F766E"
-              subtitle="إجمالي المعلمين"
-              note="الكادر التعليمي المرتبط بالنظام"
-            />
-
-            <MetricCard
-              title="الحلقات"
-              value={
-                loading
-                  ? "..."
-                  : overview.halaqat
-              }
-              icon={BookOpen}
-              color="#7C3AED"
-              subtitle="إجمالي الحلقات"
-              note={`النشط منها: ${overview.activeHalaqat}`}
-            />
-
-            <MetricCard
-              title="المساجد"
-              value={
-                loading
-                  ? "..."
-                  : overview.mosques
-              }
-              icon={Building2}
-              color="#B45309"
-              subtitle="المواقع التابعة"
-              note="المساجد المسجلة داخل النظام"
-            />
+          <div className="dashboard-grid actions-3">
+            {quickActions.map((item) => (
+              <QuickActionCard
+                key={item.path}
+                title={item.title}
+                description={
+                  item.description
+                }
+                icon={item.icon}
+                onClick={() =>
+                  navigate(item.path)
+                }
+              />
+            ))}
           </div>
         </section>
-
-        {/* ACTIVITY STATS */}
-        <section className="dashboard-section">
+<section className="dashboard-section">
           <div className="dashboard-section-head">
             <div>
               <h2>
@@ -700,9 +622,74 @@ export default function AdminDashboard() {
             />
           </div>
         </section>
+<details className="sadiq-summary-details"><summary>ملخص المسجد والحلقات</summary><section className="dashboard-section">
+          <div className="dashboard-section-head">
+            <div>
+              <h2>
+                الإحصائيات الرئيسية
+              </h2>
+              <p>
+                نظرة سريعة على أهم مؤشرات
+                النظام
+              </p>
+            </div>
+          </div>
 
-        {/* ATTENDANCE STATUS */}
-        <section className="dashboard-section">
+          <div className="dashboard-grid metrics-4">
+            <MetricCard
+              title="الطلاب"
+              value={
+                loading
+                  ? "..."
+                  : overview.students
+              }
+              icon={Users}
+              color="#2563EB"
+              subtitle="إجمالي الطلاب"
+              note="قاعدة المستفيدين من الحلقات"
+            />
+
+            <MetricCard
+              title="المعلمون"
+              value={
+                loading
+                  ? "..."
+                  : overview.teachers
+              }
+              icon={GraduationCap}
+              color="#0F766E"
+              subtitle="إجمالي المعلمين"
+              note="الكادر التعليمي المرتبط بالنظام"
+            />
+
+            <MetricCard
+              title="الحلقات"
+              value={
+                loading
+                  ? "..."
+                  : overview.halaqat
+              }
+              icon={BookOpen}
+              color="#7C3AED"
+              subtitle="إجمالي الحلقات"
+              note={`النشط منها: ${overview.activeHalaqat}`}
+            />
+
+            <MetricCard
+              title="المساجد"
+              value={
+                loading
+                  ? "..."
+                  : overview.mosques
+              }
+              icon={Building2}
+              color="#B45309"
+              subtitle="المواقع التابعة"
+              note="المساجد المسجلة داخل النظام"
+            />
+          </div>
+        </section></details>
+<details className="sadiq-summary-details"><summary>تفاصيل الحضور اليومي</summary><section className="dashboard-section">
           <div className="dashboard-section-head">
             <div>
               <h2>ملخص الحضور اليوم</h2>
@@ -758,10 +745,8 @@ export default function AdminDashboard() {
               icon={Activity}
             />
           </div>
-        </section>
-
-        {/* HEALTH INDICATORS */}
-        <section className="dashboard-section">
+        </section></details>
+<details className="sadiq-summary-details"><summary>حالة الحلقات والمتابعة</summary><section className="dashboard-section">
           <div className="dashboard-section-head">
             <div>
               <h2>
@@ -807,36 +792,8 @@ export default function AdminDashboard() {
               description="تقيس نسبة السجلات المعتمدة في الإنجاز الشهري لهذا الشهر."
             />
           </div>
-        </section>
-
-        {/* QUICK ACTIONS */}
-        <section className="dashboard-section">
-          <div className="dashboard-section-head">
-            <div>
-              <h2>الوصول السريع</h2>
-              <p>
-                أهم الصفحات المستخدمة يوميًا
-              </p>
-            </div>
-          </div>
-
-          <div className="dashboard-grid actions-3">
-            {quickActions.map((item) => (
-              <QuickActionCard
-                key={item.path}
-                title={item.title}
-                description={
-                  item.description
-                }
-                icon={item.icon}
-                onClick={() =>
-                  navigate(item.path)
-                }
-              />
-            ))}
-          </div>
-        </section>
-      </div>
+        </section></details>
+</div>
 
       <style>
         {`

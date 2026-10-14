@@ -61,7 +61,6 @@ export default function QuickActions() {
     <section className="td-actions">
       <header className="td-section-head">
         <div>
-          <span>أسرع طريق للعمل</span>
           <h3>إجراءاتك اليومية</h3>
         </div>
       </header>

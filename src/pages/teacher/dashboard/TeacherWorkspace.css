@@ -1,0 +1,51 @@
+/* Put daily work within reach, without the old wall of decorative counters. */
+.teacher-dashboard .td-actions {
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.teacher-dashboard .td-section-head { margin-bottom: 10px; }
+.teacher-dashboard .td-section-head h3 { font-size: calc(16px * var(--app-font-scale,1)); font-weight: 700; margin: 0; }
+.teacher-dashboard .td-actions-grid { grid-template-columns: repeat(3,minmax(0,1fr)); gap: 9px; }
+.teacher-dashboard .td-action-card {
+  min-height: 76px;
+  padding: 12px;
+  grid-template-columns: 30px minmax(0,1fr);
+  gap: 9px;
+  border-color: #dce6df;
+  border-radius: 11px;
+  background: #fff;
+  box-shadow: none;
+  transform: none;
+}
+.teacher-dashboard .td-action-card:hover { border-color: #8fb49c; background: #f6f9f6; transform: none; }
+.teacher-dashboard .td-action-card:focus-visible { outline: 2px solid #398568; outline-offset: 2px; }
+.teacher-dashboard .td-action-icon { width: 30px; height: 30px; border-radius: 8px; background: #eff5f0; color: #346c50; }
+.teacher-dashboard .td-action-icon svg { width: 18px; height: 18px; }
+.teacher-dashboard .td-action-copy { min-width: 0; }
+.teacher-dashboard .td-action-copy strong { font-size: calc(13px * var(--app-font-scale,1)); line-height: 1.5; font-weight: 600; }
+.teacher-dashboard .td-action-copy span { font-size: calc(11px * var(--app-font-scale,1)); font-weight: 400; line-height: 1.6; margin-top: 3px; }
+.teacher-dashboard .td-action-arrow { display: none; }
+.td-daily-summary { margin-top: 12px; }
+.td-daily-summary dl { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin: 0; }
+.td-daily-summary dl > div { padding: 10px 12px; border-radius: 9px; background: #eaf1eb; min-width: 0; }
+.td-daily-summary dt { display: flex; align-items: center; gap: 5px; color: #5e7768; font-size: calc(12px * var(--app-font-scale,1)); line-height: 1.5; }
+.td-daily-summary dt svg { flex-shrink: 0; }
+.td-daily-summary dd { margin: 3px 0 0; color: #244d37; font-size: calc(20px * var(--app-font-scale,1)); line-height: 1.3; font-weight: 650; }
+.teacher-dashboard :is(.td-alerts,.td-panel,.td-student-card) { border-radius: 12px; box-shadow: none; }
+.teacher-dashboard .td-two-column { gap: 12px; }
+.teacher-dashboard .td-skeleton-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.teacher-dashboard .td-skeleton-card { height: 66px; border-radius: 9px; }
+@media (max-width:640px) {
+  .teacher-dashboard .td-actions-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .teacher-dashboard .td-action-card { min-height: 68px; padding: 10px; gap: 7px; grid-template-columns: 26px minmax(0,1fr); }
+  .teacher-dashboard .td-action-icon { width: 26px; height: 26px; }
+  .teacher-dashboard .td-action-copy strong { font-size: calc(12px * var(--app-font-scale,1)); }
+  .teacher-dashboard .td-action-copy span { display: none; }
+  .td-daily-summary dl > div { padding: 9px; }
+  .td-daily-summary dt { font-size: calc(11px * var(--app-font-scale,1)); gap: 4px; }
+  .td-daily-summary dt svg { width: 12px; height: 12px; }
+}

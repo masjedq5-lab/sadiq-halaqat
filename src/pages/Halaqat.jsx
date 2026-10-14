@@ -770,25 +770,7 @@ function getTeacherCount(halaqa) {
                 >
                   <ArrowRight size={20} />
                 </button>
-</>}>
-<div className="hq-hero-strip">
-            <div>
-              <span>تغطية السعة</span>
-              <strong>{occupancyRate}%</strong>
-              <small>{totalStudents} طالب من {totalCapacity || 0} مقعد</small>
-            </div>
-            <div>
-              <span>تحتاج معلمًا رئيسيًا</span>
-              <strong>{halaqatWithoutTeacher}</strong>
-              <small>حلقة تحتاج استكمال التكليف</small>
-            </div>
-            <div>
-              <span>قريبة من الامتلاء</span>
-              <strong>{nearlyFullHalaqat}</strong>
-              <small>إشغال 85٪ فأكثر</small>
-            </div>
-          </div>
-</CompactPageHeader>
+</>} />
 
         <section className="hq-stats">
           <StatCard icon={<BookOpen size={18} />} title="إجمالي الحلقات" value={halaqat.length} note={`${activeCount} نشطة`} />

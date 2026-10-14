@@ -4,35 +4,7 @@ import CalendarInput from "../../components/CalendarInput";
 import {formatSideLessonTotal} from "../../lib/sideLesson";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import {
-  Activity,
-  AlertTriangle,
-  BarChart3,
-  BookOpen,
-  Building2,
-  CalendarCheck,
-  CalendarDays,
-  Check,
-  ChevronDown,
-  ClipboardCopy,
-  FileSpreadsheet,
-  FileText,
-  Filter,
-  GraduationCap,
-  Layers3,
-  Loader2,
-  MapPin,
-  Phone,
-  Printer,
-  RefreshCw,
-  Search,
-  ShieldCheck,
-  Sparkles,
-  Target,
-  UserRound,
-  Users,
-  X,
-} from "lucide-react";
+import { Activity, AlertTriangle, BarChart3, BookOpen, Building2, CalendarCheck, CalendarDays, Check, ChevronDown, ClipboardCopy, FileSpreadsheet, FileText, Filter, GraduationCap, Layers3, Loader2, MapPin, Phone, Printer, RefreshCw, Search, Sparkles, Target, UserRound, Users, X } from "lucide-react";
 
 import { showToast } from "../../components/Toast";
 import {
@@ -621,39 +593,13 @@ export default function ReportsCenter({ mode: requestedMode }) {
   );
 }
 
-function ReportsHero({ scope, mode, onRefresh, loading }) {
-  const uniqueStudents = new Set(scope.studentLinks.map((row) => Number(row.student_id))).size;
-  const uniqueTeachers = new Set(scope.teacherLinks.map((row) => Number(row.teacher_id))).size;
+function ReportsHero({ onRefresh, loading }) {
 
   return (
-    <CompactPageHeader title="التقارير">
-<div className="reports-hero-meta">
-          <span><UserRound size={14} /> {scope.profile.full_name}</span>
-          <span><ShieldCheck size={14} /> {mode === "supervisor" ? "مشرف" : mode === "teacher" ? "معلم" : "إدارة النظام"}</span>
-        </div>
-<div className="reports-hero-stats">
-        {mode === "supervisor" && <HeroStat label="مساجدي" value={scope.mosques.length} icon={Building2} />}
-        <HeroStat label="الحلقات" value={scope.halaqat.length} icon={Layers3} />
-        <HeroStat label="الطلاب" value={uniqueStudents} icon={Users} />
-        <HeroStat label="المعلمون" value={uniqueTeachers} icon={GraduationCap} />
-        <button type="button" onClick={onRefresh} disabled={loading}>
+    <CompactPageHeader title="التقارير" actions={<button type="button" onClick={onRefresh} disabled={loading}>
           <RefreshCw className={loading ? "reports-spin" : ""} size={16} />
           تحديث
-        </button>
-      </div>
-</CompactPageHeader>
-  );
-}
-
-function HeroStat({ label, value, icon: Icon }) {
-  return (
-    <div className="reports-hero-stat">
-      <Icon size={17} />
-      <div>
-        <strong>{formatNumber(value)}</strong>
-        <span>{label}</span>
-      </div>
-    </div>
+        </button>} />
   );
 }
 

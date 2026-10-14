@@ -1443,27 +1443,7 @@ export default function Profile() {
                 "—"}
             </p>
 
-            <div
-              className="profile-meta"
-            >
-              <span>
-                <Mail
-                  size={13}
-                />
 
-                {user?.email ||
-                  "لا يوجد بريد"}
-              </span>
-
-              <span>
-                <Phone
-                  size={13}
-                />
-
-                {profile?.phone ||
-                  "لا يوجد جوال"}
-              </span>
-            </div>
           </div>
         </div>
 </CompactPageHeader>

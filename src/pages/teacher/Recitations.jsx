@@ -1866,11 +1866,14 @@ export default function Recitations() {
         if (reviewHistory.error) throw reviewHistory.error;
         const previousLesson = lessonHistory.data;
         const previousReview = reviewHistory.data;
+        let lessonLoadError = "";
+        let revisionLoadError = "";
 
         // A completed surah is followed by reinforcement, not another surah.
         // Only an earlier dated lesson can open this stage: no same-day jump.
         let consolidation = null;
         if (previousLesson && interventionType !== "pause") {
+          try {
           const surahInfo = await getSurahMetadata(previousLesson.to_surah);
           if (surahInfo && finishedSurahBoundary(
             previousLesson.to_ayah,
@@ -1901,6 +1904,12 @@ export default function Recitations() {
               consolidation.ayahCount = surahInfo.ayahCount;
             }
           }
+          } catch (consolidationError) {
+            console.error("CHECK QURAN SURAH COMPLETION:", consolidationError);
+            // Do not bypass a possibly pending mandatory surah review.
+            lessonLoadError = "تعذر التحقق من تثبيت السورة السابقة. أعد المحاولة قبل الانتقال إلى درس جديد.";
+            lessonSuppressed = true;
+          }
         }
 
         let lessonStart = {
@@ -1908,18 +1917,21 @@ export default function Recitations() {
           ayah: plan.memorization_from_ayah,
         };
 
-        if (previousLesson) {
-          const next = await nextPosition(
-            previousLesson.to_surah,
-            previousLesson.to_ayah,
-            plan.memorization_direction
-          );
-
-          if (next) {
-            lessonStart = {
-              surah: next.surah_name,
-              ayah: next.ayah,
-            };
+        if (previousLesson && !lessonLoadError) {
+          try {
+            const next = await nextPosition(
+              previousLesson.to_surah,
+              previousLesson.to_ayah,
+              plan.memorization_direction
+            );
+            if (next) {
+              lessonStart = { surah: next.surah_name, ayah: next.ayah };
+            } else {
+              lessonLoadError = "تعذر تحديد الموضع الذي يلي آخر درس محفوظ. تحقق من آخر تسميع ومسار الحفظ.";
+            }
+          } catch (cursorError) {
+            console.error("NEXT QURAN LESSON POSITION:", cursorError);
+            lessonLoadError = "تعذر قراءة الموضع التالي للحفظ. لم تتغير سجلات الطالب؛ راجع آخر تسميع أو حاول التحديث.";
           }
         }
 
@@ -1931,7 +1943,6 @@ export default function Recitations() {
         // A problem in revision configuration must never hide a valid
         // memorization lesson from the teacher (and vice versa).
         let revisionCycleBounds = null;
-        let revisionLoadError = "";
         try {
           revisionCycleBounds = await getRevisionCycleBounds(plan);
         } catch (revisionError) {
@@ -1944,30 +1955,30 @@ export default function Recitations() {
           ayah: plan.revision_from_ayah,
         };
 
-        if (previousReview) {
-          const reachedCycleEnd =
-            revisionCycleBounds &&
-            String(previousReview.review_to_surah || "").trim() ===
-              String(revisionCycleBounds.endSurah || "").trim() &&
-            Number(previousReview.review_to_ayah || 0) ===
-              Number(revisionCycleBounds.endAyah || 0);
-
-          const next = reachedCycleEnd
-            ? {
-                surah_name: revisionCycleBounds.startSurah,
-                ayah: Number(revisionCycleBounds.startAyah),
-              }
-            : await nextPosition(
-                previousReview.review_to_surah,
-                previousReview.review_to_ayah,
-                plan.revision_direction
-              );
-
-          if (next) {
-            reviewStart = {
-              surah: next.surah_name,
-              ayah: next.ayah,
-            };
+        if (previousReview && !revisionLoadError) {
+          try {
+            const reachedCycleEnd =
+              revisionCycleBounds &&
+              String(previousReview.review_to_surah || "").trim() ===
+                String(revisionCycleBounds.endSurah || "").trim() &&
+              Number(previousReview.review_to_ayah || 0) ===
+                Number(revisionCycleBounds.endAyah || 0);
+            const next = reachedCycleEnd
+              ? { surah_name: revisionCycleBounds.startSurah,
+                  ayah: Number(revisionCycleBounds.startAyah) }
+              : await nextPosition(
+                  previousReview.review_to_surah,
+                  previousReview.review_to_ayah,
+                  plan.revision_direction
+                );
+            if (next) {
+              reviewStart = { surah: next.surah_name, ayah: next.ayah };
+            } else {
+              revisionLoadError = "تعذر تحديد موضع المراجعة التالي؛ تحقق من آخر تسميع وحدود المراجعة.";
+            }
+          } catch (cursorError) {
+            console.error("NEXT QURAN REVIEW POSITION:", cursorError);
+            revisionLoadError = "تعذر قراءة موضع المراجعة التالي. يظل تسجيل الحفظ متاحًا.";
           }
         }
 
@@ -2001,7 +2012,7 @@ export default function Recitations() {
           };
         }
 
-        if (!lessonSuppressed) {
+        if (!lessonSuppressed && !lessonLoadError) {
           try {
             const lessonLimit = await boundedLessonSurahLimit({
               startSurah: lessonStart.surah,
@@ -2019,9 +2030,12 @@ export default function Recitations() {
               direction: plan.memorization_direction,
             });
           } catch (generationError) {
-            if (!String(generationError?.message || "").includes("QURAN_LIMIT_BEFORE_START")) {
-              throw generationError;
-            }
+            console.error("GENERATE QURAN LESSON:", generationError);
+            const message = String(generationError?.message || "");
+            lessonLoadError = message.includes("QURAN_LIMIT_BEFORE_START") ||
+              message.includes("QURAN_REVERSE_LIMIT_NOT_AFTER_ROUTE_START")
+              ? "موضع الدرس التالي خارج حدود خطة الحفظ الحالية؛ راجع آخر تسميع ونهاية الخطة."
+              : "تعذر توليد درس الحفظ تلقائيًا. تحقق من السور والآيات المحددة في الخطة؛ تظل المراجعة متاحة.";
           }
         }
 
@@ -2050,6 +2064,7 @@ export default function Recitations() {
           generatedLesson, generatedReview, lessonSuppressed, interventionType,
         });
         if (revisionLoadError) planNotices.review = revisionLoadError;
+        if (lessonLoadError) planNotices.lesson = lessonLoadError;
         setPlanSuggestion({
           ...plan,
           planNotices,

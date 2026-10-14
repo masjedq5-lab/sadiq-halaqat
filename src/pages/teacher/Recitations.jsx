@@ -7282,6 +7282,52 @@ function StatCard({
    Form Section
 ========================================================= */
 
+function QuranAmountTrack({
+  icon, title, value, unit, evaluation, onValue, onUnit, onEvaluation,
+  suggested = false, disabled = false, disabledReason = "",
+}) {
+  const faces = value !== "" && Number(value) > 0 ? amountToFaces(value, unit) : null;
+  return (
+    <section className="quran-amount-track">
+      <div className="quran-amount-track-heading">
+        <span className="quran-amount-track-icon">{icon}</span>
+        <div>
+          <strong>{title}</strong>
+          <small>{suggested ? "من الخطة الشهرية • قابل للتعديل" : "حدد المقدار الذي تم تسميعه"}</small>
+        </div>
+      </div>
+      {disabled ? (
+        <p className="quran-amount-disabled">{disabledReason}</p>
+      ) : (
+        <>
+          <div className="quran-amount-track-fields">
+            <NumberField
+              label="المقدار الفعلي" value={value} min="0"
+              step={unit === "lines" ? "1" : "0.01"}
+              onChange={onValue} placeholder="0"
+            />
+            <SelectField
+              label="الوحدة" value={unit} onChange={onUnit}
+              options={[
+                {value: "lines", label: "أسطر"},
+                {value: "faces", label: "صفحات"},
+              ]}
+            />
+          </div>
+          {faces !== null && <small className="quran-amount-conversion">
+            يُحسب في الإنجاز: {formatFaces(faces)} وجه
+          </small>}
+          <EvaluationSelector label="التقدير" value={evaluation} onChange={onEvaluation} />
+        </>
+      )}
+    </section>
+  );
+}
+
+/* =========================================================
+   Form Section
+========================================================= */
+
 function FormSection({
   icon,
   title,
@@ -8501,6 +8547,88 @@ function PageStyles() {
           .surah-consolidation-card { padding:13px; }
           .surah-consolidation-options { gap:7px; }
           .surah-consolidation-options button { min-width:120px; }
+        }
+
+        .quran-recording-mode {
+          border: 1px solid #d6e7de; border-radius: 17px;
+          background: #f7fbf9; padding: 14px; margin: 14px 0;
+        }
+        .quran-recording-mode-label {
+          display: flex; gap: 8px; align-items: center;
+          color: #194e3c; font-size: 15px; margin-bottom: 11px;
+        }
+        .quran-recording-mode-options {
+          display: grid; grid-template-columns: 1fr 1fr; gap: 9px;
+        }
+        .quran-recording-mode-options button {
+          min-height: 48px; border: 1px solid #ccdcd3;
+          border-radius: 12px; background: #fff; color: #2e5342;
+          display: flex; align-items: center; justify-content: center;
+          gap: 7px; font-size: 13px; font-weight: 800;
+          padding: 9px 7px; cursor: pointer;
+        }
+        .quran-recording-mode-options button.selected {
+          background: #145c45; color: white; border-color: #145c45;
+          box-shadow: 0 5px 14px rgba(20, 92, 69, .14);
+        }
+        .quran-recording-mode-options button:disabled {
+          cursor: not-allowed; opacity: .65;
+        }
+        .quran-recording-mode-options button.selected:disabled { opacity: .92; }
+        .quran-recording-mode > small {
+          display: block; margin-top: 10px; line-height: 1.7;
+          color: #648174; font-size: 11px;
+        }
+        .quran-amount-mode { display: grid; gap: 12px; }
+        .quran-amount-info {
+          display: flex; gap: 11px; align-items: flex-start;
+          padding: 12px; border-radius: 13px;
+          background: #eef8f1; color: #16543f;
+        }
+        .quran-amount-info > svg { flex-shrink: 0; margin-top: 2px; }
+        .quran-amount-info strong { display: block; font-size: 13px; }
+        .quran-amount-info span {
+          display: block; font-size: 11px; line-height: 1.8; margin-top: 4px;
+        }
+        .quran-amount-track {
+          border: 1px solid #dce8e1; border-radius: 17px;
+          background: #fff; padding: 15px; min-width: 0;
+        }
+        .quran-amount-track-heading {
+          display: flex; align-items: center; gap: 10px; margin-bottom: 13px;
+        }
+        .quran-amount-track-heading strong {
+          display: block; font-size: 16px; color: #194e3c;
+        }
+        .quran-amount-track-heading small {
+          display: block; margin-top: 3px; font-size: 10px; color: #6b8377;
+        }
+        .quran-amount-track-icon {
+          width: 38px; height: 38px; border-radius: 11px;
+          display: grid; place-items: center;
+          color: #19644a; background: #eef7f1;
+        }
+        .quran-amount-track-fields {
+          display: grid; grid-template-columns: minmax(0,1fr) minmax(110px,.65fr);
+          gap: 11px; align-items: end; margin-bottom: 10px;
+        }
+        .quran-amount-track-fields > * { min-width: 0; }
+        .quran-amount-conversion {
+          display: block; margin: 0 0 10px;
+          color: #147151; font-size: 11px;
+        }
+        .quran-amount-disabled {
+          color: #9a6b28; background: #fff8e8;
+          border-radius: 11px; padding: 12px; margin: 0; font-size: 12px;
+        }
+        .quran-amount-note {
+          color: #56786b; font-size: 11px; line-height: 1.8;
+          margin: 0 4px 8px;
+        }
+        @media(max-width: 490px) {
+          .quran-recording-mode, .quran-amount-track { padding: 12px; }
+          .quran-recording-mode-options button { font-size: 11px; gap: 5px; }
+          .quran-amount-track-fields { gap: 8px; }
         }
 
         .recitations-page {

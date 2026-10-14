@@ -11,13 +11,13 @@ export function PageHeaderDate({ label }) {
   </time>;
 }
 
-export default function CompactPageHeader({ title, actions, children, dateLabel, level = 1 }) {
+export default function CompactPageHeader({ title, actions, children, dateLabel, level = 1, showDate = true }) {
   const Heading = level === 2 ? 'h2' : 'h1';
   return <>
     <header className="sadiq-page-heading">
       <div className="sadiq-heading-line">
         {title && <Heading className="sadiq-heading-title">{title}</Heading>}
-        <PageHeaderDate label={dateLabel} />
+        {showDate && <PageHeaderDate label={dateLabel} />}
         {actions && <div className="sadiq-heading-actions">{actions}</div>}
       </div>
     </header>

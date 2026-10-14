@@ -172,20 +172,15 @@ export default function Dashboard() {
 
   return (
     <div className="teacher-dashboard">
-      <div className="td-toolbar">
-        <div>
-          <span className="td-toolbar-kicker">مساحة العمل اليومية</span>
-          <h1>لوحة المعلم</h1>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "calc(8px * var(--app-density,1))",
-            flexWrap: "wrap",
-          }}
-        >
+      <TeacherHero
+        teacher={teacher}
+        assignments={assignments}
+        activeHalaqaId={activeHalaqaId}
+        onHalaqaChange={setActiveHalaqaId}
+        assignment={activeAssignment}
+        stats={stats}
+        actions={
+          <>
           <Link
             to="/teacher/join-requests"
             className="td-refresh"
@@ -204,16 +199,8 @@ export default function Dashboard() {
             <RefreshCw className={refreshing ? "td-spin" : ""} size={17} />
             {refreshing ? "جارٍ التحديث…" : "تحديث البيانات"}
           </button>
-        </div>
-      </div>
-
-      <TeacherHero
-        teacher={teacher}
-        assignments={assignments}
-        activeHalaqaId={activeHalaqaId}
-        onHalaqaChange={setActiveHalaqaId}
-        assignment={activeAssignment}
-        stats={stats}
+          </>
+        }
       />
 
       <TeacherStats stats={stats} />

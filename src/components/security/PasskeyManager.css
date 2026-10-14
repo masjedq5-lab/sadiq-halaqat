@@ -4,152 +4,74 @@
   --pk-gold: #c9a343;
   position: relative;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--pk-green) 13%, transparent);
-  border-radius: calc(26px * var(--app-radius-scale, 1));
-  background:
-    radial-gradient(circle at 8% 8%, rgba(201, 163, 67, .11), transparent 24%),
-    radial-gradient(circle at 92% 92%, color-mix(in srgb, var(--pk-green) 9%, transparent), transparent 27%),
-    linear-gradient(145deg, #fff, #fbfcfa 58%, #f3f8f5);
-  box-shadow:
-    0 22px 62px color-mix(in srgb, var(--pk-dark) 10%, transparent),
-    inset 0 1px 0 rgba(255,255,255,.92);
+  border: 1px solid #dbe5de;
+  border-radius: calc(14px * var(--app-radius-scale, 1));
+  background: #fff;
 }
 
-.passkey-vault::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: .032;
-  pointer-events: none;
-  background-image: url("/ornaments/sadiq/gold/05-wasl.svg");
-  background-size: 360px auto;
-  background-repeat: repeat;
-}
-
-.passkey-vault > * { position: relative; z-index: 1; }
-
-.passkey-vault__hero {
-  min-height: 210px;
-  padding: clamp(24px, 3.2vw, 40px);
+.passkey-vault__heading {
+  padding: calc(18px * var(--app-density, 1));
   display: grid;
-  grid-template-columns: 108px minmax(0, 1fr) auto;
-  gap: clamp(18px, 2.5vw, 30px);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 230px);
+  gap: 12px 20px;
   align-items: center;
-  color: #fff;
-  background:
-    radial-gradient(circle at 18% 10%, rgba(232, 208, 132, .16), transparent 26%),
-    radial-gradient(circle at 86% 88%, rgba(40, 126, 105, .18), transparent 34%),
-    linear-gradient(145deg, #052d28, #083d35 48%, #0d574a);
+  border-bottom: 1px solid #e5ece7;
+  color: #31543e;
 }
 
-.passkey-vault__hero::after {
-  content: "";
-  position: absolute;
-  left: -82px;
-  bottom: -104px;
-  width: 330px;
-  height: 330px;
-  opacity: .14;
-  pointer-events: none;
-  background: url("/ornaments/sadiq/gold/04-madar.svg") center/contain no-repeat;
-  animation: passkeyOrbit 48s linear infinite;
+.passkey-vault__heading-copy { min-width: 0; }
+
+.passkey-vault__heading-copy h2 {
+  margin: 0;
+  font-size: calc(20px * var(--app-font-scale, 1));
+  font-weight: 700;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
 }
 
-.passkey-vault__orb {
-  width: 102px;
-  height: 102px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(233, 210, 139, .32);
-  border-radius: 32px;
-  background: rgba(255,255,255,.08);
-  box-shadow:
-    inset 0 0 0 5px rgba(255,255,255,.025),
-    0 18px 46px rgba(0,0,0,.13);
-  backdrop-filter: blur(8px);
-}
-
-.passkey-vault__orb svg {
-  width: 52px;
-  height: 52px;
-  color: #ead58a;
-  stroke-width: 1.25;
-}
-
-.passkey-vault__eyebrow {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  color: #ead58a;
-  font-size: calc(11px * var(--app-font-scale, 1));
-  font-weight: 900;
-}
-
-.passkey-vault__eyebrow svg { width: 14px; height: 14px; }
-
-.passkey-vault__hero-copy h2 {
-  margin: 7px 0 0;
-  font-size: clamp(25px, 3vw, 36px);
-  font-weight: 950;
-  letter-spacing: -.5px;
-}
-
-.passkey-vault__hero-copy > p {
-  max-width: 630px;
-  margin: 8px 0 0;
-  color: rgba(255,255,255,.72);
+.passkey-vault__heading-copy > p {
+  margin: 4px 0 0;
+  color: #687d70;
   font-size: calc(12px * var(--app-font-scale, 1));
-  line-height: 1.9;
-  font-weight: 650;
+  line-height: 1.7;
 }
 
 .passkey-vault__chips {
-  margin-top: 17px;
+  margin-top: 8px;
   display: flex;
   flex-wrap: wrap;
-  gap: 7px;
+  gap: 6px 14px;
 }
 
 .passkey-vault__chips span {
-  min-height: 30px;
-  padding: 0 10px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  border: 1px solid rgba(255,255,255,.1);
-  border-radius: 999px;
-  background: rgba(255,255,255,.06);
-  color: rgba(255,255,255,.84);
-  font-size: calc(9px * var(--app-font-scale, 1));
-  font-weight: 780;
+  gap: 5px;
+  color: #687d70;
+  font-size: calc(11px * var(--app-font-scale, 1));
+  line-height: 1.6;
 }
 
-.passkey-vault__chips svg { width: 14px; height: 14px; color: #ead58a; }
+.passkey-vault__chips svg { width: 14px; height: 14px; color: #64816e; flex-shrink: 0; }
 
 .passkey-vault__status {
-  min-width: 155px;
-  padding: 16px 17px;
-  border: 1px solid rgba(234, 213, 138, .18);
-  border-radius: 18px;
-  background: rgba(1, 30, 27, .28);
-  text-align: center;
-}
-
-.passkey-vault__status span,
-.passkey-vault__status small {
-  display: block;
-  color: rgba(255,255,255,.59);
-  font-size: calc(8px * var(--app-font-scale, 1));
-  font-weight: 750;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 8px;
+  min-width: 0;
+  color: #687d70;
+  font-size: calc(11px * var(--app-font-scale, 1));
+  line-height: 1.6;
 }
 
 .passkey-vault__status strong {
-  display: block;
-  margin: 5px 0;
-  color: #f2dfa1;
-  font-size: calc(15px * var(--app-font-scale, 1));
-  font-weight: 950;
+  color: #31543e;
+  font-size: calc(13px * var(--app-font-scale, 1));
+  font-weight: 700;
 }
+
+.passkey-vault__status small { flex-basis: 100%; font-size: inherit; }
 
 .passkey-vault__grid {
   padding: 22px clamp(20px, 3vw, 34px) 0;
@@ -469,43 +391,16 @@
 .passkey-spin { animation: passkeySpin .8s linear infinite; }
 
 @keyframes passkeySpin { to { transform: rotate(360deg); } }
-@keyframes passkeyOrbit { to { transform: rotate(360deg); } }
 
 @media (max-width: 760px) {
-  .passkey-vault__hero {
-    grid-template-columns: 74px minmax(0,1fr);
-    min-height: 0;
-  }
-
-  .passkey-vault__orb {
-    width: 70px;
-    height: 70px;
-    border-radius: 22px;
-  }
-
-  .passkey-vault__orb svg { width: 36px; height: 36px; }
-
-  .passkey-vault__status {
-    grid-column: 1 / -1;
-    min-width: 0;
-    text-align: right;
-  }
-
+  .passkey-vault__heading { grid-template-columns: 1fr; }
+  .passkey-vault__status small { flex-basis: auto; }
   .passkey-vault__grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 520px) {
-  .passkey-vault { border-radius: 21px; }
-  .passkey-vault__hero {
-    padding: 22px 18px;
-    grid-template-columns: 1fr;
-  }
-  .passkey-vault__orb {
-    width: 62px;
-    height: 62px;
-  }
-  .passkey-vault__hero-copy h2 { font-size: 25px; }
-  .passkey-vault__chips span { font-size: calc(8px * var(--app-font-scale, 1)); }
+  .passkey-vault__heading { padding: 14px; }
+  .passkey-vault__heading-copy h2 { font-size: calc(18px * var(--app-font-scale, 1)); }
   .passkey-vault__grid,
   .passkey-vault__actions,
   .passkey-vault__list { padding-inline: 14px; }
@@ -520,6 +415,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .passkey-vault__hero::after { animation: none; }
   .passkey-spin { animation-duration: 1.4s; }
 }

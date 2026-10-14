@@ -1,18 +1,6 @@
 import {displayDateFormatter} from "../../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
-import {
-  CheckCircle2,
-  Fingerprint,
-  KeyRound,
-  Laptop,
-  Loader2,
-  RefreshCw,
-  ShieldCheck,
-  Smartphone,
-  Sparkles,
-  Trash2,
-  UserRoundCheck,
-} from "lucide-react";
+import { CheckCircle2, Fingerprint, KeyRound, Laptop, Loader2, RefreshCw, ShieldCheck, Smartphone, Trash2, UserRoundCheck } from "lucide-react";
 import { supabase } from "../../lib/supabase";
 import "./PasskeyManager.css";
 
@@ -195,16 +183,8 @@ export default function PasskeyManager({
 
   return (
     <section className={`passkey-vault ${compact ? "is-compact" : ""}`} dir="rtl">
-      <div className="passkey-vault__hero">
-        <div className="passkey-vault__orb" aria-hidden="true">
-          <Fingerprint />
-        </div>
-
-        <div className="passkey-vault__hero-copy">
-          <span className="passkey-vault__eyebrow">
-            <Sparkles />
-            أمان بدون كلمة مرور
-          </span>
+      <header className="passkey-vault__heading">
+        <div className="passkey-vault__heading-copy">
           <h2>{title}</h2>
           <p>{subtitle}</p>
 
@@ -220,7 +200,7 @@ export default function PasskeyManager({
           <strong>{securityLabel}</strong>
           <small>{total ? `${total} مفتاح مرور مسجل` : "لا يوجد مفتاح مسجل بعد"}</small>
         </div>
-      </div>
+      </header>
 
       <div className="passkey-vault__grid">
         <article className="passkey-vault__device">

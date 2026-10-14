@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -402,26 +403,8 @@ export default function TeacherAssignments() {
       {/* HEADER */}
       {/* ================================= */}
 
-      <header
-        style={{
-          maxWidth: "1250px",
-          margin: "0 auto 25px",
-          display: "flex",
-          justifyContent:
-            "space-between",
-          alignItems: "center",
-          gap: "calc(15px * var(--app-density,1))",
-          flexWrap: "wrap",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "calc(13px * var(--app-density,1))",
-          }}
-        >
-          <button
+      <div style={{ maxWidth: "1250px", margin: "0 auto" }}><CompactPageHeader title="ربط المعلمين بالحلقات" actions={<>
+<button
             type="button"
             onClick={() =>
               navigate("/admin")
@@ -429,58 +412,8 @@ export default function TeacherAssignments() {
             style={iconButton}
             title="العودة للوحة المشرف"
           >
-            <ArrowRight
-              size={20}
-            />
-          </button>
-
-          <div
-            style={{
-              width: "50px",
-              height: "50px",
-              borderRadius: "calc(15px * var(--app-radius-scale,1))",
-              background: "var(--app-color-0f5132,#0f5132)",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent:
-                "center",
-              boxShadow:
-                "0 8px 20px color-mix(in srgb,var(--app-color-0f5132,#0f5132) 15%,transparent)",
-            }}
-          >
-            <Link2
-              size={25}
-              strokeWidth={1.8}
-            />
-          </div>
-
-          <div>
-            <h1
-              style={{
-                margin: 0,
-                color: "var(--app-color-173d2b,#173d2b)",
-                fontSize: "calc(29px * var(--app-font-scale,1))",
-                fontWeight: "850",
-              }}
-            >
-              ربط المعلمين بالحلقات
-            </h1>
-
-            <p
-              style={{
-                margin:
-                  "5px 0 0",
-                color: "#7b847e",
-                fontSize: "calc(13px * var(--app-font-scale,1))",
-              }}
-            >
-              إدارة توزيع المعلمين على الحلقات
-            </p>
-          </div>
-        </div>
-
-        <button
+            <ArrowRight size={17} /> العودة للوحة المشرف</button>
+<button
           type="button"
           onClick={loadData}
           disabled={loading}
@@ -501,7 +434,7 @@ export default function TeacherAssignments() {
 
           تحديث البيانات
         </button>
-      </header>
+</>} /></div>
 
       <main
         style={{

@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
@@ -839,72 +840,14 @@ return (
 
   {/* HEADER */}
 
-  <div
-    style={{
-      display:"flex",
-      justifyContent:"space-between",
-      alignItems:"center",
-      marginBottom:"24px"
-    }}
-  >
-
-    <div>
-
-      <h1
-        style={{
-          margin:0,
-          fontSize:"calc(32px * var(--app-font-scale,1))",
-          fontWeight:"900"
-        }}
-      >
-        المنح والخصومات
-      </h1>
-
-      <p
-        style={{
-          marginTop:"8px",
-          color:"#64748B"
-        }}
-      >
-        إدارة نقاط الطلاب والمنح والخصومات
-      </p>
-
-    </div>
-
-    <div
-      style={{
-        minWidth: "240px",
-      }}
-    >
-      <label
-        style={{
-          display: "block",
-          marginBottom: "6px",
-          color: "#64748B",
-          fontSize: "calc(13px * var(--app-font-scale,1))",
-          fontWeight: "800",
-        }}
-      >
-        المسجد الحالي
-      </label>
-
+  <CompactPageHeader title="المنح والخصومات">
+    <label className="sadiq-heading-select">
+      <span>المسجد الحالي</span>
       <select
         value={selectedMosque}
         onChange={(event) =>
           setSelectedMosque(event.target.value)
         }
-        style={{
-          width: "100%",
-          minHeight: "44px",
-          border: "1px solid #E2E8F0",
-          borderRadius: "calc(12px * var(--app-radius-scale,1))",
-          background: "#FFFFFF",
-          padding: "0 calc(12px * var(--app-density,1))",
-          font: "inherit",
-          fontWeight: "800",
-          color: "#0F172A",
-          outline: "none",
-        }}
       >
         {supervisorMosques.length === 0 && (
           <option value="">
@@ -918,9 +861,8 @@ return (
           </option>
         ))}
       </select>
-    </div>
-
-  </div>
+    </label>
+  </CompactPageHeader>
 
   {/* STATS */}
 

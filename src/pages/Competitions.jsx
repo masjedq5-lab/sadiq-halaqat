@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
@@ -684,33 +685,8 @@ export default function Teachers() {
         {/* HEADER */}
         {/* ================================================= */}
 
-        <header
-          style={{
-            display:
-              "flex",
-            justifyContent:
-              "space-between",
-            alignItems:
-              "center",
-            gap:
-              "calc(15px * var(--app-density,1))",
-            flexWrap:
-              "wrap",
-            marginBottom:
-              "26px",
-          }}
-        >
-          <div
-            style={{
-              display:
-                "flex",
-              alignItems:
-                "center",
-              gap:
-                "calc(13px * var(--app-density,1))",
-            }}
-          >
-            <button
+        <CompactPageHeader title="إدارة المعلمين" actions={<>
+<button
               type="button"
               onClick={() =>
                 navigate(
@@ -722,73 +698,8 @@ export default function Teachers() {
               }
               title="العودة للوحة المشرف"
             >
-              <ArrowRight
-                size={20}
-              />
-            </button>
-
-            <div
-              style={{
-                width:
-                  "52px",
-                height:
-                  "52px",
-                borderRadius:
-                  "calc(15px * var(--app-radius-scale,1))",
-                background:
-                  "var(--app-color-0f5132,#0f5132)",
-                color:
-                  "#fff",
-                display:
-                  "flex",
-                alignItems:
-                  "center",
-                justifyContent:
-                  "center",
-                boxShadow:
-                  "0 8px 20px color-mix(in srgb,var(--app-color-0f5132,#0f5132) 16%,transparent)",
-              }}
-            >
-              <GraduationCap
-                size={27}
-                strokeWidth={
-                  1.8
-                }
-              />
-            </div>
-
-            <div>
-              <h1
-                style={{
-                  margin:
-                    0,
-                  color:
-                    "var(--app-color-173d2b,#173d2b)",
-                  fontSize:
-                    "calc(29px * var(--app-font-scale,1))",
-                  fontWeight:
-                    "850",
-                }}
-              >
-                إدارة المعلمين
-              </h1>
-
-              <p
-                style={{
-                  margin:
-                    "5px 0 0",
-                  color:
-                    "#7d8680",
-                  fontSize:
-                    "calc(13px * var(--app-font-scale,1))",
-                }}
-              >
-                إدارة بيانات المعلمين وربطهم بالحلقات
-              </p>
-            </div>
-          </div>
-
-          <button
+              <ArrowRight size={17} /> العودة للوحة المشرف</button>
+<button
             type="button"
             onClick={() =>
               loadData(
@@ -813,7 +724,7 @@ export default function Teachers() {
 
             تحديث
           </button>
-        </header>
+</>} />
 
         {/* ================================================= */}
         {/* STATISTICS */}

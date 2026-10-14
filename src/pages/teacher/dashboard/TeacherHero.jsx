@@ -7,10 +7,10 @@ const PERIOD_LABELS = {
   after_maghrib: 'بعد المغرب', after_isha: 'بعد العشاء',
 };
 
-export default function TeacherHero({ teacher, assignments = [], activeHalaqaId, onHalaqaChange, assignment, stats = {} }) {
+export default function TeacherHero({ teacher, assignments = [], activeHalaqaId, onHalaqaChange, assignment, stats = {}, actions }) {
   const todayLabel = displayDateFormatter({ timeZone: 'Asia/Riyadh', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
   return <>
-    <CompactPageHeader title={`حيّاك الله، ${teacher?.full_name || 'المعلم'}`} dateLabel={todayLabel} />
+    <CompactPageHeader title={`حيّاك الله، ${teacher?.full_name || 'المعلم'}`} dateLabel={todayLabel} actions={actions} />
     <div className="teacher-heading-tools">
       <label className="teacher-heading-halaqa">
         <BookOpen size={16} aria-hidden="true" />

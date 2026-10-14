@@ -59,7 +59,7 @@ const fixtures={React,context,supabase:fakeClient,getTeacherAssignments:async()=
 globalThis.dashboardPerformanceFixture=fixtures;
 const source=(await fs.readFile('src/pages/teacher/Dashboard.jsx','utf8')).replace(/^import[\s\S]*?;\n/gm,'').replace(/const TeacherCharts = lazyWithRetry\([^\n]+\);/,'');
 const components=['DashboardSkeleton','TeacherHero','TeacherStats','TeacherCharts','TopStudents','LatestRecitations','TeacherAlerts','QuickActions','TeacherJoinOnboarding','RefreshCw','UserRoundCheck','Link'];
-const prelude='const {React,context,supabase,getTeacherAssignments,getTeacherDashboardData}=globalThis.dashboardPerformanceFixture;const {Suspense,useCallback,useEffect,useMemo,useState}=React;const useOutletContext=()=>context;const showToast=()=>{};\n'+components.map(name=>`const ${name}=props=>React.createElement('div',null,props.children||'${name}');`).join('\n');
+const prelude='const {React,context,supabase,getTeacherAssignments,getTeacherDashboardData}=globalThis.dashboardPerformanceFixture;const {Suspense,useCallback,useEffect,useMemo,useState}=React;const useOutletContext=()=>context;const showToast=()=>{};\n'+components.map(name=>`const ${name}=props=>React.createElement('div',null,props.children||props.actions||'${name}');`).join('\n');
 const compiled=await transformWithOxc(prelude+source,'Dashboard.jsx',{jsx:{runtime:'classic'}});
 const Dashboard=(await import('data:text/javascript;base64,'+Buffer.from(compiled.code).toString('base64'))).default;
 let view;await act(async()=>{view=Renderer.create(React.createElement(Dashboard));});

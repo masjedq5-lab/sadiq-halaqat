@@ -1,12 +1,13 @@
 /* A page starts with its title and date; operational tools keep their own row. */
 .sadiq-page-heading{container-type:inline-size;container-name:page-heading;margin:0 0 16px;padding:0 0 12px;border:0;border-bottom:1px solid #dfe7e2;background:transparent;box-shadow:none;color:#234c3b;direction:rtl}
-.sadiq-heading-line{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px 18px;min-height:36px}
-html .sadiq-page-heading .sadiq-heading-title{margin:0;padding:0;font-size:calc(22px * var(--app-font-scale,1));font-weight:700;line-height:1.45;letter-spacing:0;color:var(--app-color-173d2b,#173d2b);min-width:0;overflow-wrap:anywhere}
+.sadiq-heading-line{display:flex;align-items:center;justify-content:flex-start;flex-wrap:wrap;gap:8px 18px;min-height:36px}
+html .sadiq-page-heading .sadiq-heading-title{margin:0;padding:0;font-size:calc(22px * var(--app-font-scale,1));font-weight:700;line-height:1.45;letter-spacing:0;color:var(--app-color-173d2b,#173d2b);min-width:0;max-width:100%;overflow-wrap:anywhere}
+html .sadiq-page-heading h2.sadiq-heading-title{font-size:calc(18px * var(--app-font-scale,1))}
 .sadiq-heading-title>span{display:inline;color:inherit;font:inherit;margin:0}
-.sadiq-heading-date{display:inline-flex;align-items:center;gap:7px;min-width:0;max-width:100%;color:#627264;font-size:calc(12px * var(--app-font-scale,1));font-weight:500;line-height:1.6;margin-inline-start:auto}
+.sadiq-heading-date{display:inline-flex;align-items:center;gap:7px;min-width:0;max-width:100%;color:#627264;font-size:calc(12px * var(--app-font-scale,1));font-weight:500;line-height:1.6}
 .sadiq-heading-date span{min-width:0;overflow-wrap:anywhere}
 .sadiq-heading-date svg{position:static!important;width:15px;height:15px;color:#718b79;flex-shrink:0}
-.sadiq-heading-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;max-width:100%}
+.sadiq-heading-actions{display:flex;align-items:center;flex-wrap:wrap;gap:8px;max-width:100%;margin-inline-start:auto}
 .sadiq-heading-actions>div{display:contents!important}
 html :is(.sadiq-heading-actions,.sadiq-heading-context) :is(button,a){display:inline-flex;align-items:center;justify-content:center;gap:6px;min-width:0!important;min-height:36px!important;width:auto!important;height:auto!important;margin:0!important;padding:7px 12px!important;border:1px solid #dbe5de!important;border-radius:8px!important;background:#fff!important;color:#315d45!important;box-shadow:none!important;font-family:inherit;font-size:calc(12px * var(--app-font-scale,1))!important;font-weight:600!important;line-height:1.45;white-space:normal;text-decoration:none;cursor:pointer;transform:none!important}
 html :is(.sadiq-heading-actions,.sadiq-heading-context) :is(button,a):hover:not(:disabled){background:#f0f6f2!important;border-color:#b6cdbd!important}
@@ -64,6 +65,9 @@ html .sadiq-profile-summary .student-profile-number strong{font-size:14px;color:
 .td-skeleton-heading{height:54px!important;min-height:0!important;border-radius:6px!important;background:#eaf0ec!important;box-shadow:none;margin-bottom:14px}
 .sadiq-inline-summary{display:flex;align-items:center;flex-wrap:wrap;gap:10px 20px;margin-bottom:16px;color:#718276;font-size:12px;direction:rtl}
 .sadiq-inline-summary strong{color:#31543e;font-size:13px;font-weight:700}
+.sadiq-heading-select{display:inline-flex;align-items:center;flex-wrap:wrap;gap:7px 12px;min-width:0;max-width:100%}
+html .sadiq-heading-select select{width:auto;max-width:100%;min-width:0;min-height:38px;padding:7px 10px;border:1px solid #dbe5de;border-radius:8px;background:#fff;color:#31543e;font:inherit;cursor:pointer}
+.sadiq-heading-select select:focus-visible{outline:2px solid #398568;outline-offset:2px}
 @container page-heading (max-width:640px){html .sadiq-page-heading .sadiq-heading-title{font-size:calc(20px * var(--app-font-scale,1))}.sadiq-heading-date{font-size:calc(11px * var(--app-font-scale,1))}.sadiq-heading-actions{flex-basis:100%;gap:6px;margin-top:3px}}
-@media(max-width:640px){html .sadiq-page-heading .sadiq-heading-title{font-size:calc(20px * var(--app-font-scale,1))}.sadiq-page-heading{margin-bottom:13px;padding-bottom:10px}.sadiq-heading-line{gap:5px 12px}.sadiq-heading-date{font-size:calc(11px * var(--app-font-scale,1))}.sadiq-heading-actions{gap:6px;flex-basis:100%;margin-top:3px}.teacher-heading-tools{gap:8px}.teacher-heading-halaqa{width:100%}.teacher-heading-halaqa select{flex:1;width:100%}.sadiq-heading-context{gap:6px 12px}}
+@media(max-width:640px){html .sadiq-page-heading .sadiq-heading-title{font-size:calc(20px * var(--app-font-scale,1))}.sadiq-page-heading{margin-bottom:13px;padding-bottom:10px}.sadiq-heading-line{gap:5px 12px}.sadiq-heading-date{font-size:calc(11px * var(--app-font-scale,1))}.sadiq-heading-actions{gap:6px;flex-basis:100%;margin-top:3px}.teacher-heading-tools{gap:8px}.teacher-heading-halaqa{width:100%}.teacher-heading-halaqa select{flex:1;width:100%}.sadiq-heading-context{gap:6px 12px}.sadiq-heading-select{width:100%}html .sadiq-heading-select select{flex:1;width:100%}}
 @media print{.sadiq-page-heading,.sadiq-heading-context,.teacher-heading-tools{display:none!important}}

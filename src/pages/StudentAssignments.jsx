@@ -1,3 +1,4 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
@@ -520,25 +521,8 @@ export default function StudentAssignments() {
           HEADER
       ===================================================== */}
 
-      <header
-        style={{
-          display: "flex",
-          justifyContent:
-            "space-between",
-          alignItems: "center",
-          gap: "calc(15px * var(--app-density,1))",
-          flexWrap: "wrap",
-          marginBottom: "28px",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "calc(13px * var(--app-density,1))",
-          }}
-        >
-          <button
+      <CompactPageHeader title="ربط الطلاب بالحلقات" actions={<>
+<button
             type="button"
             onClick={() =>
               navigate("/admin")
@@ -546,61 +530,8 @@ export default function StudentAssignments() {
             style={backButton}
             title="العودة للوحة المشرف"
           >
-            <ArrowRight
-              size={20}
-            />
-          </button>
-
-          <div
-            style={{
-              width: "52px",
-              height: "52px",
-              borderRadius:
-                "calc(15px * var(--app-radius-scale,1))",
-              background:
-                "linear-gradient(145deg,var(--app-color-0f5132,#0f5132),#174f37)",
-              color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent:
-                "center",
-              boxShadow:
-                "0 8px 20px color-mix(in srgb,var(--app-color-0f5132,#0f5132) 16%,transparent)",
-            }}
-          >
-            <Link2
-              size={25}
-              strokeWidth={1.8}
-            />
-          </div>
-
-          <div>
-            <h1
-              style={{
-                margin: 0,
-                color: "var(--app-color-173d2b,#173d2b)",
-                fontSize: "calc(29px * var(--app-font-scale,1))",
-                fontWeight: "800",
-              }}
-            >
-              ربط الطلاب بالحلقات
-            </h1>
-
-            <p
-              style={{
-                margin:
-                  "5px 0 0",
-                color: "#7c857f",
-                fontSize: "calc(13px * var(--app-font-scale,1))",
-              }}
-            >
-              إدارة الحلقة الحالية لكل طالب
-              مع الحفاظ على السجل التاريخي
-            </p>
-          </div>
-        </div>
-
-        <button
+            <ArrowRight size={17} /> العودة للوحة المشرف</button>
+<button
           type="button"
           onClick={() =>
             loadData()
@@ -615,7 +546,7 @@ export default function StudentAssignments() {
 
           تحديث البيانات
         </button>
-      </header>
+</>} />
 
       {/* =====================================================
           ERROR

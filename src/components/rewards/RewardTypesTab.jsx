@@ -1,23 +1,10 @@
+import CompactPageHeader from "../CompactPageHeader";
 import {
   useMemo,
   useState,
 } from "react";
 
-import {
-  AlertTriangle,
-  Ban,
-  CheckCircle2,
-  Gift,
-  Layers3,
-  MinusCircle,
-  Pencil,
-  Plus,
-  Power,
-  Search,
-  Sparkles,
-  Trash2,
-  X,
-} from "lucide-react";
+import { AlertTriangle, Ban, CheckCircle2, Gift, MinusCircle, Pencil, Plus, Power, Search, Trash2, X } from "lucide-react";
 
 import ConfirmModal from "../ConfirmModal";
 
@@ -541,70 +528,11 @@ export default function RewardTypesTab({
             HERO
         ========================================= */}
 
-        <section className="reward-types-hero">
-          <div className="reward-types-hero-main">
-            <span className="reward-types-hero-icon">
-              <Layers3
-                size={20}
-              />
-            </span>
-
-            <div>
-              <div className="reward-types-eyebrow">
-                <Sparkles
-                  size={11}
-                />
-                إعدادات نظام النقاط
-              </div>
-
-              <h2>
-                أنواع المنح والخصومات
-              </h2>
-
-              <p>
-                إدارة الأسباب والقيم التي يستخدمها المعلم عند منح النقاط أو خصمها من الطلاب.
-              </p>
-            </div>
-          </div>
-
-          <div className="reward-types-overview">
-            <div>
-              <span>
-                إجمالي الأنواع
-              </span>
-
-              <strong>
-                {formatNumber(
-                  rewardTypes.length
-                )}
-              </strong>
-            </div>
-
-            <div>
-              <span>
-                الأنواع النشطة
-              </span>
-
-              <strong className="active">
-                {formatNumber(
-                  totalActive
-                )}
-              </strong>
-            </div>
-
-            <div>
-              <span>
-                المتوقفة
-              </span>
-
-              <strong className="inactive">
-                {formatNumber(
-                  totalInactive
-                )}
-              </strong>
-            </div>
-          </div>
-        </section>
+        <CompactPageHeader title="أنواع المنح والخصومات" level={2} showDate={false}>
+          <span>إجمالي الأنواع: <strong>{formatNumber(rewardTypes.length)}</strong></span>
+          <span>الأنواع النشطة: <strong>{formatNumber(totalActive)}</strong></span>
+          <span>المتوقفة: <strong>{formatNumber(totalInactive)}</strong></span>
+        </CompactPageHeader>
 
         {/* =========================================
             TOOLBAR

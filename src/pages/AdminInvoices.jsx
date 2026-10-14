@@ -1,5 +1,6 @@
+import CompactPageHeader from "../components/CompactPageHeader";
 import {displayDateFormatter} from "../lib/calendar";
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, CheckCircle2, ChevronLeft, Clock3, FileText, Loader2, ReceiptText, RefreshCw, Search, WalletCards } from "lucide-react";
 import { supabase } from "../lib/supabase";
@@ -126,16 +127,11 @@ export default function AdminInvoices() {
         @media(max-width:600px){.ai-head{align-items:center}.ai-title{font-size:calc(21px * var(--app-font-scale,1))}.ai-sub{display:none}.ai-tools{display:grid}.ai-select{width:100%}.ai-stat{padding:calc(12px * var(--app-density,1))}.ai-stat-value{font-size:calc(16px * var(--app-font-scale,1))}}
       `}</style>
 
-      <header className="ai-head">
-        <div>
-          <div className="ai-kicker">FINANCIAL CONTROL</div>
-          <h1 className="ai-title">الفواتير</h1>
-          <div className="ai-sub">متابعة فواتير اشتراكات المساجد وسجل حالاتها المالية.</div>
-        </div>
-        <button type="button" className="ai-refresh" onClick={loadInvoices} disabled={loading}>
+      <CompactPageHeader title="الفواتير" actions={<>
+<button type="button" className="ai-refresh" onClick={loadInvoices} disabled={loading}>
           <RefreshCw size={15} className={loading ? "spin" : ""}/> تحديث
         </button>
-      </header>
+</>} />
 
       {error && <div className="ai-error"><AlertTriangle size={14}/> {error}</div>}
 

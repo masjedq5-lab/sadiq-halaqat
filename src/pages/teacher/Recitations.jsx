@@ -2078,8 +2078,9 @@ export default function Recitations() {
               next.review_evaluation = "";
             }
             const defaults = plannedRecitationAmounts({
+              ...plan,
               memorizationAmount, memorizationUnit,
-              revisionAmount, revisionUnit,
+              revisionAmount, revisionUnit, activeIntervention,
               lessonSuppressed, interventionType, consolidation,
             });
             if (next.lesson_amount_value === "") {
@@ -2361,6 +2362,14 @@ export default function Recitations() {
       return;
     }
 
+    if (!editing && key === "recitation_date" && quranForm.recording_mode === "amount") {
+      // New dates can belong to another Hijri month or intervention.
+      // The following plan load restores the new date's exact daily amount.
+      setQuranForm(current => ({
+        ...current, lesson_amount_value: "", review_amount_value: "",
+        lesson_evaluation: "", review_evaluation: "",
+      }));
+    }
     setCommonForm(
       (current) => ({
         ...current,
@@ -6111,19 +6120,7 @@ export default function Recitations() {
                         isActiveSessionForm
                       )
                     }
-                    onChange={(
-                      value
-                    ) => {
-                      setCommonForm(
-                        (current) => ({
-                          ...current,
-                          halaqa_id:
-                            value,
-                          student_id:
-                            "",
-                        })
-                      );
-                    }}
+                    onChange={(value) => setCommon("halaqa_id", value)}
                     options={[
                       {
                         value: "",

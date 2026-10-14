@@ -66,6 +66,8 @@ jobs:
 
       - name: Quran amount-only recitation and monthly progress tests
         run: npm run test:quran-amount
+      - name: Quran plan readiness and reverse-route regression tests
+        run: npm run test:quran-plan-readiness
 
       - name: Absent student recitation regression tests
         run: npm run test:attendance

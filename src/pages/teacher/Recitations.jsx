@@ -27,6 +27,7 @@ import {
 } from "../../data/surahList";
 import { finishedSurahBoundary, nextSurahConsolidation } from "../../lib/surahConsolidation";
 import { amountToFaces, plannedRecitationAmounts, validateAmountRecitation } from "../../lib/quranAmountRecitation";
+import { recitationPlanNotices } from "../../lib/quranPlanReadiness";
 
 import {
   useToast,
@@ -329,6 +330,7 @@ export default function Recitations() {
     planSuggestion,
     setPlanSuggestion,
   ] = useState(null);
+  const [planLoadIssue, setPlanLoadIssue] = useState("");
 
   // The teacher can select one or two reinforcement days before recording
   // the first consolidation session. The preference is scoped by lesson ID.
@@ -1735,8 +1737,10 @@ export default function Recitations() {
 
         if (!plan) {
           setPlanSuggestion(null);
+          setPlanLoadIssue(recitationPlanNotices({plan:null}).general);
           return;
         }
+        setPlanLoadIssue("");
 
         const {
           data: interventionHistory,
@@ -2026,8 +2030,13 @@ export default function Recitations() {
 
         if (!active) return;
 
+        const planNotices = recitationPlanNotices({
+          plan: { ...plan, memorizationAmount, revisionAmount },
+          generatedLesson, generatedReview, lessonSuppressed, interventionType,
+        });
         setPlanSuggestion({
           ...plan,
+          planNotices,
           scheduledToday,
           days,
           memorizationAmount,
@@ -2125,6 +2134,7 @@ export default function Recitations() {
 
         if (active) {
           setPlanSuggestion(null);
+          setPlanLoadIssue("تعذر قراءة الخطة أو توليد المطلوب تلقائيًا. تأكد من صحة حدود الخطة وحاول تحديث الصفحة. يمكن تسجيل المقدار دون تعديل مواضع الطالب.");
         }
       }
     }
@@ -2536,6 +2546,7 @@ export default function Recitations() {
     );
 
     setPlanSuggestion(null);
+    setPlanLoadIssue("");
     setCompletionModes(createCompletionModes());
     setRangeMetrics({
       lesson: null,
@@ -2676,6 +2687,7 @@ export default function Recitations() {
     );
     setNooraniaForm(createNooraniaForm());
     setPlanSuggestion(null);
+    setPlanLoadIssue("");
     setCompletionModes(createCompletionModes());
     setRangeMetrics({
       lesson: null,
@@ -6250,7 +6262,9 @@ export default function Recitations() {
                       <span>
                         {planSuggestion.activeIntervention
                           ? formatInterventionType(planSuggestion.interventionType)
-                          : "خطة اليوم جاهزة"}
+                          : (planSuggestion.planNotices?.lesson || planSuggestion.planNotices?.review)
+                            ? "الخطة تحتاج مراجعة مواضع"
+                            : "خطة اليوم جاهزة"}
                       </span>
                       {!planSuggestion.scheduledToday && (
                         <small>جلسة إضافية</small>
@@ -6327,6 +6341,20 @@ export default function Recitations() {
 
                   {quranForm.recording_mode === "positions" && (
                     <>
+                  {!editing && (planLoadIssue ||
+                    planSuggestion?.planNotices?.lesson ||
+                    planSuggestion?.planNotices?.review) && (
+                    <div className="recitation-plan-diagnostic" role="status" aria-live="polite">
+                      <AlertTriangle size={19} />
+                      <div>
+                        <strong>ملاحظة على خطة التسميع</strong>
+                        {planLoadIssue && <p>{planLoadIssue}</p>}
+                        {planSuggestion?.planNotices?.lesson && <p>{planSuggestion.planNotices.lesson}</p>}
+                        {planSuggestion?.planNotices?.review && <p>{planSuggestion.planNotices.review}</p>}
+                      </div>
+                    </div>
+                  )}
+
                   {!editing && planSuggestion?.consolidation && (
                     <div className="surah-consolidation-card" role="status">
                       <div className="surah-consolidation-heading">
@@ -8577,6 +8605,14 @@ function PageStyles() {
           .surah-consolidation-options button { min-width:120px; }
         }
 
+        .recitation-plan-diagnostic {
+          display: flex; align-items: flex-start; gap: 10px;
+          border: 1px solid #e7cc94; background: #fffaf0; color: #7a5621;
+          padding: 13px 14px; border-radius: 14px; margin: 13px 0;
+        }
+        .recitation-plan-diagnostic > svg { flex-shrink: 0; margin-top: 3px; }
+        .recitation-plan-diagnostic strong { font-size: 13px; display: block; }
+        .recitation-plan-diagnostic p { margin: 6px 0 0; font-size: 12px; line-height: 1.8; }
         .quran-recording-mode {
           border: 1px solid #d6e7de; border-radius: 17px;
           background: #f7fbf9; padding: 14px; margin: 14px 0;

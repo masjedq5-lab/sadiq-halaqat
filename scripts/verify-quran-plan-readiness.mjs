@@ -18,7 +18,7 @@ const generatedRevision = {start_surah_name:"الواقعة",start_ayah:1};
 let warnings = recitationPlanNotices({plan:good,generatedLesson:generated,generatedReview:generatedRevision});
 assert.deepEqual(warnings,{lesson:"",review:"",general:""});
 warnings = recitationPlanNotices({plan: {...good, memorization_to_surah:null}, generatedReview:generatedRevision});
-assert.match(warnings.lesson,/حدود/);
+assert.match(warnings.lesson,/بداية الحفظ أو نهايته غير محددة/);
 assert.equal(warnings.review,"");
 warnings = recitationPlanNotices({plan:{...good,revision_from_ayah:null},generatedLesson:generated});
 assert.match(warnings.review,/حدود/);
